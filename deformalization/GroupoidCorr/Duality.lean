@@ -1,0 +1,215 @@
+import Mathlib
+
+/-!
+# Duals, torsion, modifications, and the rank-one norm map
+
+Mirrors `note/note.tex`, Section 9 (`lem:torsion-dual`, `prop:modification-dual`,
+`ex:rank-one`); this is Section 2 of the main account.
+
+`O` is a domain with fraction field `E`. For a *modification* `u : M' → M` (injective, with
+torsion cokernel `T = M / u M'`), the connecting map `δ : M'^∨ → Hom(T, E/O)` is built directly:
+every `φ : M' → O` extends uniquely to an `O`-linear `M → E` (because `T` is torsion), and `δ φ`
+is that extension modulo `O`. The sequence `0 → M^∨ → M'^∨ → Hom(T, E/O) → 0` is exact; the
+last map is onto when `M` is projective. This replaces the main account's route through
+`Ext¹(T, O) ≅ Hom(T, E/O)`.
+-/
+
+open Submodule
+
+namespace GroupoidCorr
+
+open scoped BigOperators
+
+variable {O : Type*} [CommRing O] [IsDomain O]
+
+/-- [note: lem:torsion-dual] There are no nonzero maps from a torsion module to `O`. -/
+theorem hom_torsion_eq_zero {T : Type*} [AddCommGroup T] [Module O T]
+    (hT : ∀ t : T, ∃ c : O, c ≠ 0 ∧ c • t = 0) (f : T →ₗ[O] O) : f = 0 := by
+  ext t
+  obtain ⟨c, hc, h⟩ := hT t
+  have := congrArg f h
+  rw [map_smul, map_zero, smul_eq_mul] at this
+  exact (mul_eq_zero.mp this).resolve_left hc
+
+/-- [note: prop:modification-dual] Exactness at `M^∨`: `u^∨` is injective. -/
+theorem dual_injective {M M' : Type*} [AddCommGroup M] [Module O M] [AddCommGroup M']
+    [Module O M'] (u : M' →ₗ[O] M) (htors : ∀ m : M, ∃ c : O, c ≠ 0 ∧ ∃ m', u m' = c • m)
+    (ψ₁ ψ₂ : M →ₗ[O] O) (h : ψ₁ ∘ₗ u = ψ₂ ∘ₗ u) : ψ₁ = ψ₂ := by
+  ext m
+  obtain ⟨c, hc, m', hm⟩ := htors m
+  have := congrArg (fun ψ => ψ m') h
+  simp only [LinearMap.comp_apply, hm, map_smul, smul_eq_mul] at this
+  exact mul_left_cancel₀ hc this
+
+variable {E : Type*} [Field E] [Algebra O E] [IsFractionRing O E]
+variable {M M' : Type*} [AddCommGroup M] [Module O M] [AddCommGroup M'] [Module O M']
+
+/-- `O` inside `E`, as an `O`-submodule. -/
+abbrev OinE (O E : Type*) [CommRing O] [Field E] [Algebra O E] : Submodule O E :=
+  LinearMap.range (Algebra.linearMap O E)
+
+/-- The `O`-module `E/O`. -/
+abbrev EmodO (O E : Type*) [CommRing O] [Field E] [Algebra O E] : Type _ := E ⧸ OinE O E
+
+omit [IsDomain O] in
+theorem alg_ne_zero {c : O} (hc : c ≠ 0) : algebraMap O E c ≠ 0 := by
+  rw [Ne, ← map_zero (algebraMap O E)]
+  exact fun h => hc (IsFractionRing.injective O E h)
+
+section modification
+
+variable (u : M' →ₗ[O] M) (hu : Function.Injective u)
+  (htors : ∀ m : M, ∃ c : O, c ≠ 0 ∧ ∃ m', u m' = c • m)
+include hu htors
+
+omit [IsDomain O] htors in
+/-- The value `φ(m') / c` does not depend on the pair `(m', c)` with `u m' = c • m`. -/
+theorem ext_wd (φ : M' →ₗ[O] O) {m : M} {c₁ c₂ : O} {m₁ m₂ : M'} (hc₁ : c₁ ≠ 0) (hc₂ : c₂ ≠ 0)
+    (h₁ : u m₁ = c₁ • m) (h₂ : u m₂ = c₂ • m) :
+    algebraMap O E (φ m₁) / algebraMap O E c₁ = algebraMap O E (φ m₂) / algebraMap O E c₂ := by
+  have h : c₂ • m₁ = c₁ • m₂ := hu (by rw [map_smul, map_smul, h₁, h₂, smul_smul, smul_smul,
+    mul_comm])
+  have h' : c₂ * φ m₁ = c₁ * φ m₂ := by
+    have := congrArg φ h; rwa [map_smul, map_smul, smul_eq_mul, smul_eq_mul] at this
+  rw [div_eq_div_iff (alg_ne_zero hc₁) (alg_ne_zero hc₂), ← map_mul, ← map_mul, mul_comm,
+    h', mul_comm]
+
+/-- The extension of `φ` to `M`, valued in `E`. -/
+noncomputable def extFun (φ : M' →ₗ[O] O) (m : M) : E :=
+  algebraMap O E (φ (htors m).choose_spec.2.choose) / algebraMap O E (htors m).choose
+
+omit [IsDomain O] in
+theorem extFun_eq (φ : M' →ₗ[O] O) {m : M} {c : O} {m' : M'} (hc : c ≠ 0) (h : u m' = c • m) :
+    extFun u htors φ m = algebraMap O E (φ m') / algebraMap O E c :=
+  ext_wd u hu φ (htors m).choose_spec.1 hc (htors m).choose_spec.2.choose_spec h
+
+/-- The extension of `φ : M' → O` to an `O`-linear map `M → E`. -/
+noncomputable def extL (φ : M' →ₗ[O] O) : M →ₗ[O] E where
+  toFun := extFun u htors φ
+  map_add' m₁ m₂ := by
+    obtain ⟨c₁, hc₁, m₁', h₁⟩ := htors m₁
+    obtain ⟨c₂, hc₂, m₂', h₂⟩ := htors m₂
+    rw [extFun_eq u hu htors φ hc₁ h₁, extFun_eq u hu htors φ hc₂ h₂,
+      extFun_eq u hu htors φ (mul_ne_zero hc₁ hc₂) (m' := c₂ • m₁' + c₁ • m₂')
+        (by rw [map_add, map_smul, map_smul, h₁, h₂, smul_smul, smul_smul, smul_add,
+          mul_comm c₁ c₂])]
+    have := alg_ne_zero (E := E) hc₁
+    have := alg_ne_zero (E := E) hc₂
+    rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    simp only [map_add, map_mul]
+    field_simp
+  map_smul' a m := by
+    obtain ⟨c, hc, m', h⟩ := htors m
+    rw [extFun_eq u hu htors φ hc h, extFun_eq u hu htors φ hc (m' := a • m')
+      (by rw [map_smul, h, smul_comm])]
+    rw [map_smul, smul_eq_mul, map_mul, RingHom.id_apply, Algebra.smul_def, mul_div_assoc]
+
+theorem extL_apply (φ : M' →ₗ[O] O) {m : M} {c : O} {m' : M'} (hc : c ≠ 0) (h : u m' = c • m) :
+    extL u hu htors φ m = algebraMap O E (φ m') / algebraMap O E c :=
+  extFun_eq u hu htors φ hc h
+
+theorem extL_comp (φ : M' →ₗ[O] O) (m' : M') : extL u hu htors φ (u m') = algebraMap O E (φ m') := by
+  rw [extL_apply u hu htors φ one_ne_zero (m' := m') (by rw [one_smul]), map_one, div_one]
+
+theorem extL_add (φ ψ : M' →ₗ[O] O) : extL (E := E) u hu htors (φ + ψ) = extL u hu htors φ + extL u hu htors ψ := by
+  ext m
+  obtain ⟨c, hc, m', h⟩ := htors m
+  simp only [LinearMap.add_apply, extL_apply u hu htors _ hc h, map_add, add_div]
+
+theorem extL_smul (a : O) (φ : M' →ₗ[O] O) : extL (E := E) u hu htors (a • φ) = a • extL u hu htors φ := by
+  ext m
+  obtain ⟨c, hc, m', h⟩ := htors m
+  simp only [LinearMap.smul_apply, extL_apply u hu htors _ hc h, smul_eq_mul, map_mul,
+    Algebra.smul_def, mul_div_assoc]
+
+theorem range_le_ker (φ : M' →ₗ[O] O) :
+    LinearMap.range u ≤ LinearMap.ker ((OinE O E).mkQ ∘ₗ extL u hu htors φ) := by
+  rintro _ ⟨m', rfl⟩
+  rw [LinearMap.mem_ker, LinearMap.comp_apply, extL_comp, Submodule.mkQ_apply,
+    Submodule.Quotient.mk_eq_zero]
+  exact ⟨φ m', rfl⟩
+
+/-- [note: prop:modification-dual] The connecting map `δ : M'^∨ → Hom(M / u M', E/O)`:
+`δ φ` is the extension of `φ` to `M`, taken modulo `O`. -/
+noncomputable def delta : (M' →ₗ[O] O) →ₗ[O] ((M ⧸ LinearMap.range u) →ₗ[O] EmodO O E) where
+  toFun φ := (LinearMap.range u).liftQ _ (range_le_ker u hu htors φ)
+  map_add' φ ψ := by
+    ext m
+    simp [extL_add]
+  map_smul' a φ := by
+    ext m
+    simp [extL_smul]
+
+theorem delta_apply (φ : M' →ₗ[O] O) (m : M) :
+    delta u hu htors φ ((LinearMap.range u).mkQ m) = (OinE O E).mkQ (extL u hu htors φ m) := rfl
+
+/-- `O ≅ O ⊆ E`. -/
+noncomputable def OequivOinE : O ≃ₗ[O] OinE O E :=
+  LinearEquiv.ofInjective (Algebra.linearMap O E) (IsFractionRing.injective O E)
+
+/-- [note: prop:modification-dual] Exactness at `M'^∨`: `δ φ = 0` iff `φ = ψ ∘ u`. -/
+theorem delta_eq_zero_iff (φ : M' →ₗ[O] O) :
+    delta (E := E) u hu htors φ = 0 ↔ ∃ ψ : M →ₗ[O] O, ψ ∘ₗ u = φ := by
+  constructor
+  · intro h0
+    have hmem : ∀ m, extL u hu htors φ m ∈ OinE O E := fun m => by
+      have := congrArg (fun f => f ((LinearMap.range u).mkQ m)) h0
+      change (OinE O E).mkQ (extL u hu htors φ m) = 0 at this
+      exact (Submodule.Quotient.mk_eq_zero _).mp this
+    refine ⟨(OequivOinE (E := E)).symm.toLinearMap ∘ₗ
+      (extL u hu htors φ).codRestrict (OinE O E) hmem, ?_⟩
+    ext m'
+    apply IsFractionRing.injective O E
+    have key := (OequivOinE (O := O) (E := E)).apply_symm_apply
+      ⟨extL u hu htors φ (u m'), hmem (u m')⟩
+    have : algebraMap O E ((OequivOinE (E := E)).symm
+        ⟨extL u hu htors φ (u m'), hmem (u m')⟩) = extL u hu htors φ (u m') :=
+      congrArg Subtype.val key
+    change algebraMap O E ((OequivOinE (E := E)).symm
+      ⟨extL u hu htors φ (u m'), hmem (u m')⟩) = _
+    rw [this, extL_comp]
+  · rintro ⟨ψ, rfl⟩
+    ext m
+    obtain ⟨c, hc, m', hm⟩ := htors m
+    change (OinE O E).mkQ (extL u hu htors (ψ ∘ₗ u) m) = 0
+    rw [extL_apply u hu htors _ hc hm, LinearMap.comp_apply, hm, map_smul, smul_eq_mul, map_mul,
+      mul_div_cancel_left₀ _ (alg_ne_zero hc), Submodule.mkQ_apply,
+      Submodule.Quotient.mk_eq_zero]
+    exact ⟨ψ m, rfl⟩
+
+/-- [note: prop:modification-dual] Exactness at `Hom(T, E/O)`: `δ` is onto when `M` is
+projective (this is `Ext¹(M, O) = 0`). -/
+theorem delta_surjective [Module.Projective O M] : Function.Surjective (delta u hu htors (E := E)) := by
+  intro χ
+  obtain ⟨h, hh⟩ := Module.projective_lifting_property (OinE O E).mkQ
+    (χ ∘ₗ (LinearMap.range u).mkQ) (Submodule.mkQ_surjective _)
+  have hmem : ∀ m', (h ∘ₗ u) m' ∈ OinE O E := fun m' => by
+    have := congrArg (fun f => f (u m')) hh
+    simp only [LinearMap.comp_apply, Submodule.mkQ_apply] at this
+    rw [(Submodule.Quotient.mk_eq_zero _).mpr (LinearMap.mem_range_self u m'), map_zero,
+      Submodule.Quotient.mk_eq_zero] at this
+    exact this
+  let φ : M' →ₗ[O] O := (OequivOinE (E := E)).symm.toLinearMap ∘ₗ (h ∘ₗ u).codRestrict _ hmem
+  have hφ : ∀ m', algebraMap O E (φ m') = h (u m') := fun m' =>
+    congrArg Subtype.val ((OequivOinE (O := O) (E := E)).apply_symm_apply ⟨h (u m'), hmem m'⟩)
+  refine ⟨φ, ?_⟩
+  ext m
+  obtain ⟨c, hc, m', hm⟩ := htors m
+  rw [LinearMap.comp_apply, delta_apply, extL_apply u hu htors _ hc hm, hφ, hm, map_smul,
+    Algebra.smul_def, mul_div_cancel_left₀ _ (alg_ne_zero hc)]
+  exact congrArg (fun f => f m) hh
+
+end modification
+
+/-- [note: ex:rank-one] In `M^{⊗k}`, the norm map of the symmetric group sends `e^{⊗k}` to
+`k! • e^{⊗k}`: every permutation fixes the tensor power of a single vector. For `M = O e` this is
+the norm map `Sym^k M → Γ^k M`, `e^k ↦ k! e^{[k]}`, with cokernel `O / k! O`. -/
+theorem norm_tprod_const {R : Type*} [CommSemiring R] {N : Type*} [AddCommMonoid N] [Module R N]
+    (k : ℕ) (e : N) :
+    ∑ σ : Equiv.Perm (Fin k), PiTensorProduct.reindex R (fun _ : Fin k => N) σ
+        (PiTensorProduct.tprod R (fun _ : Fin k => e)) =
+      k.factorial • PiTensorProduct.tprod R (fun _ : Fin k => e) := by
+  simp only [PiTensorProduct.reindex_tprod]
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_perm, Fintype.card_fin]
+
+end GroupoidCorr

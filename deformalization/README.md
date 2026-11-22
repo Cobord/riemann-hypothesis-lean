@@ -10,7 +10,8 @@ A short note (`note/note.tex`) and a Lean 4 library (`GroupoidCorr/`) kept in on
 - the one-step minor lemma behind each unit of divisibility;
 - the factorial identity relating the prime sum to the inert factorial ideal;
 - integrality of divided periods over a Dedekind domain;
-- the content of the period map, and Claim A from (the consequence of) Hypothesis J.
+- the content of the period map, and Claim A from (the consequence of) Hypothesis J;
+- trace duality, duals of modifications, and the rank-one norm map.
 
 ```
 lake exe cache get && lake build

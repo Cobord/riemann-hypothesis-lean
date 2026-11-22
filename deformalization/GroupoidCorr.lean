@@ -13,3 +13,5 @@ import GroupoidCorr.Divided
 import GroupoidCorr.QuadCharJacobi
 import GroupoidCorr.Content
 import GroupoidCorr.ClaimA
+import GroupoidCorr.Duality
+import GroupoidCorr.TraceDual

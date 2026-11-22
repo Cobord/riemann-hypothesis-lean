@@ -24,6 +24,7 @@
 \DeclareMathOperator{\Aut}{Aut}
 \DeclareMathOperator{\ord}{ord}
 \DeclareMathOperator{\Nm}{Nm}
+\DeclareMathOperator{\Tr}{Tr}
 \newcommand{\ASK}{\mathrm{ASK}}
 \newcommand{\Z}{\mathbb{Z}}
 
@@ -543,6 +544,60 @@ Put $G(p)=\sum_{i:\,p\le a_i}g_p(a_i)$. By Lemma~\ref{lem:norm-bound} with $n(\m
 [E:\mathbb Q]\sum_{p\le A\ \mathrm{inert}}\log p\cdot G(p)\ \le\ \log\Nm\mathrm{cont}(\mathit{per}).
 \]
 Exchanging the sums over $p$ and $i$, the left side is $\frac{[E:\mathbb Q]}2\sum_i\sum_{p\le a_i\ \mathrm{inert}}2\log p\cdot g_p(a_i)$. Bound each inner sum from below by Corollary~\ref{cor:factorial-gain}.
+\end{proof}
+
+%======================================================================
+\section{Duals, torsion and modifications}
+%======================================================================
+
+This section is Section~2 of the main account: every denominator in the argument is a finite module, recorded by the right target for duality.
+
+\begin{lemma}[trace duality]\label{lem:trace-dual}
+Let $A\subseteq K$ and $B\subseteq L$ with $L/K$ finite separable (in the application $\mathcal O_{E^+}\subseteq E^+$ and $\mathcal O_E\subseteq E$). Assume $B$ is free over $A$ on a basis that is also a $K$-basis of $L$; this holds after localizing at any prime of $A$. Let $\mathfrak D^{-1}=\{y\in L:\Tr_{L/K}(yB)\subseteq A\}$ be the inverse different. Then for every $B$-module $M$, every $A$-linear $h\colon M\to A$ is $\Tr_{L/K}\circ g$ for a unique $B$-linear $g\colon M\to\mathfrak D^{-1}$. That is, $\mathrm{Hom}_B(M,\mathfrak D^{-1})\cong\mathrm{Hom}_A(M,A)$ by composition with the trace.
+\lean{GroupoidCorr.trace_dual_self, GroupoidCorr.trace_dual}\leanok
+\end{lemma}
+
+\begin{proof}
+First let $M=B$. Let $b_i$ be the basis and $b_i^\vee$ the dual basis for the (nondegenerate) trace form. For $f\colon B\to A$, put $y=\sum_if(b_i)\,b_i^\vee$. Then $\Tr(yb_j)=f(b_j)$, so $\Tr(yc)=f(c)$ for all $c\in B$, and in particular $y\in\mathfrak D^{-1}$. Uniqueness is nondegeneracy. For general $M$ and $m\in M$, apply this to $c\mapsto h(cm)$ to get $g(m)$. Additivity and $B$-linearity of $g$ follow from uniqueness, $\Tr g(m)=h(m)$ is the case $c=1$, and any other $g'$ satisfies the defining property of $g(m)$ at each $m$.
+\end{proof}
+
+\begin{remark}
+The different is trivial exactly at the primes unramified in $L/K$. So $\mathrm{Hom}_A(M,A)$ and $\mathrm{Hom}_B(M,B)$ agree after localizing at unramified primes and differ at the ramified ones. This is not formalized.
+\end{remark}
+
+Now let $O$ be a domain with fraction field $E$.
+
+\begin{lemma}[duality for torsion modules]\label{lem:torsion-dual}
+If $T$ is a torsion $O$-module, then $\mathrm{Hom}_O(T,O)=0$.
+\lean{GroupoidCorr.hom_torsion_eq_zero}\leanok
+\end{lemma}
+
+\begin{proof}
+If $ct=0$ with $c\ne0$, then $c\,f(t)=0$ in the domain $O$, so $f(t)=0$.
+\end{proof}
+
+The main account also identifies $\mathrm{Ext}^1_O(T,O)\cong\mathrm{Hom}_O(T,E/O)$. Its only use is the following sequence, which we construct directly instead.
+
+\begin{proposition}\label{prop:modification-dual}
+Let $u\colon M'\to M$ be injective with torsion cokernel $T=M/u(M')$ (a \emph{modification}). Every $\varphi\in M'^\vee=\mathrm{Hom}_O(M',O)$ extends uniquely to an $O$-linear map $\tilde\varphi\colon M\to E$ with $\tilde\varphi\circ u=\varphi$. Put $\delta(\varphi)=\tilde\varphi\bmod O\in\mathrm{Hom}_O(T,E/O)$. Then
+\[
+0\to M^\vee\xrightarrow{u^\vee}M'^\vee\xrightarrow{\ \delta\ }\mathrm{Hom}_O(T,E/O)\to0
+\]
+is exact at $M^\vee$ and at $M'^\vee$, and also at $\mathrm{Hom}_O(T,E/O)$ when $M$ is projective.
+\lean{GroupoidCorr.delta, GroupoidCorr.dual_injective, GroupoidCorr.delta_eq_zero_iff, GroupoidCorr.delta_surjective}\leanok
+\end{proposition}
+
+\begin{proof}
+For $m\in M$ choose $c\ne0$ and $m'$ with $u(m')=cm$, and put $\tilde\varphi(m)=\varphi(m')/c$. This does not depend on the choice, because $u$ is injective. $u^\vee$ is injective: if $\psi\circ u=0$ then $\psi$ factors through the torsion module $T$, so $\psi=0$ by Lemma~\ref{lem:torsion-dual}. If $\delta(\varphi)=0$, then $\tilde\varphi$ takes values in $O$ and $\varphi=\tilde\varphi\circ u$; conversely $\widetilde{\psi\circ u}=\psi$. For surjectivity, lift $\chi\circ(M\to T)\colon M\to E/O$ to $h\colon M\to E$ using projectivity of $M$ (this is $\mathrm{Ext}^1(M,O)=0$). Then $\varphi=h\circ u$ takes values in $O$, $\tilde\varphi=h$, and $\delta(\varphi)=\chi$.
+\end{proof}
+
+\begin{lemma}[rank one]\label{ex:rank-one}
+For a vector $e$ of a module $N$, the norm map of the symmetric group $S_k$ acting on $N^{\otimes k}$ sends $e^{\otimes k}$ to $k!\,e^{\otimes k}$. For $N=Oe$ this is the norm map $\mathrm{Sym}^kN\to\Gamma^kN$, $e^k\mapsto k!\,e^{[k]}$, whose cokernel is $O/k!\,O$.
+\lean{GroupoidCorr.norm_tprod_const}\leanok
+\end{lemma}
+
+\begin{proof}
+Every permutation fixes $e\otimes\cdots\otimes e$, and $|S_k|=k!$.
 \end{proof}
 
 \end{document}

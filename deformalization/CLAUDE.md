@@ -64,7 +64,7 @@ Both must exit 0.
 
 ## Current status
 
-`lake build` is clean, with no `sorry`. All 39 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
+`lake build` is clean, with no `sorry`. All 43 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
 
 Files:
 - `NormMap.lean`: Section 1.
@@ -81,6 +81,8 @@ Files:
 - `QuadCharJacobi.lean`: `χ_{-d}(n) = (n/d)` for a prime `d ≡ 3 mod 4` (`chiNeg`), an instance of `QuadChar` (`quadCharOf`), and the splitting criteria via quadratic reciprocity (`prop:chi-split`). That these criteria describe splitting in `ℚ(√-d)` is not formalized.
 - `Content.lean`: `def:content` and `prop:content`. `VanishesMod per I` (values reduce to 0 in `R/I`) stands for `per ⊗ R/I = 0`. The content is the span of the values, and `ordP` is the exponent of `𝔭` in it (`Associates.count`).
 - `ClaimA.lean`: `prop:content`(3) (`log_absNorm_content`), `lem:norm-bound` and `thm:claimA`, over `𝓞 E` for a number field `E`. Primes above `p` are indexed by `Above E T = Σ p : T, (span {p}).primesOver (𝓞 E)`. The `Fintype` instance on `primesOver` needs `[Fact p.Prime]`, so `T`'s primality is the instance argument `[∀ p : T, Fact (p : ℕ).Prime]`. Hypothesis J is replaced by its per-step consequence. Uses the new ramification API (`Ideal.ramificationIdx`, `Ideal.inertiaDeg`, `absNorm_pow_inertiaDeg`, `sum_ramification_inertia_eq_finrank`), not the primed one.
+- `Duality.lean`: Section 9 of the note, which is §2 of the main account. Contains `lem:torsion-dual` (`Hom(T, O) = 0` only; the `Ext` identification is not formalized), `prop:modification-dual` and `ex:rank-one`. The connecting map `delta` is built directly: `φ` extends uniquely to `extL φ : M → E` (cokernel torsion), and `δ φ` is that map mod `O`. Surjectivity uses `Module.projective_lifting_property`.
+- `TraceDual.lean`: `lem:trace-dual`, assuming `B` is free over `A` on a basis that is also a `K`-basis of `L`. The inverse different is `Submodule.traceDual A K 1`. The case `M = B` uses the dual basis of the trace form; general `M` follows by uniqueness.
 - `LubinTate.lean`: Section 4 of the note, which is Section 8.2 of the main account. `LTData` bundles the hypotheses; `[p]_F(exp Z) = exp(pZ)` is an assumption, used in coefficient form. Bounds are integral: `ϖ ^ (n-1) * c_n ∈ O` with `ϖ ^ (q-1) = p`, which stands for `ord_p(c_n) ≥ -(n-1)/(q-1)`. Proof via the scaled series `G(Z) = ϖ⁻¹ E(ϖ Z)`. `cor:height` is an exact integer identity from Mathlib's Legendre formula (`sub_one_mul_padicValNat_factorial`).
 
 Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
