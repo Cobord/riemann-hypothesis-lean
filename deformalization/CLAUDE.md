@@ -64,7 +64,7 @@ Both must exit 0.
 
 ## Current status
 
-`lake build` is clean, with no `sorry`. All 32 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
+`lake build` is clean, with no `sorry`. All 33 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
 
 Files:
 - `NormMap.lean`: Section 1.
@@ -77,7 +77,7 @@ Files:
 - `Chain.lean`: kernel scaling (`Corr.smul`), the identity correspondence, and bundled correspondences `BCorr` with the apex as a field, all in one universe `Type u`. Also chains `chain` and `thm:orders-add-corr` (`chain_eq_pow_smul`). This is the kernel-level version of `thm:orders-add`.
 - `OneStep.lean`: Section 5 of the note, which is Section 8.3 of the main account (`lem:minor`, `lem:covector`). The proofs work in `B ⧸ (ϖ)`, which is either the zero ring or of characteristic `p`.
 - `Factorial.lean`: Section 6 of the note, which is Section 8.5 of the main account. `QuadChar d` records the properties of `χ_{-d}` that are used; `χ_{-d}` itself and the splitting of primes are not formalized. `askFlat_eq` is Proposition 8.9, by reindexing the `Λ`-sum over prime powers with `Finset.sum_bij_ne_zero`. `factorial_gain` is Corollary 8.10; its proof writes the even-`k` part of Legendre's sum as Legendre's sum in base `p²` (`legendre_base`), which avoids geometric series.
-- `Divided.lean`: Section 7 of the note, which is Corollary 8.12 of the main account. Over a Dedekind domain, divisibility by each `𝔭^e` gives divisibility by `𝔞 = ∏ 𝔭^e` (`IsDedekindDomain.inf_pow_eq_prod_of_prime`), and `𝔞⁻¹ 𝔞 = 1` for fractional ideals. The local-to-global step (`ϖ^e R_𝔭 ∩ R = 𝔭^e`) is a hypothesis.
+- `Divided.lean`: Section 7 of the note, which is Corollary 8.12 of the main account. Over a Dedekind domain, divisibility by each `𝔭^e` gives divisibility by `𝔞 = ∏ 𝔭^e` (`IsDedekindDomain.inf_pow_eq_prod_of_prime`), and `𝔞⁻¹ 𝔞 = 1` for fractional ideals. The local-to-global step is `mem_pow_of_local` (`lem:local-global`): `𝔭^e` is primary, so `𝔭^e R_𝔭 ∩ R = 𝔭^e` (`IsLocalization.under_map_of_isPrimary_disjoint`). `divided_integral_of_local` takes the local form directly.
 - `LubinTate.lean`: Section 4 of the note, which is Section 8.2 of the main account. `LTData` bundles the hypotheses; `[p]_F(exp Z) = exp(pZ)` is an assumption, used in coefficient form. Bounds are integral: `ϖ ^ (n-1) * c_n ∈ O` with `ϖ ^ (q-1) = p`, which stands for `ord_p(c_n) ≥ -(n-1)/(q-1)`. Proof via the scaled series `G(Z) = ϖ⁻¹ E(ϖ Z)`. `cor:height` is an exact integer identity from Mathlib's Legendre formula (`sub_one_mul_padicValNat_factorial`).
 
 Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
@@ -94,7 +94,7 @@ Lean gotchas:
 - When destructuring `Quotient.exact`, give the witness type explicitly (`obtain ⟨γ, hγ⟩ : ∃ γ : a ⟶ b, … := Quotient.exact h`).
 
 Natural extensions from the main account (not started):
-- §8.6 is covered by `thm:orders-add-corr`, `cor:divisible-values` and `cor:divided`. Still open: the localization step `ϖ^e R_𝔭 ∩ R = 𝔭^e`, which joins them.
+- §8.6 is covered by `thm:orders-add-corr`, `cor:divisible-values`, `lem:local-global` and `cor:divided`.
 - Defining `χ_{-d}` from Mathlib's Jacobi symbol and proving the `QuadChar` properties.
 - Building a Lubin–Tate formal group and its exponential, so that `LTData.hE` is a theorem rather than a hypothesis.
 

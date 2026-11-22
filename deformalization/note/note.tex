@@ -438,19 +438,29 @@ The inequality holds because $s_q(a)\le(q-1)(\lfloor\log_qa\rfloor+1)$ and $\lfl
 \section{Divided periods are integral}
 %======================================================================
 
-This section is Corollary~8.12 of the main account. Let $R$ be a Dedekind domain with fraction field $K$, and let $\mathit{per}\colon N\times P\to R$ be an $R$-bilinear period pairing. Extend it $K$-linearly in the first variable, so that $\mathit{per}(\alpha v)(w)=\alpha\,\mathit{per}(v)(w)$ for $\alpha\in K$. At a prime $\mathfrak p$ with uniformizer $\varpi$, Theorem~\ref{thm:orders-add-corr} and Corollary~\ref{cor:divisible-values}, applied over $R_{\mathfrak p}$, show that every value of the period map of a chain lies in $\varpi^{e}R_{\mathfrak p}\cap R=\mathfrak p^{e}$, with $e=e(\mathfrak p)=\sum_ir_i(\mathfrak p)$. This step from local to global is not formalized; the corollary takes its output as hypothesis.
+This section is Corollary~8.12 of the main account. Let $R$ be a Dedekind domain with fraction field $K$, and let $\mathit{per}\colon N\times P\to R$ be an $R$-bilinear period pairing. Extend it $K$-linearly in the first variable, so that $\mathit{per}(\alpha v)(w)=\alpha\,\mathit{per}(v)(w)$ for $\alpha\in K$. At a prime $\mathfrak p$, Theorem~\ref{thm:orders-add-corr} and Corollary~\ref{cor:divisible-values}, applied over $R_{\mathfrak p}$ with some $\varpi\in\mathfrak p$, show that every value of the period map of a chain is $\varpi^{e}$ times an element of $R_{\mathfrak p}$, with $e=e(\mathfrak p)=\sum_ir_i(\mathfrak p)$. The next lemma returns this to $R$.
+
+\begin{lemma}\label{lem:local-global}
+Let $\mathfrak p\ne0$ be a prime of $R$, $\varpi\in\mathfrak p$ and $e\ge0$. If $x\in R$ satisfies $x=\varpi^e y$ in $R_{\mathfrak p}$ for some $y\in R_{\mathfrak p}$, then $x\in\mathfrak p^e$.
+\lean{GroupoidCorr.mem_pow_of_local}\leanok
+\end{lemma}
+
+\begin{proof}
+For $e=0$ there is nothing to prove. Otherwise $\mathfrak p$ is maximal, so $\mathfrak p^e$, whose radical is $\mathfrak p$, is $\mathfrak p$-primary. It is disjoint from $R\setminus\mathfrak p$, so $\mathfrak p^eR_{\mathfrak p}\cap R=\mathfrak p^e$. Finally $x=\varpi^ey\in\mathfrak p^eR_{\mathfrak p}$.
+\end{proof}
 
 \begin{corollary}[divided periods are integral]\label{cor:divided}
 Let $\mathfrak p_1,\dots,\mathfrak p_m$ be distinct nonzero primes of $R$ and $e_1,\dots,e_m\ge0$. Suppose every value of $\mathit{per}$ lies in $\mathfrak p_i^{e_i}$ for each $i$, and put $\mathfrak a=\prod_i\mathfrak p_i^{e_i}$. Then:
 \begin{enumerate}
 \item every value of $\mathit{per}$ lies in $\mathfrak a$;
-\item for $\alpha\in\mathfrak a^{-1}$, $\mathit{per}(\alpha v)(w)\in R$ for all $v,w$. That is, $\mathit{per}$ maps $\mathfrak a^{-1}N$ into $\mathrm{Hom}_R(P,R)$.
+\item for $\alpha\in\mathfrak a^{-1}$, $\mathit{per}(\alpha v)(w)\in R$ for all $v,w$. That is, $\mathit{per}$ maps $\mathfrak a^{-1}N$ into $\mathrm{Hom}_R(P,R)$;
+\item the conclusion of (2) also holds if, instead, for each $i$ there is $\varpi_i\in\mathfrak p_i$ such that every value of $\mathit{per}$ is $\varpi_i^{e_i}$ times an element of $R_{\mathfrak p_i}$.
 \end{enumerate}
-\lean{GroupoidCorr.values_mem_prod, GroupoidCorr.divided_integral}\leanok
+\lean{GroupoidCorr.values_mem_prod, GroupoidCorr.divided_integral, GroupoidCorr.divided_integral_of_local}\leanok
 \end{corollary}
 
 \begin{proof}
-(1) Powers of distinct maximal ideals are pairwise coprime, so $\bigcap_i\mathfrak p_i^{e_i}=\prod_i\mathfrak p_i^{e_i}$. (2) $\mathfrak a\neq0$ is invertible as a fractional ideal, so $\alpha\,\mathit{per}(v)(w)\in\mathfrak a^{-1}\mathfrak a=R$.
+(1) Powers of distinct maximal ideals are pairwise coprime, so $\bigcap_i\mathfrak p_i^{e_i}=\prod_i\mathfrak p_i^{e_i}$. (2) $\mathfrak a\neq0$ is invertible as a fractional ideal, so $\alpha\,\mathit{per}(v)(w)\in\mathfrak a^{-1}\mathfrak a=R$. (3) Lemma~\ref{lem:local-global} gives the hypothesis of (1).
 \end{proof}
 
 \end{document}
