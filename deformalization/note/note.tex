@@ -434,4 +434,23 @@ g_p(a)=\sum_{k\ \mathrm{odd}}\Bigl\lfloor\frac a{p^k}\Bigr\rfloor+\frac{1-s_q(a)
 The inequality holds because $s_q(a)\le(q-1)(\lfloor\log_qa\rfloor+1)$ and $\lfloor\log_qa\rfloor\le\lfloor\log_pa\rfloor$. Next, $2\log p\,(\log_pa+1)\le2\log a+2\log p\le4\log a$ for $p\le a$, and there are at most $\pi(a)$ inert primes $p\le a$. Finally, $\log d\cdot\ord_d(a!)\le a\log d/(d-1)$, since $(d-1)\ord_d(a!)=a-s_d(a)\le a$. Combine with Proposition~\ref{prop:factorial}.
 \end{proof}
 
+%======================================================================
+\section{Divided periods are integral}
+%======================================================================
+
+This section is Corollary~8.12 of the main account. Let $R$ be a Dedekind domain with fraction field $K$, and let $\mathit{per}\colon N\times P\to R$ be an $R$-bilinear period pairing. Extend it $K$-linearly in the first variable, so that $\mathit{per}(\alpha v)(w)=\alpha\,\mathit{per}(v)(w)$ for $\alpha\in K$. At a prime $\mathfrak p$ with uniformizer $\varpi$, Theorem~\ref{thm:orders-add-corr} and Corollary~\ref{cor:divisible-values}, applied over $R_{\mathfrak p}$, show that every value of the period map of a chain lies in $\varpi^{e}R_{\mathfrak p}\cap R=\mathfrak p^{e}$, with $e=e(\mathfrak p)=\sum_ir_i(\mathfrak p)$. This step from local to global is not formalized; the corollary takes its output as hypothesis.
+
+\begin{corollary}[divided periods are integral]\label{cor:divided}
+Let $\mathfrak p_1,\dots,\mathfrak p_m$ be distinct nonzero primes of $R$ and $e_1,\dots,e_m\ge0$. Suppose every value of $\mathit{per}$ lies in $\mathfrak p_i^{e_i}$ for each $i$, and put $\mathfrak a=\prod_i\mathfrak p_i^{e_i}$. Then:
+\begin{enumerate}
+\item every value of $\mathit{per}$ lies in $\mathfrak a$;
+\item for $\alpha\in\mathfrak a^{-1}$, $\mathit{per}(\alpha v)(w)\in R$ for all $v,w$. That is, $\mathit{per}$ maps $\mathfrak a^{-1}N$ into $\mathrm{Hom}_R(P,R)$.
+\end{enumerate}
+\lean{GroupoidCorr.values_mem_prod, GroupoidCorr.divided_integral}\leanok
+\end{corollary}
+
+\begin{proof}
+(1) Powers of distinct maximal ideals are pairwise coprime, so $\bigcap_i\mathfrak p_i^{e_i}=\prod_i\mathfrak p_i^{e_i}$. (2) $\mathfrak a\neq0$ is invertible as a fractional ideal, so $\alpha\,\mathit{per}(v)(w)\in\mathfrak a^{-1}\mathfrak a=R$.
+\end{proof}
+
 \end{document}

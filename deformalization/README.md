@@ -8,7 +8,8 @@ A short note (`note/note.tex`) and a Lean 4 library (`GroupoidCorr/`) kept in on
 - additivity of divisibility along chains;
 - denominators of the Lubin–Tate exponential and divisibility of jets at inert primes;
 - the one-step minor lemma behind each unit of divisibility;
-- the factorial identity relating the prime sum to the inert factorial ideal.
+- the factorial identity relating the prime sum to the inert factorial ideal;
+- integrality of divided periods over a Dedekind domain.
 
 ```
 lake exe cache get && lake build
