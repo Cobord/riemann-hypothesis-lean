@@ -1,0 +1,8 @@
+.lake/
+note/*.aux
+note/*.log
+note/*.out
+note/*.fdb_latexmk
+note/*.fls
+note/*.toc
+scripts/_axioms.lean

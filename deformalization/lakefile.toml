@@ -1,0 +1,15 @@
+name = "groupoidCorr"
+defaultTargets = ["GroupoidCorr"]
+
+[leanOptions]
+autoImplicit = false
+relaxedAutoImplicit = false
+
+# Same Mathlib commit as the Alpöge archive (lean/lakefile.toml), so the two can share a cache.
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "0df444a360eaa60ab8c11dca51a86af692955474"
+
+[[lean_lib]]
+name = "GroupoidCorr"

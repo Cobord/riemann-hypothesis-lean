@@ -1,0 +1,1658 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{amssymb,amsmath,amsthm,mathtools,mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem*{claimA}{Claim A}
+\newtheorem*{claimB}{Claim B}
+\newtheorem*{theoremC}{Theorem C}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{construction}[theorem]{Construction}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ---------- notation ----------
+\newcommand{\OEring}{\mathcal{O}_E}
+\newcommand{\OEp}{\mathcal{O}_{E^+}}
+\newcommand{\Md}{\mathit{Mod}}
+\newcommand{\Tors}{\mathit{Tors}}
+\newcommand{\Input}{\mathit{Input}}
+\newcommand{\Test}{\mathit{Test}}
+\newcommand{\per}{\mathit{per}}
+\newcommand{\len}{\mathit{len}}
+\newcommand{\herm}{\mathit{herm}}
+\newcommand{\Herm}{\mathit{Herm}}
+\newcommand{\Skew}{\mathit{Skew}}
+\newcommand{\Symp}{\mathit{Symp}}
+\newcommand{\Corr}{\mathit{Corr}}
+\newcommand{\Ker}{\mathit{Ker}}
+\newcommand{\LocType}{\mathit{LocType}}
+\newcommand{\Lag}{\mathit{Lag}}
+\newcommand{\Base}{\mathit{Base}}
+\newcommand{\Mat}{\mathit{Mat}}
+\newcommand{\vect}{\mathit{vec}}
+\newcommand{\cov}{\mathit{cov}}
+\newcommand{\row}{\mathit{row}}
+\newcommand{\src}{\mathrm{src}}
+\newcommand{\tgt}{\mathrm{tgt}}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Gen}{Gen}
+\DeclareMathOperator{\Disc}{Disc}
+\DeclareMathOperator{\Coef}{Coef}
+\DeclareMathOperator{\AlgForms}{AlgForms}
+\DeclareMathOperator{\Schur}{Schur}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Nm}{Nm}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\coker}{coker}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\cont}{cont}
+\DeclareMathOperator{\Heis}{Heis}
+\DeclareMathOperator{\Sp}{Sp}
+\DeclareMathOperator{\Mp}{Mp}
+\DeclareMathOperator{\U}{U}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Dist}{Dist}
+\DeclareMathOperator{\Fun}{Fun}
+\DeclareMathOperator{\Weil}{Weil}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\colim}{colim}
+\DeclareMathOperator{\Ind}{Ind}
+\newcommand{\adeg}{\widehat{\deg}}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\pp}{\mathfrak{p}}
+\newcommand{\Diff}{\mathfrak{D}_{E/E^+}}
+\newcommand{\dual}{^{\vee}}
+\newcommand{\conj}{^{c}}
+\newcommand{\ASK}{\mathrm{ASK}}
+\newcommand{\MAIN}{\mathrm{MAIN}}
+
+\emergencystretch=2em
+\begin{document}
+
+\title[The theta-chain approach to GRH]{The theta-chain approach to the generalized Riemann hypothesis:\\ a conceptual account}
+\date{22 November 2026}
+
+\begin{abstract}
+On 20 November 2026 L.~Alp\"oge released a Lean~4 archive, accompanied by a four-page note, containing a formal proof of the Riemann hypothesis and of the generalized Riemann hypothesis for Dirichlet $L$-functions. No human-readable proof accompanies it. This document gives a conceptual account of the arithmetic mechanism that secondary sources attribute to that proof. In this account an $\len$-fold composite of theta correspondences between definite unitary groups produces an integral linear map whose divisibility at inert primes grows linearly in~$\len$. A product-formula (slope) inequality trades this divisibility against archimedean size, and Landau's positivity theorem turns the resulting one-sided prime-sum bound into the absence of zeros off the critical line.
+
+The presentation is deliberately structural, and departs from the formal archive's method by design. Objects are defined by what they are: Hermitian modules over rings of integers, finite groupoids, correspondences with kernels, and representations characterized by uniqueness. Explicit formulas appear only as models whose agreement with the definition is a proposition. Analysis is confined to a small number of clearly marked places. Every tensor product names its base ring and every dual names its target.
+
+We reproduce the core idea of each external result we use, so that the text can be read by a mathematician outside automorphic forms, and we cite sources for full details. Two steps of the argument, the divisibility estimate (Claim~A) and the archimedean size estimate (Claim~B), are reported from the secondary sources and are not proved here. Everything else is either proved or reduced to a cited classical theorem.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+%=====================================================================
+\section{Introduction}
+%=====================================================================
+
+\subsection{The principle}
+The argument rests on one elementary fact.
+
+\begin{quote}
+\emph{A nonzero integer cannot be more divisible than it is large.}
+\end{quote}
+
+If $z\in\Z\smallsetminus\{0\}$ and $p^{r}\mid z$, then $p^{r}\le |z|$. Summing over primes,
+\begin{equation}\label{eq:integer-principle}
+\sum_{p}\ord_p(z)\,\log p\;\le\;\log|z| .
+\end{equation}
+Over a number field $E$ the same statement is the \emph{product formula}: for $\alpha\in E^{\times}$ one has $\sum_{v}\log|\alpha|_v=0$, where $v$ runs over all places, finite and infinite. Divisibility at the finite places is therefore paid for by size at the infinite ones. Section~\ref{sec:slope} proves the version of this needed here, for linear maps between Hermitian modules.
+
+The left side of \eqref{eq:integer-principle} is a sum over primes weighted by $\log p$, which is the shape of a von Mangoldt sum. The strategy is:
+\begin{enumerate}[label=(\arabic*)]
+\item construct a nonzero integral linear map whose divisibility at each prime $p\le x$ is at least the ``expected'' amount, so that its total divisibility is bounded below by a weighted prime sum $\ASK$;
+\item bound its size at the infinite places by the main term $\MAIN$ that the prime number theorem predicts for that sum;
+\item compare the two via the product formula, obtaining $\ASK-\MAIN\ll x^{1/2+o(1)}$ for $x$ in a sequence of windows;
+\item deduce the absence of zeros with real part $>1/2$ from this one-sided, windowed bound, by a windowed form of Landau's positivity theorem (Section~\ref{sec:landau}).
+\end{enumerate}
+
+\subsection{The model: Stepanov's method}\label{subsec:stepanov}
+The construction in step (1) is an arithmetic analogue of Stepanov's elementary proof of the Riemann hypothesis for curves over finite fields \cite{Bombieri-Stepanov}. We recall its core idea, because it explains where the exponent $1/2$ comes from.
+
+Let $C$ be a curve over $\F_q$. One wants to show $\#C(\F_q)\le q+O(\sqrt q)$. Stepanov constructs an auxiliary function $f$ on $C$ with three properties:
+\begin{itemize}
+\item $f$ vanishes to order at least $\len$ at every point of $C(\F_q)$;
+\item $f$ is not identically zero;
+\item $f$ has controlled degree.
+\end{itemize}
+The vanishing to order $\len$ is arranged by building $f$ out of the Frobenius map, which is how the points of $C(\F_q)$ enter: they are the fixed points of Frobenius. Since a nonzero function has as many zeros as poles, $\len\cdot\#C(\F_q)\le\deg f$.
+
+The construction keeps $\deg f$ at $\len\cdot q$ plus an excess. That excess has two parts: one grows with $\len$, the cost of imposing high-order vanishing; the other grows with $q$, the cost of the Frobenius twist. Schematically, after dividing by $\len$,
+\[
+\#C(\F_q)\;\le\;q+O\Bigl(\len+\frac{q}{\len}\Bigr),
+\]
+and choosing $\len\approx\sqrt q$ balances the two errors and gives $\#C(\F_q)\le q+O(\sqrt q)$. See \cite{Bombieri-Stepanov} for the precise construction via Riemann--Roch.
+
+In the argument studied here:
+\begin{itemize}
+\item the curve becomes $\Spec\Z$;
+\item ``vanishing to order $\len$ at a point'' becomes ``divisible by the $\len$-th power of a prime'';
+\item ``zeros equal poles'' becomes the product formula;
+\item the auxiliary function becomes an $\len$-fold composite of theta correspondences.
+\end{itemize}
+The balancing is identical: the two error terms are $x/\len$ and $\len$, and $\len\approx\sqrt x$.
+
+\subsection{What is and is not established here}\label{subsec:status}
+We prove the structural results (Sections~\ref{sec:duals}--\ref{sec:chain}), the one-step divisibility lemma (Lemma~\ref{lem:minor}), the height-two divisibility of jets (Theorem~\ref{thm:jet-gain}), Claim~A from a one-step local hypothesis (Theorem~\ref{thm:claimA}), qualitative nonvanishing (Theorem~\ref{thm:nonvanishing}), the slope inequality (Theorem~C) and the windowed Landau theorem (Theorem~\ref{thm:window}), which turns a windowed prime bound into the absence of zeros. The following are \emph{reported}, not proved:
+\begin{itemize}
+\item the one-step local Hypothesis~J, from which Claim~A is deduced;
+\item the archimedean size estimate, Claim~B;
+\item the passage from these to the windowed prime bound, Claim~\ref{claim:window}.
+\end{itemize}
+These come from Alp\"oge's note \cite{Alpoge}, Zhang's preliminary note \cite{Zhang}, the nasqret guide \cite{nasqret} and the audit \cite{golf}. The Lean archive has been kernel-checked by the Lean and Mathlib communities \cite{LeanBlog}. Section~\ref{sec:assembly} records how the archive assembles these steps: it identifies the five inputs that carry the content and proves the elementary glue between them.
+
+Our organization deliberately differs from the archive's. The archive places lattices inside a fixed vector space, chooses class representatives and proves independence of the choice, pushes forward by averaging and clears denominators afterwards, and states integrality as membership in a sublattice. Here these are replaced by, respectively:
+\begin{itemize}
+\item Hermitian modules;
+\item groupoids;
+\item summation over fibres;
+\item vanishing after reduction modulo a prime power.
+\end{itemize}
+
+\subsection{Conventions}\label{subsec:conventions}
+Throughout:
+\begin{itemize}
+\item $E$ is a CM field: a totally imaginary quadratic extension of a totally real field $E^{+}$.
+\item $c\in\Gal(E/E^+)$ is complex conjugation.
+\item $\OEring$ and $\OEp$ are the rings of integers, and $\Diff$ is the relative different.
+\item For a prime $\pp$ of $\OEring$, $p$ is the rational prime below it, $\Nm\pp=p^{f_\pp}$ is its norm, and $\mathcal{O}_{E,\pp}$ is the completion.
+\item Every tensor product carries its base ring as a subscript.
+\item For an $\OEring$-module $\Md$ we write $\Md\dual:=\Hom_{\OEring}(\Md,\OEring)$. This is the only meaning of $^\vee$. Other duals are written out as $\Hom$ into a named target.
+\end{itemize}
+
+%=====================================================================
+\section{Duals, targets, and the difference between subobjects and quotients}\label{sec:duals}
+%=====================================================================
+
+This section collects the elementary module theory on which all integrality statements rest. Its content can be summarized in one sentence: \emph{maps that become isomorphisms after tensoring with $E$ can differ integrally by a finite module, and every denominator and every divisibility in the argument is such a finite module.}
+
+\subsection{Three targets for duality}
+
+\begin{lemma}[trace duality]\label{lem:trace-dual}
+Let $\Md$ be a finitely generated projective $\OEring$-module. Composition with the trace $\Tr_{E/E^+}$ gives an isomorphism of $\OEring$-modules
+\[
+\Hom_{\OEring}(\Md,\Diff^{-1})\xrightarrow{\ \sim\ }\Hom_{\OEp}(\Md,\OEp).
+\]
+In particular $\Hom_{\OEp}(\Md,\OEp)$ and $\Md\dual$ coincide after localizing at every prime of $\OEp$ unramified in $E$, and differ at the ramified ones.
+\end{lemma}
+
+\begin{proof}
+Both sides commute with finite direct sums and localization, so we may assume $\Md=\OEring$. The claim is then that $\Tr_{E/E^+}$ identifies $\Diff^{-1}$ with $\Hom_{\OEp}(\OEring,\OEp)$. This is the definition of the inverse different: it is the set of $y\in E$ with $\Tr_{E/E^+}(y\,\OEring)\subseteq\OEp$ \cite[Ch.~III, \S2]{Neukirch}. The different is trivial exactly at the unramified primes.
+\end{proof}
+
+\begin{lemma}[duality for torsion modules]\label{lem:torsion-dual}
+Let $\Tors$ be a finite $\OEring$-module. Then $\Hom_{\OEring}(\Tors,\OEring)=0$, and there is a canonical isomorphism
+\[
+\Ext^1_{\OEring}(\Tors,\OEring)\cong\Hom_{\OEring}(\Tors,E/\OEring).
+\]
+\end{lemma}
+
+\begin{proof}
+A homomorphism from a torsion module to the torsion-free module $\OEring$ is zero. Apply $\Hom_{\OEring}(\Tors,-)$ to $0\to\OEring\to E\to E/\OEring\to 0$. The terms $\Hom(\Tors,E)$ and $\Ext^1(\Tors,E)$ vanish: the first because $\Tors$ is torsion and $E$ is torsion-free, the second because $E$ is divisible and hence injective over the Dedekind domain $\OEring$. The connecting map is the asserted isomorphism.
+\end{proof}
+
+So for a torsion module the correct target for duality is $E/\OEring$, not $\OEring$.
+
+\subsection{Modifications}
+A \emph{modification} is an injective map $u\colon\Md'\hookrightarrow\Md$ of finitely generated projective $\OEring$-modules with finite cokernel $\Tors$. After $-\otimes_{\OEring}E$ it becomes an isomorphism.
+
+\begin{proposition}\label{prop:modification-dual}
+For a modification $u$ with cokernel $\Tors$ there is an exact sequence
+\[
+0\to\Md\dual\xrightarrow{u\dual}\Md'^{\vee}\to\Hom_{\OEring}(\Tors,E/\OEring)\to 0 .
+\]
+\end{proposition}
+
+\begin{proof}
+Apply $\Hom_{\OEring}(-,\OEring)$ to $0\to\Md'\to\Md\to\Tors\to0$. Use Lemma~\ref{lem:torsion-dual}, together with $\Ext^1_{\OEring}(\Md,\OEring)=0$ for projective $\Md$.
+\end{proof}
+
+The dual of a modification is again a modification, but it points the other way, and its cokernel is the dual of $\Tors$ into $E/\OEring$. Rationally, a subobject on one side is a quotient on the other. Integrally the two are different, and the difference is recorded by a finite module.
+
+\subsection{Invariants, coinvariants, and factorials}
+Let $\Gamma$ be a finite group acting on an $\OEring$-module $V$. The \emph{invariants} $V^{\Gamma}$ form a subobject, and the \emph{coinvariants} $V_{\Gamma}=V/\langle \gamma v-v\rangle$ form a quotient. The \emph{norm map} $N_\Gamma\colon V_\Gamma\to V^\Gamma$ is induced by $v\mapsto\sum_{\gamma\in\Gamma}\gamma v$.
+
+\begin{lemma}\label{lem:norm-map}
+$N_\Gamma\otimes_{\OEring}E$ is an isomorphism, and both $\ker N_\Gamma$ and $\coker N_\Gamma$ are killed by $|\Gamma|$.
+\end{lemma}
+
+\begin{proof}
+If $v\in V^\Gamma$ then $N_\Gamma(\bar v)=|\Gamma|v$, so $|\Gamma|$ kills $\coker N_\Gamma$. If $N_\Gamma(\bar v)=0$ then $|\Gamma|\bar v=\overline{\sum_\gamma(v-\gamma v)}+\overline{N_\Gamma(v)}=0$ in $V_\Gamma$, since $\overline{v-\gamma v}=0$ and $N_\Gamma(v)=0$. So $|\Gamma|$ kills $\ker N_\Gamma$. Inverting $|\Gamma|$ gives an isomorphism.
+\end{proof}
+
+The most important instance is the symmetric group $S_k$ acting on $\Md^{\otimes_{\OEring}k}$. Here:
+\begin{itemize}
+\item the coinvariants are the symmetric power $\Sym^k_{\OEring}\Md$, a quotient;
+\item the invariants are the divided power $\Gamma^k_{\OEring}\Md$, a subobject.
+\end{itemize}
+For finitely generated projective $\Md$, duality into $\OEring$ exchanges them:
+\begin{equation}\label{eq:sym-gamma}
+\Hom_{\OEring}\bigl(\Sym^k_{\OEring}\Md,\OEring\bigr)\cong\Gamma^k_{\OEring}(\Md\dual),
+\end{equation}
+because the dual of a coinvariant module is the invariant module of the dual.
+
+\begin{example}[rank one]\label{ex:rank-one}
+If $\Md=\OEring e$ then $\Sym^k\Md=\OEring e^k$ and $\Gamma^k\Md=\OEring e^{[k]}$, where $e^{[k]}=e\otimes\cdots\otimes e$. The norm map sends $e^k\mapsto k!\,e^{[k]}$, so its cokernel is $\OEring/k!\,\OEring$. This one example is the source of every factorial below.
+\end{example}
+
+\subsection{Hermitian modules}
+
+For an $\OEring$-module $\Md$, write $\Md\conj$ for the same abelian group with $\OEring$ acting through $c$.
+
+\begin{definition}\label{def:herm-module}
+A \emph{Hermitian module} is a pair $(\Md,\herm_{\Md})$. Here $\Md$ is a finitely generated projective $\OEring$-module, and
+\[
+\herm_{\Md}\colon \Md\longrightarrow (\Md\conj)\dual=\Hom_{\OEring}(\Md\conj,\OEring)
+\]
+is an $\OEring$-linear map that is injective with finite cokernel and Hermitian-symmetric: $\herm(v)(w)=c\bigl(\herm(w)(v)\bigr)$. Its \emph{discriminant module} is
+\[
+\Disc(\Md):=\coker(\herm_{\Md}),
+\]
+and it is \emph{self-dual} if $\Disc(\Md)=0$. It is \emph{definite} if for every real embedding of $E^+$ the complex vector space $\Md\otimes_{\OEp}\R$ with the induced form is positive definite.
+\end{definition}
+
+\begin{remark}
+The functional $\herm(v)$ is $\OEring$-linear on $\Md\conj$ precisely because the form is conjugate-linear in its second variable. That is why the target is the dual of $\Md\conj$ rather than of $\Md$. We never use $\herm$ to identify $\Md$ with a dual, even when it is an isomorphism.
+
+A morphism $u\colon\Md'\to\Md$ is compatible with the forms when $(u\conj)\dual\circ\herm_{\Md}\circ u=\herm_{\Md'}$. For an isometry the form transports harmlessly between $\Md$ and its dual. For a modification it does not: $\Md$ maps forward and its dual maps backward (Proposition~\ref{prop:modification-dual}).
+\end{remark}
+
+%=====================================================================
+\section{Finite groupoids and correspondences}\label{sec:groupoids}
+%=====================================================================
+
+The operators in the argument are all built in one way, called \emph{pull--tensor--push} in geometric function theory \cite{nLab-GFT,BaezHoffnungWalker}. Functions on a space are pulled back along one leg of a span, multiplied by a kernel, and pushed forward along the other leg. Matrix multiplication is the case where the spaces are finite sets. We need the case of finite groupoids, where points can have automorphisms. Keeping those automorphisms is what makes the integral theory work.
+
+\subsection{Groupoids, local systems, pushforward}
+A \emph{finite groupoid} is a category $X$, all of whose morphisms are invertible, with finitely many isomorphism classes of objects and finite automorphism groups. A \emph{local system} of $\OEring$-modules on $X$ is a functor $\mathcal F\colon X\to\OEring\text{-Mod}$. Its \emph{sections} are
+\[
+\Gamma(X,\mathcal F)=\lim_X\mathcal F,
+\]
+the families $(s_x)_{x\in X}$ with $s_x\in\mathcal F(x)$ that are compatible with all morphisms. Concretely, this is $\prod_{[x]}\mathcal F(x)^{\Aut(x)}$ over isomorphism classes. A functor $f\colon X\to Y$ pulls local systems and sections back by composition.
+
+\begin{definition}\label{def:pushforward}
+Let $f\colon X\to Y$ be a \emph{faithful} functor of finite groupoids. For $y\in Y$, the \emph{fibre} $X_y$ is the set of isomorphism classes of pairs $(x,\alpha)$ with $\alpha\colon f(x)\xrightarrow{\sim}y$. Here $(x,\alpha)\cong(x',\alpha')$ if there is $\beta\colon x\to x'$ with $\alpha'\circ f(\beta)=\alpha$; faithfulness ensures such $\beta$ is unique, so $X_y$ is a set. Let $\mathcal F$ be a local system on $Y$ and $s$ a section of $f^*\mathcal F$. Its \emph{pushforward} is
+\[
+(f_!s)_y:=\sum_{(x,\alpha)\in X_y}\mathcal F(\alpha)(s_x)\in\mathcal F(y).
+\]
+The sum is well defined: replacing $(x,\alpha)$ by an isomorphic pair does not change the summand, because $s$ is compatible with morphisms. The result is compatible with automorphisms of $y$, which permute $X_y$.
+\end{definition}
+
+The pushforward is a sum with integer coefficients, so it preserves integrality. No division occurs.
+
+\begin{proposition}[base change]\label{prop:base-change}
+Consider a $2$-cartesian square of finite groupoids, in which $W=X\times_Y Z$ is the groupoid of triples $(x,z,\gamma\colon f(x)\xrightarrow{\sim}g(z))$, and $f$ is faithful:
+\[
+\begin{tikzcd}
+W\arrow[r,"g'"]\arrow[d,"f'"'] & X\arrow[d,"f"]\\
+Z\arrow[r,"g"'] & Y
+\end{tikzcd}
+\]
+Then $f'$ is faithful, and $g^*f_!=f'_!g'^*$ on sections of $f^*\mathcal F$.
+\end{proposition}
+
+\begin{proof}
+For $z\in Z$, the fibre $W_z$ is the set of isomorphism classes of $(x,\gamma\colon f(x)\xrightarrow{\sim}g(z))$, which is exactly the fibre $X_{g(z)}$. Faithfulness of $f'$ follows from that of $f$. Both sides of the identity, evaluated at $z$, are therefore the same sum.
+\end{proof}
+
+\begin{remark}
+If one replaces $W$ by the fibre product of the \emph{sets} of isomorphism classes, Proposition~\ref{prop:base-change} fails: fibres are then counted without their automorphisms. This is the technical reason for working with groupoids \cite{BaezHoffnungWalker}.
+\end{remark}
+
+\subsection{Groupoid cardinality and adjointness}
+The \emph{groupoid cardinality} of a finite groupoid is $|X|=\sum_{[x]}1/|\Aut x|$ \cite{nLab-cardinality}. More generally, for $\C$-valued functions on isomorphism classes define
+\[
+\langle a,b\rangle_X=\sum_{[x]}\frac{a(x)\,\overline{b(x)}}{|\Aut x|}.
+\]
+
+\begin{proposition}\label{prop:adjoint}
+For faithful $f\colon X\to Y$, a function $a$ on $X$ and a function $b$ on $Y$, we have $\langle f_!a,b\rangle_Y=\langle a,f^*b\rangle_X$.
+\end{proposition}
+
+\begin{proof}
+$\Aut(y)$ acts on the fibre $X_y$. Its orbits are the isomorphism classes of $x$ with $f(x)\cong y$, and the stabilizer of $(x,\alpha)$ is $\alpha f(\Aut x)\alpha^{-1}\cong\Aut x$, using faithfulness. By the orbit--stabilizer formula,
+\[
+\frac{1}{|\Aut y|}\sum_{(x,\alpha)\in X_y}a(x)=\sum_{[x]\mapsto[y]}\frac{a(x)}{|\Aut x|}.
+\]
+Multiply by $\overline{b(y)}$ and sum over $[y]$.
+\end{proof}
+
+So the weights $1/|\Aut|$ are forced: they are the unique measure making integral pushforward adjoint to pullback. Combining with Lemma~\ref{lem:norm-map}, any statement that needs averaging rather than summing introduces denominators dividing the orders of automorphism groups, and no others.
+
+\subsection{Correspondences}
+\begin{definition}\label{def:correspondence}
+Let $X$ and $X'$ be finite groupoids with local systems $\mathcal F$ and $\mathcal F'$. A \emph{correspondence} from $(X,\mathcal F)$ to $(X',\mathcal F')$ consists of:
+\begin{itemize}
+\item a finite groupoid $\Corr$;
+\item functors $\src\colon\Corr\to X$ and $\tgt\colon\Corr\to X'$, with $\tgt$ faithful;
+\item a \emph{kernel}: a morphism of local systems $\Ker\colon\src^*\mathcal F\to\tgt^*\mathcal F'$ on $\Corr$.
+\end{itemize}
+Its \emph{operator} is
+\[
+T_{\Corr}:=\tgt_!\circ\Ker\circ\src^*\colon\Gamma(X,\mathcal F)\to\Gamma(X',\mathcal F').
+\]
+\end{definition}
+
+\begin{proposition}[composition]\label{prop:composition}
+Let $\Corr_1$ go from $(X_1,\mathcal F_1)$ to $(X_2,\mathcal F_2)$ and $\Corr_2$ from $(X_2,\mathcal F_2)$ to $(X_3,\mathcal F_3)$. Then
+\[
+T_{\Corr_2}\circ T_{\Corr_1}=T_{\Corr_1\times_{X_2}\Corr_2},
+\]
+where the fibre product carries the composite kernel and the composite legs. In particular, if every $\Ker_i$ is integral, meaning a morphism of local systems of $\OEring$-modules, then so is the composite.
+\end{proposition}
+
+\begin{proof}
+Write $T_{\Corr_2}T_{\Corr_1}=\tgt_{2!}\Ker_2\,\src_2^*\,\tgt_{1!}\Ker_1\,\src_1^*$. By Proposition~\ref{prop:base-change}, $\src_2^*\tgt_{1!}=\mathrm{pr}_{2!}\mathrm{pr}_1^*$, where $\mathrm{pr}_i$ are the projections from $\Corr_1\times_{X_2}\Corr_2$. Pullback commutes with applying a kernel, and pushforwards compose, which gives the formula. The composite of integral maps is integral.
+\end{proof}
+
+\begin{remark}
+Integrality of an $\len$-fold composite is thus inherited step by step, \emph{provided every kernel points in the same direction}: from the source local system to the target one. A correspondence and its transpose are adjoint by Proposition~\ref{prop:adjoint}. But when the kernel is integral in one direction, it is in general integral in the other only after multiplying by an index (Proposition~\ref{prop:hecke-integral} below).
+\end{remark}
+
+%=====================================================================
+\section{Genus groupoids and algebraic modular forms}\label{sec:genus}
+%=====================================================================
+
+\subsection{Why definite unitary groups}
+For a reductive group $G$ over a number field, automorphic forms are functions on $G(F)\backslash G(\A_F)$. When $G(F\otimes_{\Q}\R)$ is noncompact, they must satisfy growth and differential conditions at the archimedean place, and this is where analysis enters the theory. Gross observed \cite{Gross-AMF} that when $G(F\otimes_{\Q}\R)$ is \emph{compact}, the archimedean component of an automorphic form is just a vector in a finite-dimensional algebraic representation. The space $G(F)\backslash G(\A_{F,f})/K$ is then finite, and automorphic forms become the linear algebra of finite groupoids with algebraic coefficients. Unitary groups of definite Hermitian forms over CM fields are the basic example.
+
+\subsection{The genus groupoid}
+\begin{definition}\label{def:genus}
+The \emph{local type} of a Hermitian module $(\Md,\herm_\Md)$ is the collection of isomorphism classes of $(\Md,\herm_\Md)\otimes_{\OEring}\mathcal{O}_{E,\pp}$ over all primes $\pp$, together with definiteness at infinity. For a local type $\LocType$, the \emph{genus groupoid} $\Gen(\LocType)$ has:
+\begin{itemize}
+\item as objects, the definite Hermitian modules of type $\LocType$;
+\item as morphisms, the isometries.
+\end{itemize}
+\end{definition}
+
+No ambient space, base point, level subgroup or coset representative is chosen. $\Gen(\LocType)$ is the moduli problem ``Hermitian modules that look like $\LocType$ everywhere locally''. Two inputs are needed to make it usable.
+
+\begin{theorem}[Landherr \cite{Landherr}]\label{thm:landherr}
+Two nondegenerate Hermitian spaces over $E$ are isometric if and only if they have the same dimension, the same signatures at all real places of $E^+$, and are isometric over every completion. Moreover, the determinant, as a class in $E^{+\times}/\Nm_{E/E^+}E^\times$, is the only invariant beyond dimension and signatures.
+\end{theorem}
+
+\noindent\emph{Core idea.} Diagonalizing a Hermitian form gives diagonal entries in $E^+$. A Hermitian form of rank one with entry $a$ is isometric to the one with entry $b$ if and only if $b/a$ is a norm from $E$. In higher rank one reduces to determinants modulo norms by a Witt-cancellation argument. Since $E/E^+$ is cyclic, the Hasse norm theorem says an element of $E^{+}$ is a global norm if and only if it is a local norm everywhere. This gives the local--global principle. See \cite[Ch.~10]{Scharlau}.
+
+\begin{proposition}\label{prop:genus-finite}
+$\Gen(\LocType)$ is a finite groupoid.
+\end{proposition}
+
+\begin{proof}
+\emph{Automorphisms.} An isometry of $(\Md,\herm)$ preserves the discrete subgroup $\Md$ of the real vector space $\Md\otimes_{\Z}\R$. It also lies in the compact group of isometries of the definite form $\Md\otimes_{\OEp}\R$. A subgroup that is both discrete and contained in a compact group is finite.
+
+\emph{Isomorphism classes.} By Theorem~\ref{thm:landherr} all objects have isometric generic fibres $\Md\otimes_{\OEring}E$. Fix one such space $V$. Each object is then isomorphic to an $\OEring$-lattice $L\subset V$ whose localizations lie in finitely many (in fact one) $\U(V\otimes_E E_\pp)$-orbits. Such lattices have bounded discriminant. By reduction theory, i.e.\ Minkowski's theorem on successive minima applied to the positive definite trace form, there are finitely many such lattices up to isometry. This is the finiteness of the class number of a genus \cite[\S5]{Borel-HC}.
+\end{proof}
+
+\begin{remark}[adelic model]
+Choose an object $\Md_0$ and let $K\subset\U(V)(\A_{E^+,f})$ be the stabilizer of $\Md_0\otimes_{\OEring}\widehat{\OEring}$. Then
+\[
+g\;\longmapsto\;\bigl(g\cdot(\Md_0\otimes_{\OEring}\widehat{\OEring})\bigr)\cap V
+\]
+identifies $\Gen(\LocType)$ with the action groupoid $[\U(V)(E^+)\backslash\U(V)(\A_{E^+,f})/K]$. This model requires the choice of $\Md_0$ and of $V$, and we do not use it.
+\end{remark}
+
+\subsection{Coefficient systems and algebraic modular forms}
+For a dominant weight $\lambda$ of $\mathrm{GL}_n$, let $\Schur_\lambda$ be the Schur functor over $\OEring$ \cite{ABW}. It is a covariant functor from finitely generated projective $\OEring$-modules to themselves. For $\lambda=(k)$ it is $\Sym^k_{\OEring}$.
+
+\begin{definition}\label{def:coef}
+The \emph{coefficient system} of weight $\lambda$ is the local system on $\Gen(\LocType)$
+\[
+\Coef_\lambda(\Md):=\Hom_{\OEring}\bigl(\Schur_\lambda(\Md),\OEring\bigr),
+\]
+which is contravariant in $\Md$, so that isometries act through inverse transposes. The \emph{integral algebraic modular forms} are
+\[
+\AlgForms_\lambda(\LocType):=\Gamma\bigl(\Gen(\LocType),\Coef_\lambda\bigr).
+\]
+\end{definition}
+
+\begin{remark}[why the dual, and why into $\OEring$]
+On $\Gen(\LocType)$ alone every morphism is invertible, so covariant and contravariant coefficient systems look interchangeable. They are not interchangeable once modifications appear (Section~\ref{sec:hecke}). Contravariance is what lets forms pull back along a modification without denominators. The target $\OEring$, rather than $\Diff^{-1}$ or $E/\OEring$, is what makes ``integral'' mean integral.
+
+Dualizing also changes the kind of integral structure. For $\lambda=(k)$, \eqref{eq:sym-gamma} gives $\Coef_\lambda(\Md)=\Gamma^k_{\OEring}(\Md\dual)$, a divided-power (invariant) lattice. Replacing it by $\Sym^k(\Md\conj)$ through the form would swap divided powers for symmetric powers, and lose exactly the factorials that drive the divisibility in Section~\ref{sec:divisibility}.
+\end{remark}
+
+\begin{proposition}[comparison with automorphic forms]
+Let $V_\lambda=\Schur_\lambda(\C^n)^\vee$ with its action of the compact group $\U(n)$. Then $\AlgForms_\lambda(\LocType)\otimes_{\OEring}\C$ is identified with the space of functions
+\[
+\varphi\colon\U(V)(\A_{E^+})\to V_\lambda
+\]
+that are left $\U(V)(E^+)$-invariant, right $K$-invariant, and transform under $\U(V)(E^+\otimes_{\Q}\R)$ by $V_\lambda$.
+\end{proposition}
+
+\begin{proof}
+Such $\varphi$ is determined by its restriction to $\U(V)(\A_{E^+,f})$, because the archimedean component acts through the representation. That restriction is a function on the finite double coset space that is equivariant for the stabilizers. By the adelic model, this is a section of $\Coef_\lambda\otimes\C$ over $\Gen(\LocType)$.
+\end{proof}
+
+\subsection{The mass}\label{subsec:mass}
+The groupoid cardinality $|\Gen(\LocType)|=\sum_{[\Md]}1/|\Aut\Md|$ is classically called the \emph{mass} of the genus. Siegel's mass formula, extended to unitary groups by Gan, Hanke and Yu \cite{GHY}, expresses it as a product of local densities. For definite unitary groups this product is an explicit product of special values of Dirichlet $L$-functions and powers of $\pi$.
+
+\noindent\emph{Core idea.} The Tamagawa measure gives $\U(V)(E^+)\backslash\U(V)(\A)$ total volume $2$. Decomposing this volume over the finite set of double cosets expresses $2$ as the mass times the volume of $K\times\U(V)(E^+\otimes_{\Q}\R)$. At almost all places the local volume is $|\U(V)(\F_\pp)|/(\Nm\pp)^{\dim\U(V)}$, and the product of these local factors is an Euler product, i.e.\ a product of $L$-values \cite{Gross-motive}.
+
+The mass is \emph{defined} by counting. Only its \emph{evaluation} as an $L$-value is analytic, and that evaluation is needed only in Claim~B. Under the function field analogy, the same statement computes the groupoid cardinality of the moduli stack of bundles on a curve over a finite field \cite{nLab-FFA}.
+
+%=====================================================================
+\section{Hecke correspondences and the direction of integrality}\label{sec:hecke}
+%=====================================================================
+
+\begin{construction}\label{con:hecke}
+Fix a finite torsion $\OEring$-module $\Tors$. Let $\Corr_{\Tors}$ be the groupoid of modifications $u\colon\Md'\hookrightarrow\Md$ between objects of $\Gen(\LocType')$ and $\Gen(\LocType)$ with $\coker u\cong\Tors$. Its legs are $\src(u)=\Md$ and $\tgt(u)=\Md'$; $\tgt$ is faithful, since an automorphism of $u$ is determined by its restriction to $\Md'$. The \emph{Hecke kernel} is
+\[
+\Coef_\lambda(u)=\Hom\bigl(\Schur_\lambda(u),\OEring\bigr)\colon\Coef_\lambda(\Md)\to\Coef_\lambda(\Md').
+\]
+\end{construction}
+
+The \emph{Hecke operator} $T_{\Tors}$ is the operator of this correspondence. It pulls back along the source leg and pushes forward along the target leg.
+
+\begin{proposition}\label{prop:hecke-integral}
+The Hecke kernel is integral. Its inverse, defined after $-\otimes_{\OEring}E$, becomes integral after multiplication by $e^{|\lambda|}$, where $e\in\OEring$ is any element annihilating $\Tors$.
+\end{proposition}
+
+\begin{proof}
+$\Schur_\lambda(u)$ is $\OEring$-linear, so its dual is too. Since $e\,\Md\subseteq u(\Md')$ and $\Schur_\lambda$ is a quotient of the $|\lambda|$-fold tensor power, we get $e^{|\lambda|}\Schur_\lambda(\Md)\subseteq\Schur_\lambda(u)\bigl(\Schur_\lambda(\Md')\bigr)$. Dualizing gives the claim for the inverse.
+\end{proof}
+
+Thus integrality has a direction. Contravariant coefficients pull back along modifications integrally. The reverse direction has denominators controlled by $\Tors$, or equivalently by its dual $\Hom_{\OEring}(\Tors,E/\OEring)$ (Proposition~\ref{prop:modification-dual}).
+
+%=====================================================================
+\section{The Weil representation and the theta functional}\label{sec:weil}
+%=====================================================================
+
+In this section $F$ denotes a number field (we take $F=E^+$), $\A=\A_F$, and $\psi\colon\A/F\to\C^\times$ is a nontrivial character.
+
+\subsection{Heisenberg groups and Stone--von Neumann}
+Let $\Symp$ be a finite-dimensional $F$-vector space with a nondegenerate alternating form $\langle\ ,\ \rangle$, viewed as a map $\Symp\to\Hom_F(\Symp,F)$. Over any $F$-algebra $R$ the \emph{Heisenberg group} is
+\[
+\Heis(\Symp)(R)=(\Symp\otimes_F R)\times R,\qquad
+(v,t)(v',t')=\bigl(v+v',\,t+t'+\tfrac12\langle v,v'\rangle\bigr).
+\]
+Its centre is $\{0\}\times R$.
+
+\begin{theorem}[Stone--von Neumann]\label{thm:svn}
+For each place $v$ of $F$, there is up to isomorphism exactly one irreducible smooth (unitary, if $v$ is archimedean) representation of $\Heis(\Symp)(F_v)$ on which the centre acts by $\psi_v$. The same holds adelically, with ``smooth'' in the restricted tensor product sense.
+\end{theorem}
+
+\noindent\emph{Core idea, in a finite model.} Replace $F_v$ by $\F_p$ with $p$ odd, $\dim\Symp=2n$, and let $\psi$ be a nontrivial character of $\F_p$. Then $H=\Heis(\Symp)(\F_p)$ has order $p^{2n+1}$ and centre $Z\cong\F_p$, and $H/Z\cong\Symp$ is abelian. So $H$ has exactly $p^{2n}$ one-dimensional representations, all trivial on $Z$.
+
+Let $\pi$ be an irreducible representation with central character $\psi$. Its character vanishes outside $Z$: for $h\notin Z$ there is $h'$ with $h'hh'^{-1}=hz$ for some $z\in Z$ with $\psi(z)\ne1$. Orthogonality then gives $\dim\pi=p^{n}$. Counting, $p^{2n}+(p-1)\cdot p^{2n}=|H|$, so for each $\psi\ne1$ there is exactly one such $\pi$.
+
+A model is obtained by choosing a Lagrangian subspace $\Lag\subset\Symp$ and inducing the character $\psi$ from the abelian subgroup $\Lag\times\F_p$. The local and adelic statements are proved by the same induction from a Lagrangian, with Mackey theory replacing character counting \cite[Ch.~2]{MVW}, \cite[\S1]{Weil-Acta}.
+
+\subsection{The metaplectic group}
+Since $\Sp(\Symp)$ acts on $\Heis(\Symp)$ fixing the centre, uniqueness in Theorem~\ref{thm:svn} gives, for each $g\in\Sp(\Symp)(F_v)$, an operator $\omega(g)$ on the representation space with $\omega(g)\rho(h)\omega(g)^{-1}=\rho(g\cdot h)$. By Schur's lemma $\omega(g)$ is unique up to a scalar. This defines a projective representation, i.e.\ a central extension $\Mp(\Symp)(F_v)$ of $\Sp(\Symp)(F_v)$ with a genuine representation, the \emph{Weil representation} $\Weil_\psi$. Weil showed the extension can be reduced to one by $\{\pm1\}$ when $v$ is not complex \cite{Weil-Acta}.
+
+\begin{proposition}\label{prop:rational-splitting}
+The adelic metaplectic cover splits over $\Sp(\Symp)(F)$, and the splitting is unique.
+\end{proposition}
+
+\begin{proof}
+Existence is Weil's theorem \cite[\S\S 34--43]{Weil-Acta}. It is a consequence of the existence of the theta functional (Proposition~\ref{prop:poisson}): the stabilizer of the theta line acts on it by a character, which provides the splitting. Uniqueness: two splittings differ by a homomorphism $\Sp(\Symp)(F)\to\{\pm1\}$. The group $\Sp(\Symp)(F)$ is perfect, being generated by transvections, each of which is a commutator over an infinite field. So every such homomorphism is trivial.
+\end{proof}
+
+\subsection{The theta functional}
+\begin{definition}\label{def:theta}
+A \emph{theta functional} is a nonzero linear functional $\theta\colon\Weil_\psi\to\C$ that is invariant under the rational Heisenberg group $\Heis(\Symp)(F)$.
+\end{definition}
+
+\begin{theorem}\label{thm:theta-unique}
+Theta functionals exist, and they form a single line. Every theta functional is invariant under $\Sp(\Symp)(F)$, acting through the splitting of Proposition~\ref{prop:rational-splitting}.
+\end{theorem}
+
+\begin{proof}
+For uniqueness, choose a Lagrangian decomposition $\Symp=\Lag\oplus\Lag'$ and realize $\Weil_\psi$ on the Schwartz space $\mathcal S(\Lag(\A))$ (Schr\"odinger model). Here $\Lag(\A)$ acts by translation and $\Lag'(\A)$ acts by multiplication by the characters $\psi(\langle\cdot,\ell'\rangle)$. A functional invariant under $\Lag'(F)$ is a distribution annihilated by multiplication by $\psi(\langle x,\ell'\rangle)-1$ for all $\ell'\in\Lag'(F)$. These functions vanish exactly on $\Lag(F)$, which is discrete, so the distribution is supported on $\Lag(F)$. Since multiplication by these functions also kills derivatives of point masses, the distribution has order zero. Invariance under $\Lag(F)$-translations then forces equal weights at all points of $\Lag(F)$. This gives at most a line, and Proposition~\ref{prop:poisson} gives existence.
+
+For $\Sp(\Symp)(F)$-invariance: $\Sp(\Symp)(F)$ normalizes $\Heis(\Symp)(F)$, so it preserves the line and acts on it by a character. That character is trivial because $\Sp(\Symp)(F)$ is perfect.
+\end{proof}
+
+\begin{proposition}[the summation model]\label{prop:poisson}
+In the Schr\"odinger model, $\theta(\varphi)=\sum_{\ell\in\Lag(F)}\varphi(\ell)$ is a theta functional.
+\end{proposition}
+
+\begin{proof}
+Invariance under $\Lag(F)$ is invariance of a sum over $\Lag(F)$ under translation by $\Lag(F)$. Invariance under $\Lag'(F)$ is clear, since $\psi$ is trivial on $F$. The centre acts by $\psi$, which is trivial on $F$. The remaining point is that this functional is also invariant under the Fourier transform interchanging $\Lag$ and $\Lag'$. That is the adelic Poisson summation formula $\sum_{F}\varphi=\sum_F\widehat\varphi$ \cite[\S4.2]{Tate-thesis}.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{prop:poisson} is the \emph{only} place in the theory of $\theta$ where harmonic analysis appears, and it is used to identify a model, not to define anything. Geometrically, a theta function is a section of a principally polarizing line bundle $\mathcal L$ on an abelian variety. ``Principally polarizing'' means $h^0(\mathcal L)=1$ by the Riemann--Roch theorem for abelian varieties, so the bundle determines $\theta$ up to a scalar; this is the same uniqueness as in Theorem~\ref{thm:theta-unique}. The Heisenberg group appears as Mumford's theta group of $\mathcal L$ \cite{Mumford-eq}, \cite{nLab-theta}.
+\end{remark}
+
+\subsection{Unitary dual pairs}\label{subsec:dualpair}
+Let $(\Herm,\herm)$ be a Hermitian module and $(\Skew,\mathit{skew})$ a skew-Hermitian module over $\OEring$. On $\Herm\otimes_{\OEring}\Skew$ put the $\OEring$-valued form $\herm\otimes_{\OEring}\mathit{skew}$, restrict scalars to $\OEp$, and compose with $\Tr_{E/E^+}$. The result is an alternating $\OEp$-bilinear form, making
+\[
+\Symp:=\Herm\otimes_{\OEring}\Skew
+\]
+an $\OEp$-module with an alternating map $\Symp\to\Hom_{\OEp}(\Symp,\OEp)$.
+
+\begin{proposition}\label{prop:symp-selfdual}
+At a prime of $\OEp$ unramified in $E$, where $\Disc(\Herm)$ and $\Disc(\Skew)$ vanish, the map $\Symp\to\Hom_{\OEp}(\Symp,\OEp)$ is an isomorphism. In general its cokernel is an extension built from $\Disc(\Herm)$, $\Disc(\Skew)$ and $\Diff^{-1}/\OEring$.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:trace-dual}, $\Hom_{\OEp}(\Symp,\OEp)\cong\Hom_{\OEring}(\Symp,\Diff^{-1})$. The map factors as the tensor product of $\herm$ and $\mathit{skew}$, whose cokernels are the two discriminant modules, followed by the inclusion of $\Hom_{\OEring}(\Symp,\OEring)$ into $\Hom_{\OEring}(\Symp,\Diff^{-1})$, whose cokernel is governed by $\Diff^{-1}/\OEring$.
+\end{proof}
+
+This is why the two kinds of dual of Lemma~\ref{lem:trace-dual} must be kept apart: the symplectic form uses the trace dual, while the Hermitian forms use the $\OEring$-dual.
+
+The groups $\U(\Herm)$ and $\U(\Skew)$ act on $\Symp$ commuting with each other, and each is the full centralizer of the other in $\Sp(\Symp)$ (a \emph{dual pair} in Howe's sense). To restrict $\Weil_\psi$ from $\Mp$ to $\U(\Herm)(\A)\times\U(\Skew)(\A)$ one needs a splitting of the metaplectic cover over this product.
+
+\begin{proposition}[Kudla \cite{Kudla-splitting}]\label{prop:kudla}
+Such splittings exist. Those extending the rational splitting form a torsor under the group of automorphic characters of $\U(\Herm)\times\U(\Skew)$, all of which factor through the determinant. Kudla's explicit splittings correspond to pairs of Hecke characters $\chi_{\Herm},\chi_{\Skew}$ of $\A_E^\times/E^\times$ whose restrictions to $\A_{E^+}^\times$ are prescribed powers of the quadratic character of $E/E^+$.
+\end{proposition}
+
+\noindent\emph{Core idea.} Two splittings differ by a homomorphism to $\C^\times$ that is trivial on rational points, i.e.\ an automorphic character. The abelianization of a unitary group is given by the determinant. Kudla constructs one splitting explicitly by computing the Rao cocycle on the unitary group \cite{Kudla-splitting}. These characters are the only genuine choices in the theta correspondence.
+
+\subsection{Theta kernels between definite groups}\label{subsec:theta-kernel}
+Assume $\Herm$ and $\Skew$ are both definite, so that both unitary groups are compact at infinity. Let $\varphi\in\Weil_\psi$ be a test vector satisfying three conditions:
+\begin{itemize}
+\item it is invariant under the stabilizers of $\Herm\otimes_{\OEring}\widehat{\OEring}$ and $\Skew\otimes_{\OEring}\widehat{\OEring}$;
+\item at infinity it spans copies of the algebraic representations of weights $\lambda$ and $\lambda'$;
+\item at the finite places it is the characteristic function of a self-dual integral structure (cf.\ Proposition~\ref{prop:symp-selfdual}).
+\end{itemize}
+For $g\in\U(\Herm)(\A)$ and $g'\in\U(\Skew)(\A)$ set
+\[
+\theta_\varphi(g,g'):=\theta\bigl(\Weil_\psi(g,g')\varphi\bigr).
+\]
+By Theorem~\ref{thm:theta-unique} this is invariant under rational points. By the adelic model, it therefore defines a morphism of local systems on $\Gen(\LocType_{\Herm})\times\Gen(\LocType_{\Skew})$.
+
+\begin{definition}\label{def:theta-lift}
+The \emph{theta correspondence} is the correspondence of Definition~\ref{def:correspondence} with
+\begin{itemize}
+\item groupoid $\Corr=\Gen(\LocType_{\Herm})\times\Gen(\LocType_{\Skew})$;
+\item legs the two projections;
+\item kernel $\theta_\varphi$, \emph{oriented} as a morphism $\src^*\Coef_\lambda\to\tgt^*\Coef_{\lambda'}$.
+\end{itemize}
+Its operator is the \emph{theta lift}.
+\end{definition}
+
+The orientation is a choice made once. It agrees with that of Hecke kernels (Section~\ref{sec:hecke}), so theta and Hecke steps compose under Proposition~\ref{prop:composition} without introducing denominators.
+
+\begin{proposition}\label{prop:theta-integral}
+With $\varphi$ as above, $\theta_\varphi$ is an integral kernel.
+\end{proposition}
+
+\begin{proof}
+Compute in the summation model (Proposition~\ref{prop:poisson}). The value $\theta_\varphi(g,g')$ is a finite sum, since both groups are definite and the archimedean component is a polynomial times a Gaussian whose Gaussian factor is absorbed by the algebraic identification of the archimedean representation. The sum runs over vectors of a self-dual integral structure in $\Symp\otimes_{\OEp}F$, and its summands are values of $\OEring$-integral polynomials at those vectors. The result is integral.
+\end{proof}
+
+\begin{remark}[seesaw, in finite form]\label{rem:seesaw}
+Because both groups are definite, the integrals defining the classical theta lift and its adjoint are finite sums over $\Gen\times\Gen$. Fubini's theorem for finite sums, together with Proposition~\ref{prop:adjoint}, gives
+\[
+\langle T_\theta f,f'\rangle=\langle f,T_\theta^{\dagger}f'\rangle.
+\]
+More generally, for two dual pairs $(G,H')$ and $(G',H)$ inside one symplectic group with $G\subset G'$ and $H\subset H'$, the pairing of a lift from $G$ with a form on $H$ equals the pairing of the form on $G$ with a lift from $H$ \cite{Kudla-seesaw}. This seesaw identity lets one evaluate every step of the chain below against one fixed test module.
+\end{remark}
+
+%=====================================================================
+\section{The theta chain, its periods, and content}\label{sec:chain}
+%=====================================================================
+
+\begin{definition}\label{def:chain}
+Fix definite Hermitian modules $\Md_0,\dots,\Md_{\len}$, with local types $\LocType_0$, \dots, $\LocType_{\len}$, each obtained from the previous one by adjoining an orthogonal summand of fixed rank $t+1$. The \emph{theta chain} is the composite correspondence
+\[
+\Theta^{(\len)}:\ \Gen(\LocType_0)\to\Gen(\LocType_1)\to\cdots\to\Gen(\LocType_{\len})
+\]
+of $\len$ theta correspondences, all oriented as in Definition~\ref{def:theta-lift}. Each step uses an auxiliary skew-Hermitian module; see \cite{Alpoge,golf} for the specific ranks and signatures.
+\end{definition}
+
+By Proposition~\ref{prop:composition}, $\Theta^{(\len)}$ is a single correspondence with integral kernel, living on the $\len$-fold fibre product.
+
+\begin{remark}[what one step does]
+On automorphic representations, step $i$ sends a representation $\pi$ to $\pi\boxplus\mu_i[t]$, adjoining one block to its Langlands parameter. This is Rallis's tower property \cite{Rallis} and its refinements \cite{Gan-theta}. In the Stepanov analogy (\S\ref{subsec:stepanov}), each step is one more order of vanishing.
+\end{remark}
+
+\begin{definition}\label{def:period}
+Let $\Input$ be the $\OEring$-module of integral input forms on $\Gen(\LocType_0)$, and $\Test$ a fixed finitely generated projective $\OEring$-module of test vectors on the last group. Composing the chain with the seesaw pairing (Remark~\ref{rem:seesaw}) gives an $\OEring$-linear \emph{period map}
+\[
+\per_{\len}\colon\Input\longrightarrow\Test\dual=\Hom_{\OEring}(\Test,\OEring),
+\]
+or equivalently an evaluation pairing $\Input\otimes_{\OEring}\Test\to\OEring$.
+\end{definition}
+
+The target is the dual $\Test\dual$, not $\Test\conj$ via a form. If $\Test$ is replaced by a submodule $\Test'\hookrightarrow\Test$, periods restrict along the dual map $\Test\dual\to\Test'^{\vee}$, so any divisibility of $\per$ persists.
+
+\begin{definition}\label{def:content}
+For a prime $\pp$ of $\OEring$, let $\ord_\pp(\per)$ be the largest integer $r\geq0$ such that
+\[
+\per\otimes_{\OEring}\OEring/\pp^r=0\quad\text{as a map}\quad
+\Input\otimes_{\OEring}\OEring/\pp^r\to\Hom_{\OEring}(\Test,\OEring/\pp^r).
+\]
+Here we use $\Test\dual\otimes_{\OEring}\OEring/\pp^r=\Hom_{\OEring}(\Test,\OEring/\pp^r)$, valid because $\Test$ is projective. The \emph{content} of $\per$ is the ideal $\cont(\per)=\prod_\pp\pp^{\ord_\pp(\per)}$.
+\end{definition}
+
+\begin{proposition}\label{prop:content}
+\begin{enumerate}[label=(\alph*)]
+\item $\cont(\per)$ is the image of the evaluation map $\Input\otimes_{\OEring}\Test\to\OEring$.
+\item If $\per\otimes_{\OEring}\OEring/\pp^r=0$, then the same holds after any base change $\OEring\to R$ factoring through $\OEring/\pp^r$, and after composing $\per$ with any $\OEring$-linear map on either side.
+\item $\log\Nm\cont(\per)=\sum_{\pp}\ord_\pp(\per)\,f_\pp\,\log p$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a) The image $I$ is an ideal. For each $r$, $\per\otimes_{\OEring}\OEring/\pp^r=0$ if and only if every value $\per(a)(b)$ lies in $\pp^r$, i.e.\ $I\subseteq\pp^r$. Since $\OEring$ is Dedekind, $I=\prod\pp^{\ord_\pp}$.
+(b) Base change and composition preserve the zero map.
+(c) The norm is multiplicative and $\Nm\pp=p^{f_\pp}$.
+\end{proof}
+
+Part (c) is the arithmetic heart of the argument: \emph{the divisibility of an integral linear map is literally a sum over primes weighted by $\log p$.} Part (b) is why divisibility is formulated as vanishing after reduction: in that form it is visibly inherited along compositions, which is what an $\len$-step chain requires.
+
+%=====================================================================
+\section{Divisibility at inert primes}\label{sec:divisibility}
+%=====================================================================
+
+\subsection{Distributions and the factorial gain}
+Let $\widehat G$ be a one-dimensional formal group over a complete discrete valuation ring $R$ with fraction field $K$, and let $\Fun=R[[T]]$ be its ring of functions. Define the \emph{distributions}
+\[
+\Dist(\widehat G):=\Hom_{R,\mathrm{cont}}(\Fun,R),
+\]
+the continuous dual of the functions, taken into $R$. It is an $R$-algebra under convolution. Let $\partial\in\Dist$ be the invariant derivation evaluated at the origin; its powers $\partial^k$ also lie in $\Dist$.
+
+\begin{lemma}\label{lem:gain}
+Suppose $\partial^k=g_k\,\delta_k$ for some $g_k\in R$ and $\delta_k\in\Dist(\widehat G)$. Then for every $f\in\Fun$ the value $(\partial^kf)(0)=\partial^k(f)$ is divisible by $g_k$ in $R$.
+\end{lemma}
+
+\begin{proof}
+$\partial^k(f)=g_k\,\delta_k(f)$, and $\delta_k(f)\in R$ because $\delta_k$ is a distribution, i.e.\ takes $R$-values on $\Fun$.
+\end{proof}
+
+\begin{example}[the additive group: Legendre's formula]\label{ex:additive}
+For $\widehat G=\widehat{\mathbb G}_a$ we have $\partial=d/dT$. Then $\Dist$ has $R$-basis $\delta_k=\partial^k/k!$, the functional reading off the $k$-th Taylor coefficient, so $g_k=k!$. Lemma~\ref{lem:gain} is the familiar fact that the $k$-th derivative at $0$ of an integral power series is divisible by $k!$. Here the powers $\partial^k$ span the image of $\Sym^k$ (coinvariants) and the $\delta_k$ span $\Gamma^k$ (invariants). The gain is the cokernel of the norm map of Example~\ref{ex:rank-one}. By Legendre's formula,
+\[
+\ord_p(k!)=\sum_{j\ge1}\left\lfloor\frac{k}{p^j}\right\rfloor=\frac{k-s_p(k)}{p-1},
+\]
+where $s_p(k)$ is the sum of the base-$p$ digits of $k$. So the gain is about $k/p+k/p^2+\cdots$ factors of $p$. Both sides of this comparison exist only because $\Dist$ is kept as the dual of $\Fun$ into $R$, rather than being identified with anything else.
+\end{example}
+
+\subsection{Inert primes and height two}\label{subsec:height}
+Let $A$ be an elliptic curve with complex multiplication by the ring of integers of an imaginary quadratic field $K$, and let $p$ be a prime of good reduction.
+\begin{itemize}
+\item If $p$ is inert in $K$, Deuring's criterion says the reduction is supersingular \cite[Ch.~13]{Lang-EF}. The formal group of $A$ at $p$ is then a Lubin--Tate formal group for $\mathcal O_{K,p}=\Z_{p^2}$ with uniformizer $p$ and residue field $\F_{p^2}$ \cite{Lubin-Tate}.
+\item If $p$ splits, the reduction is ordinary, and the formal group is a Lubin--Tate group for $\Z_p$ with residue field $\F_p$.
+\end{itemize}
+The two cases differ only in the size $q$ of the residue field: $q=p^2$ in the inert case, $q=p$ in the split case. The next two theorems show that this single number decides the divisibility gain.
+
+\begin{theorem}[denominators of the Lubin--Tate exponential]\label{thm:LT-exp}
+Let $\mathcal O$ be a complete discrete valuation ring, unramified over $\Z_p$, with fraction field $K_p$ and residue field $\F_q$. Let $F$ be a formal group over $\mathcal O$ with an endomorphism
+\[
+[p]_F(T)=pT+\sum_{k\ge2}e_kT^k,\qquad [p]_F(T)\equiv T^q\pmod p .
+\]
+Let $\lambda_F\in K_p[[T]]$ be its logarithm, normalized by $\lambda_F'(0)=1$, and $\exp_F(Z)=\sum_{n\ge1}c_nZ^n$ its compositional inverse. Then
+\[
+\ord_p(c_n)\ \ge\ -\frac{n-1}{q-1}\qquad\text{for all }n\ge1 .
+\]
+\end{theorem}
+
+\begin{proof}
+Since $\lambda_F$ is the normalized homomorphism from $F$ to the additive group and $[p]_F$ is an endomorphism with linear term $p$, we have $\lambda_F\circ[p]_F=p\,\lambda_F$. Equivalently,
+\[
+[p]_F\bigl(\exp_F(Z)\bigr)=\exp_F(pZ).
+\]
+Compare coefficients of $Z^n$. The right side gives $p^nc_n$. The left side gives $pc_n+\sum_{k\ge2}e_k\,[Z^n]\exp_F(Z)^k$. For $n\ge2$ this yields
+\[
+c_n=\frac{1}{p^n-p}\sum_{k=2}^{n}e_k\,[Z^n]\exp_F(Z)^k ,
+\]
+and $\ord_p(p^n-p)=1$.
+
+We argue by induction on $n$; the case $n=1$ holds since $c_1=1$. The coefficient $[Z^n]\exp_F^k$ is a sum of products $c_{n_1}\cdots c_{n_k}$ with $n_1+\cdots+n_k=n$, each $n_i\ge 1$ and, since $k\ge2$, each $n_i<n$. By induction each product has valuation at least $-\sum_i(n_i-1)/(q-1)=-(n-k)/(q-1)$.
+
+The congruence $[p]_F\equiv T^q$ means $e_k\in p\mathcal O$ for $k\ne q$, while $e_q\in\mathcal O$. So:
+\begin{itemize}
+\item the term $k=q$ has valuation at least $-1+0-(n-q)/(q-1)=-(n-1)/(q-1)$;
+\item a term with $k\ne q$ has valuation at least $-1+1-(n-k)/(q-1)\ge-(n-2)/(q-1)$.
+\end{itemize}
+Both bounds are at least $-(n-1)/(q-1)$, which completes the induction.
+\end{proof}
+
+\begin{theorem}[divisibility of jets]\label{thm:jet-gain}
+With $F$ as in Theorem~\ref{thm:LT-exp}, let $\partial$ be the invariant derivation normalized by $\partial\lambda_F=1$, so $\partial=\lambda_F'(T)^{-1}\,d/dT$. Then for every integral function $f\in\mathcal O[[T]]$ and every $a\ge1$,
+\[
+\ord_p\bigl((\partial^af)(0)\bigr)\ \ge\ \ord_p(a!)-\frac{a-1}{q-1}.
+\]
+\end{theorem}
+
+\begin{proof}
+In the coordinate $Z=\lambda_F(T)$ the derivation $\partial$ becomes $d/dZ$. Write $f(\exp_F(Z))=\sum_nb_nZ^n$, so that $(\partial^af)(0)=a!\,b_a$. With $f=\sum_mf_mT^m$ and $f_m\in\mathcal O$,
+\[
+b_a=\sum_{m=1}^{a}f_m\,[Z^a]\exp_F(Z)^m .
+\]
+As in the proof of Theorem~\ref{thm:LT-exp}, $[Z^a]\exp_F^m$ has valuation at least $-(a-m)/(q-1)\ge-(a-1)/(q-1)$. Multiplying by $a!$ gives the claim.
+\end{proof}
+
+In terms of Section~\ref{sec:duals}, $\partial^a$ spans the image of the symmetric power (coinvariants) inside the distributions $\Dist(F)$. Theorem~\ref{thm:jet-gain} says that $\partial^a$ divided by $p^{\ord_p(a!)-\lfloor(a-1)/(q-1)\rfloor}$ is still a distribution. The gain has two parts:
+\begin{itemize}
+\item Legendre's $\ord_p(a!)$, which is the cokernel of the norm map from $\Sym^a$ to $\Gamma^a$ (Example~\ref{ex:rank-one});
+\item minus the denominators of the exponential, $(a-1)/(q-1)$.
+\end{itemize}
+
+\begin{corollary}[height decides the gain]\label{cor:height}
+Write $s_p(a)$ for the sum of the base-$p$ digits of $a$.
+\begin{enumerate}[label=(\alph*)]
+\item \emph{Split primes} ($q=p$). The bound is $\bigl(1-s_p(a)\bigr)/(p-1)\le0$: there is no gain.
+\item \emph{Inert primes} ($q=p^2$). For every $f\in\mathcal O[[T]]$,
+\[
+\ord_p\bigl((\partial^af)(0)\bigr)\ \ge\ \frac{ap}{p^2-1}-\frac{(p+1)s_p(a)-1}{p^2-1}
+\ =\ \sum_{k\ \mathrm{odd}}\frac{a}{p^k}\ -\ O\bigl(\log_p a\bigr).
+\]
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+By Legendre's formula $\ord_p(a!)=(a-s_p(a))/(p-1)$. In case (a), subtract $(a-1)/(p-1)$. In case (b),
+\[
+\frac{a-s_p(a)}{p-1}-\frac{a-1}{p^2-1}=\frac{ap-(p+1)s_p(a)+1}{p^2-1},
+\]
+and $ap/(p^2-1)=\sum_{k\ \mathrm{odd}}a/p^{k}$. Finally $s_p(a)\le(p-1)(\log_pa+1)$.
+\end{proof}
+
+This proves the divisibility pattern $k/p+k/p^3+\cdots-O(\log k)$ that \cite{nasqret} asserts for jets of CM theta functions. It holds for every function that is integral on the formal group, and so in particular for the restriction of an integral section of a theta line bundle to the formal group at an inert prime. The proof uses only the Lubin--Tate congruence and Legendre's formula; no analysis is involved.
+
+The gain is a single high derivative. As explained in \S\ref{subsec:stepanov}, a single derivative has the right divisibility, but its size at infinity cannot be controlled well enough. The chain spreads the gain over $\len$ steps.
+
+\subsection{The one-step lemma}
+The local source of each unit of divisibility in the chain is the following lemma, which is the conceptual content of \texttt{key\_minor\_dvd} and \texttt{key\_pow\_dvd} in the archive \cite{golf}. Vectors transform by $\gamma^{-1}$ and covectors by $\gamma$, and the two are never identified.
+
+\begin{lemma}\label{lem:minor}
+Let $\Base$ be a commutative ring containing $\varpi$ with $\varpi^2=p$. Let $\Mat$ and $\Mat'$ be $(n+1)\times(n+1)$ matrices over $\Base$ such that $\Mat^{(p^e)}\equiv\Mat'\pmod{p}$ entrywise, where $\Mat^{(p^e)}$ is the matrix of $p^e$-th powers of entries. Let $\vect,\vect'\in\Base^{n+1}$ be row vectors whose coordinates of index $\ge1$ are divisible by $\varpi$. Put
+\[
+\row_1=(\vect\cdot\Mat)^{(p^e)},\qquad \row_2=\vect'\cdot\Mat' .
+\]
+Then every $2\times2$ minor of the $2\times(n+1)$ matrix with rows $\row_1,\row_2$ is divisible by $\varpi$.
+\end{lemma}
+
+\begin{proof}
+It suffices to show that the image of each minor in the quotient ring $\overline{\Base}=\Base/\varpi\Base$ is zero. In $\overline{\Base}$ we have $p=\varpi^2=0$. Hence the map $x\mapsto x^{p^e}$ is additive (it is a power of Frobenius), and $\overline{\Mat}^{(p^e)}=\overline{\Mat'}$. By hypothesis $\overline{\vect}=(\bar v_0,0,\dots,0)$ and $\overline{\vect'}=(\bar v'_0,0,\dots,0)$. Therefore
+\[
+\overline{\row_1}=\bigl(\bar v_0\,\overline{\Mat}_{0,\bullet}\bigr)^{(p^e)}=\bar v_0^{\,p^e}\,\overline{\Mat'}_{0,\bullet},
+\qquad
+\overline{\row_2}=\bar v'_0\,\overline{\Mat'}_{0,\bullet},
+\]
+where $\Mat'_{0,\bullet}$ denotes row $0$. The two rows are proportional, so the matrix they form has rank at most one, and all its $2\times2$ minors vanish.
+\end{proof}
+
+\begin{lemma}[covector form]\label{lem:covector}
+With $\Base,\varpi,\Mat,\Mat',\vect$ as in Lemma~\ref{lem:minor}, let $\Mat''$ be a matrix with $\Mat'\Mat''=1$. Let $\cov\in\Base^{n+1}$ be a column vector with $\cov_0$ divisible by $\varpi$. Then
+\[
+\sum_{a}\bigl((\vect\cdot\Mat)_a\bigr)^{p^e}\,(\Mat''\cdot\cov)_a\equiv0\pmod{\varpi}.
+\]
+\end{lemma}
+
+\begin{proof}
+In $\overline\Base$, the sum equals $\bar v_0^{\,p^e}\sum_a\overline{\Mat'}_{0a}(\overline{\Mat''}\,\overline{\cov})_a=\bar v_0^{\,p^e}(\overline{\Mat'}\,\overline{\Mat''}\,\overline{\cov})_0=\bar v_0^{\,p^e}\,\overline{\cov}_0=0$.
+\end{proof}
+
+The second proof uses the cancellation $\Mat'\Mat''=1$ between the matrix acting on vectors and the matrix acting on covectors. If covectors were identified with vectors through a form, both would carry $\gamma^{-1}$, and this cancellation would not be available. Keeping the dual explicit is what makes the argument work.
+
+\subsection{The global claim}
+For $a>0$ let
+\[
+\ASK(a)=\sum_{n\ge1}\Lambda(n)\,\bigl(1-\chi_{-d}(n)\bigr)\,\Bigl(\frac{a}{n}-w_n\Bigr)_+ ,
+\]
+where $\Lambda$ is the von Mangoldt function, $\chi_{-d}$ is the quadratic character of $\Q(\sqrt{-d})$ for an auxiliary prime $d$, and $w_n\ge0$ are cutoff weights specified in \cite{Zhang,golf}. The factor $1-\chi_{-d}(n)$ equals $2$ on primes inert in $\Q(\sqrt{-d})$ and $0$ on split primes. The ramp gives weight about $a/n$ to small $n$, which is the shape of $\ord_n(a!)$.
+
+\begin{claimA}[{\cite{Alpoge,Zhang,golf}}]
+For the theta chain of length $\len$ and suitable parameters, $\ord_\pp(\per_\len)$ grows linearly in $\len$ at primes $\pp$ inert over $E^+$, and
+\[
+\log\Nm\cont(\per_\len)\ \ge\ \ASK(a)
+\]
+where the ramp scale $a$ is determined by $\len$ and $x$ as in \cite{Zhang,golf}.
+\end{claimA}
+
+The rest of this section proves Claim~A from a single local hypothesis (Hypothesis~J below), by a route different from the archive's.
+
+\subsection{The prime sum is the norm of a factorial ideal}
+Put
+\[
+\ASK^\flat(a)=\sum_{n\ge1}\Lambda(n)\bigl(1-\chi_{-d}(n)\bigr)\Bigl\lfloor\frac an\Bigr\rfloor .
+\]
+When all $w_n\ge1$ we have $(a/n-w_n)_+\le(a/n-1)_+\le\lfloor a/n\rfloor$, so $\ASK(a)\le\ASK^\flat(a)$, and a lower bound by $\ASK^\flat$ is the stronger statement. For general $w_n\ge0$ the two differ by at most $\sum_{n\le a}\Lambda(n)=O(a)$.
+
+\begin{proposition}[the factorial identity]\label{prop:factorial}
+Let $K=\Q(\sqrt{-d})$. Then
+\[
+\ASK^\flat(a)=\sum_{p\ \mathrm{inert\ in}\ K}2\log p\sum_{k\ \mathrm{odd}}\Bigl\lfloor\frac a{p^k}\Bigr\rfloor\ +\ \log d\cdot\ord_d(a!).
+\]
+Equivalently, $\ASK^\flat(a)=\log\Nm_{K/\Q}\mathfrak f_K(a)+\log d\cdot\ord_d(a!)$, where
+\[
+\mathfrak f_K(a)=\prod_{p\ \mathrm{inert}}(p)^{\sum_{k\ \mathrm{odd}}\lfloor a/p^k\rfloor}\subseteq\mathcal O_K
+\]
+is the \emph{inert factorial ideal}.
+\end{proposition}
+
+\begin{proof}
+$\Lambda$ is supported on prime powers $p^k$, with $\Lambda(p^k)=\log p$, and $\chi_{-d}(p^k)=\chi_{-d}(p)^k$. So the weight $1-\chi_{-d}(p^k)$ is:
+\begin{itemize}
+\item $1-(-1)^k$ for $p$ inert, which is $2$ for odd $k$ and $0$ for even $k$;
+\item $0$ for $p$ split;
+\item $1$ for the ramified prime $p=d$.
+\end{itemize}
+Summing, and using Legendre's formula $\ord_d(a!)=\sum_k\lfloor a/d^k\rfloor$, gives the first formula. The second follows because an inert prime has $\Nm(p)=p^2$.
+\end{proof}
+
+Proposition~\ref{prop:factorial} and Corollary~\ref{cor:height} fit together exactly. The weight $1-\chi_{-d}(n)$ vanishes at split primes and at even powers of inert primes, which is precisely where height-two divided powers give no gain. At odd powers of inert primes it counts precisely what they do give. So the expected divisibility $\ASK$ is not an arbitrary target: up to rounding and the single ramified prime, it is the norm of the ideal that jets of order $a$ are automatically divisible by.
+
+\begin{corollary}\label{cor:factorial-gain}
+Let $f$ be a function that is integral on the formal group of $A$ at every inert prime $p\le a$. Then $(\partial^af)(0)$ is divisible by an ideal $\mathfrak g(a)$ with
+\[
+\log\Nm_{K/\Q}\mathfrak g(a)\ \ge\ \ASK^\flat(a)-\frac{a\log d}{d-1}-4\pi(a)\log a .
+\]
+\end{corollary}
+
+\begin{proof}
+By Corollary~\ref{cor:height}(b), the jet is divisible by $p^{g_p(a)}$ with
+\[
+g_p(a)\ \ge\ \sum_{k\ \mathrm{odd}}\Bigl\lfloor\frac a{p^k}\Bigr\rfloor-(\log_pa+1),
+\]
+using $\sum_{k\ \mathrm{odd}}\lfloor a/p^k\rfloor\le ap/(p^2-1)$ and $((p+1)s_p(a)-1)/(p^2-1)\le s_p(a)/(p-1)\le\log_pa+1$. Sum $2\log p\cdot g_p(a)$ over inert $p\le a$. Then apply Proposition~\ref{prop:factorial}, together with $\ord_d(a!)\le a/(d-1)$ and $\sum_{p\le a}2(\log a+\log p)\le4\pi(a)\log a$.
+\end{proof}
+
+\subsection{Accumulation along the chain}
+\begin{definition}
+Let $\pp$ be a prime of $\OEring$. A kernel $\Ker$ between local systems of finitely generated projective $\OEring$-modules is \emph{divisible by $\pp^r$} if $\Ker\otimes_{\OEring}\OEring/\pp^r=0$. Equivalently, after localizing at $\pp$ we have $\Ker=\varpi^r\Ker'$ with $\Ker'$ integral, where $\varpi$ is a uniformizer at $\pp$.
+\end{definition}
+
+\begin{theorem}[orders add along compositions]\label{thm:accumulate}
+Let $\Corr_1,\dots,\Corr_\len$ be composable correspondences with integral kernels, and suppose $\Ker_i$ is divisible by $\pp^{r_i}$. Then:
+\begin{enumerate}[label=(\alph*)]
+\item the kernel of the composite correspondence (Proposition~\ref{prop:composition}) is divisible by $\pp^{r_1+\cdots+r_\len}$;
+\item for any integral test pairing, the resulting period map satisfies $\ord_\pp(\per_\len)\ge r_1+\cdots+r_\len$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Localize at $\pp$ and write $\Ker_i=\varpi^{r_i}\Ker_i'$ with $\Ker_i'$ integral. By Proposition~\ref{prop:composition}, the composite kernel is the composite of the pulled-back kernels on the iterated fibre product. Pullback is compatible with multiplication by scalars, so the composite kernel is $\varpi^{\sum r_i}$ times the composite of the $\Ker_i'$, which is integral. This proves (a).
+
+For (b): pushforward (Definition~\ref{def:pushforward}) and pullback are $\OEring$-linear, so the composite operator is $\varpi^{\sum r_i}$ times an integral operator. The period map is the composite operator followed by an integral evaluation, and Proposition~\ref{prop:content}(b) gives the claim.
+\end{proof}
+
+\begin{corollary}[divided periods are integral]\label{cor:divided}
+Let $\mathfrak a=\prod_\pp\pp^{\sum_ir_i(\pp)}$. Then $\per_\len$ maps $\mathfrak a^{-1}\Input$ into $\Test\dual=\Hom_{\OEring}(\Test,\OEring)$.
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:accumulate}, $\cont(\per_\len)\subseteq\mathfrak a$. That is, every value $\per_\len(v)(w)$ lies in $\mathfrak a$. Since $\mathfrak a$ is invertible, every value $\per_\len(\alpha v)(w)$ with $\alpha\in\mathfrak a^{-1}$ lies in $\mathfrak a^{-1}\mathfrak a=\OEring$.
+\end{proof}
+
+Corollary~\ref{cor:divided} is the archive's Input~II (Section~\ref{sec:assembly}). Here it is a consequence of a \emph{local} divisibility statement for each step together with Proposition~\ref{prop:composition}, rather than a global statement about the final lattice. The archive contains the same idea in the abstract lemma \texttt{ChainIntM}, which its main route does not use.
+
+\subsection{The remaining local input}
+What is left of Claim~A is a statement about one step at one inert prime.
+
+\noindent\textbf{Hypothesis J} (jets at inert places). For each step $i$ of the chain and each prime $\pp$ of $\OEring$ above a rational prime $p$ inert in $K$, there is a jet order $a_i\ge0$ with the following property. After localizing at $\pp$, $\Ker_i$ is an integral combination of maps of the form $f\mapsto(\partial^{a_i}f)(0)$, applied to functions $f$ integral on the formal group of $A$ at $p$.
+
+\noindent\emph{Reading.} Hypothesis~J is the $p$-adic content of the algebraic reading of $\theta$ in Section~\ref{sec:weil}. At an inert place, the test vector of a step is a jet of a section of a theta line bundle on a CM abelian scheme. Restricted to the formal group at $p$, such a section is an integral function. Lemma~\ref{lem:minor}, which gives one factor of $\varpi$ per step, is the archive's version of a statement of this type. We have not derived Hypothesis~J from the definition of the theta kernels: it is the precise residue of Claim~A.
+
+\begin{theorem}[Claim A from Hypothesis J]\label{thm:claimA}
+Assume Hypothesis~J with jet orders $a_1,\dots,a_\len$. Then
+\[
+\log\Nm_{E/\Q}\cont(\per_\len)\ \ge\ \frac{[E:\Q]}2\sum_{i=1}^{\len}\Bigl(\ASK^\flat(a_i)-\frac{a_i\log d}{d-1}-4\pi(a_i)\log a_i\Bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+By Hypothesis~J and Theorem~\ref{thm:jet-gain}, $\Ker_i$ is divisible by $p^{g_p(a_i)}$ at every $\pp\mid p$, i.e.\ by $\pp^{e_\pp g_p(a_i)}$. By Theorem~\ref{thm:accumulate}, $\ord_\pp(\per_\len)\ge e_\pp\sum_ig_p(a_i)$. Summing over $\pp\mid p$ with weights $f_\pp\log p$ gives $[E:\Q]\log p\sum_ig_p(a_i)$, because $\sum_{\pp\mid p}e_\pp f_\pp=[E:\Q]$. Now apply the estimate in the proof of Corollary~\ref{cor:factorial-gain}, noting that $\log\Nm_{K/\Q}(p)=2\log p$.
+\end{proof}
+
+So the accumulation along the chain, the rate at inert primes, and the shape of $\ASK$ are all proved here. The only unproved input on the divisibility side is the one-step, one-prime Hypothesis~J.
+
+\subsection{Nonvanishing}
+Theorem~C requires $\per_\len\ne0$. The archive obtains this from quantitative near-orthogonality (Input~III of Section~\ref{sec:assembly}), which it needs anyway for the size estimate. Qualitatively, nonvanishing follows from the structure plus one standard input.
+
+\begin{theorem}[nonvanishing]\label{thm:nonvanishing}
+Assume the following.
+\begin{enumerate}[label=(\roman*)]
+\item (Rallis inner product formula \cite{GQT}.) For each step $i$, the operator $T_i^\dagger T_i$, where $T_i^\dagger$ is the adjoint for the mass pairing (Proposition~\ref{prop:adjoint}), preserves the Hecke-isotypic components of its source. On the component of $\pi$ it acts by a scalar
+\[
+c_i(\pi)=(\text{nonzero local factors})\cdot L^S(s_i,\pi),
+\]
+with $s_i$ in the region of absolute convergence of the Euler product.
+\item The test module satisfies $\Test\otimes_{\OEring}\C\supseteq T_\len\cdots T_1(\Input\otimes_{\OEring}\C)$.
+\end{enumerate}
+Then $\per_\len\ne0$ whenever $\Input\ne0$.
+\end{theorem}
+
+\begin{proof}
+An absolutely convergent Euler product does not vanish, since each factor is nonzero and the product of their logarithms converges. So every $c_i(\pi)\ne0$. Hence $T_i^\dagger T_i$ is invertible on the source of $T_i$, and $T_i$ is injective. The composite $T=T_\len\cdots T_1$ is therefore injective.
+
+For $0\ne v\in\Input$, the vector $Tv\ne0$ lies in $\Test\otimes\C$ by (ii). The mass pairing on a definite genus is positive definite, being a finite sum with positive weights of positive definite forms. Hence $\langle Tv,Tv\rangle>0$, and so $\per_\len(v)\ne0$.
+\end{proof}
+
+In the chain each step adds a summand of rank $t+1$ with $t$ large compared with the rank of the source, which puts each step in the stable range. In the Rallis formula for such a step, the standard $L$-function is evaluated at a point with real part roughly $(t+2)/2>1$. That point is in the region of absolute convergence of the Euler product for unitary cuspidal representations of $\mathrm{GL}_n$ (Jacquet--Shalika). The exact normalization should be checked against \cite{GQT}. The only analysis left in nonvanishing is the convergence of an Euler product. What the archive's Gram estimates provide beyond this is \emph{quantitative} control of norms, which belongs to Claim~B.
+
+\subsection{Summary of the divisibility side}
+Combining Theorem~\ref{thm:claimA}, Theorem~\ref{thm:nonvanishing} and Theorem~C:
+\begin{align*}
+\frac{[E:\Q]}2\sum_i\Bigl(\ASK^\flat(a_i)-\text{losses}\Bigr)\ &\le\ \log\Nm\cont(\per_\len)\\
+&\le\ \sum_\sigma\log\|\per_\len\|_\sigma-\mu_{\min}\bigl(\overline{\Input\otimes_{\OEring}\Test}\bigr).
+\end{align*}
+The left inequality uses only Hypothesis~J, the groupoid composition law and the Lubin--Tate congruence. The right inequality uses only the product formula. What remains to reach $\ASK\lesssim\MAIN$ is the archimedean estimate, Claim~B.
+
+%=====================================================================
+\section{Size at the infinite places}\label{sec:size}
+%=====================================================================
+
+Fix a complex embedding $\sigma$ of $E$. The mass pairing (Proposition~\ref{prop:adjoint}) with the positive invariant form on $V_\lambda$ makes $\Input\otimes_{\OEring,\sigma}\C$ and $\Test\otimes_{\OEring,\sigma}\C$ into Hermitian vector spaces. Let $\|\per_\len\|_\sigma$ be the resulting operator norm.
+
+\begin{claimB}[{\cite{Alpoge,Zhang,golf}}]
+$\sum_\sigma\log\|\per_\len\|_\sigma\le\MAIN(a)+\text{error}$, where $\MAIN(a)$ is the main term that the prime number theorem predicts for $\ASK(a)$, and the error is controlled as in \eqref{eq:balance} below.
+\end{claimB}
+
+Claim~B is a statement about algebraic numbers, since all spaces are finite-dimensional. Its proof is where all the genuine analysis of the argument sits. We describe each ingredient and what it computes.
+
+\subsection*{The Rallis inner product formula}
+The norm of a theta lift is computed by the \emph{doubling method} \cite{GQT}. By seesaw (Remark~\ref{rem:seesaw}) applied to the doubled dual pair, $\langle\theta(f),\theta(f)\rangle$ equals an integral of $f\otimes_{\C}\bar f$ against a theta function on the doubled group. By the Siegel--Weil formula, that theta integral is an Eisenstein series. Unfolding the Eisenstein series against $f\otimes_{\C}\bar f$ (Piatetski-Shapiro--Rallis) produces a product of local zeta integrals and a special value $L(s_0,\pi)$. So
+\[
+\|\theta(f)\|^2=(\text{local factors})\cdot L(s_0,\pi)\cdot\|f\|^2 .
+\]
+In the definite situation the relevant $L$-values lie in the range of absolute convergence.
+
+\subsection*{Mass and dimension}
+Total masses (\S\ref{subsec:mass}) and the dimensions of the $V_\lambda$ (Weyl's dimension formula, a product of linear factors in $\lambda$) contribute explicit products of $L$-values and factorials.
+
+\subsection*{CM periods}
+The period $\Omega$ of a CM elliptic curve with CM by $\Q(\sqrt{-D})$ satisfies the Chowla--Selberg formula \cite{Chowla-Selberg}: up to an algebraic factor,
+\[
+\Omega\ \sim\ \frac{1}{\sqrt{2\pi D}}\Bigl(\prod_{a=1}^{D-1}\Gamma(a/D)^{\chi_{-D}(a)}\Bigr)^{w/(4h)},
+\]
+where $h$ is the class number and $w$ the number of roots of unity. Stirling's formula estimates these $\Gamma$-values. The main term $\MAIN$ arises here.
+
+\subsection*{Near-orthogonality}
+One must show that the outputs of the chain do not cancel against each other, so that the norm of the whole is controlled by the norms of the pieces. The sources do this with frame bounds, i.e.\ approximate orthogonality estimates. This is the most functional-analytic ingredient.
+
+%=====================================================================
+\section{The slope inequality}\label{sec:slope}
+%=====================================================================
+
+\subsection{Hermitian vector bundles on $\Spec\OEring$}
+Arakelov geometry treats $\Spec\OEring$ as a ``complete curve'' by adjoining the archimedean places, at which one records Hermitian metrics \cite{nLab-Arakelov}, \cite{Gillet-Soule}.
+
+\begin{definition}
+A \emph{Hermitian vector bundle} $\overline{\mathcal V}$ on $\Spec\OEring$ is a finitely generated projective $\OEring$-module $\mathcal V$ together with a Hermitian norm $\|\cdot\|_\sigma$ on $\mathcal V\otimes_{\OEring,\sigma}\C$ for each embedding $\sigma\colon E\to\C$, compatible with complex conjugation. For rank one with nonzero element $s$, the \emph{arithmetic degree} is
+\[
+\adeg(\overline{\mathcal V})=\log\#(\mathcal V/\OEring s)-\sum_\sigma\log\|s\|_\sigma .
+\]
+For higher rank, $\adeg$ is the degree of the determinant. The \emph{slope} is $\mu=\adeg/\mathrm{rank}$.
+\end{definition}
+
+\begin{lemma}\label{lem:adeg}
+\begin{enumerate}[label=(\alph*)]
+\item $\adeg$ does not depend on the choice of $s$ (product formula).
+\item If $\mathfrak a\subseteq\OEring$ is a nonzero ideal with the metric restricted from the standard metric $|\cdot|_\sigma$ on $\OEring$, then $\adeg(\overline{\mathfrak a})=-\log\Nm\mathfrak a$.
+\item If $\mathcal L\subseteq\mathcal V$ is a saturated rank-one submodule, or $\mathcal V\twoheadrightarrow\mathcal L$ a rank-one quotient with the quotient metric, the degrees satisfy the usual additivity in exact sequences.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) Replacing $s$ by $\alpha s$ with $\alpha\in E^\times$ changes the first term by $\log|\Nm_{E/\Q}\alpha|$ (appropriately interpreted for fractional changes of index) and the second by $\sum_\sigma\log|\sigma\alpha|$. These are equal: this is the product formula $\prod_v|\alpha|_v=1$, written as finite part equals infinite part.
+(b) Take $s\in\mathfrak a$. Then $\#(\mathfrak a/\OEring s)=|\Nm s|/\Nm\mathfrak a$, and $\sum_\sigma\log|\sigma s|=\log|\Nm s|$.
+(c) See \cite[\S2]{Bost-Bourbaki}.
+\end{proof}
+
+For a Hermitian vector bundle $\overline{\mathcal V}$, let $\mu_{\min}(\overline{\mathcal V})$ be the minimum slope of a nonzero quotient bundle with the quotient metrics.
+
+\subsection{The inequality}
+\begin{theoremC}
+Let $\overline{\Input}$ and $\overline{\Test}$ be Hermitian vector bundles on $\Spec\OEring$, and give $\Input\otimes_{\OEring}\Test$ the tensor product metrics. Let $\per\colon\Input\to\Test\dual$ be nonzero, with operator norms $\|\per\|_\sigma$ for the pairing $\Input\otimes_{\OEring}\Test\to\OEring$. Then
+\[
+\log\Nm\cont(\per)\ \le\ \sum_\sigma\log\|\per\|_\sigma\ -\ \mu_{\min}\bigl(\overline{\Input\otimes_{\OEring}\Test}\bigr).
+\]
+\end{theoremC}
+
+\begin{proof}
+By Proposition~\ref{prop:content}(a), the evaluation map factors as
+\[
+\Input\otimes_{\OEring}\Test\ \twoheadrightarrow\ \cont(\per)\ \hookrightarrow\ \OEring,
+\]
+a quotient followed by a subobject. Give the rank-one module $\cont(\per)$ two metrics: the quotient metric $\|\cdot\|^{\mathrm q}_\sigma$ from $\Input\otimes_{\OEring}\Test$, and the metric $|\cdot|_\sigma$ restricted from $\OEring$.
+
+First, as a nonzero quotient of $\overline{\Input\otimes_{\OEring}\Test}$, we have
+\[
+\adeg\bigl(\cont(\per),\|\cdot\|^{\mathrm q}\bigr)\ge\mu_{\min}\bigl(\overline{\Input\otimes_{\OEring}\Test}\bigr).
+\]
+
+Second, the identity map of $\cont(\per)\otimes_{\OEring,\sigma}\C$ from the quotient metric to the restricted metric has norm at most $\|\per\|_\sigma$. Hence $|s|_\sigma\le\|\per\|_\sigma\|s\|^{\mathrm q}_\sigma$ for every $s$. By the definition of $\adeg$,
+\[
+\adeg(\cont(\per),|\cdot|)\ \ge\ \adeg(\cont(\per),\|\cdot\|^{\mathrm q})-\sum_\sigma\log\|\per\|_\sigma .
+\]
+
+Third, by Lemma~\ref{lem:adeg}(b), $\adeg(\cont(\per),|\cdot|)=-\log\Nm\cont(\per)$. Combining the three inequalities gives the theorem.
+\end{proof}
+
+\begin{remark}
+On a smooth projective curve, a nonzero map of vector bundles $\mathcal V\to\mathcal W$ forces $\mu_{\min}(\mathcal V)\le\mu_{\max}(\mathcal W)$. Theorem~C is the analogue over $\Spec\OEring$, written from the quotient side. Bost's general slope inequality \cite{Bost-Bourbaki} states that for an injective map, $\adeg$ of the source is bounded by the sum over successive quotients of slopes of the target plus the logarithms of the norms. A lower bound for $\mu_{\min}(\overline{\Input\otimes_{\OEring}\Test})$ requires arithmetic-volume estimates \cite{Gillet-Soule}, which use the metrics at infinity.
+\end{remark}
+
+%=====================================================================
+\section{How the archive assembles the inequality}\label{sec:assembly}
+%=====================================================================
+
+The preceding sections stop at two facts:
+\begin{itemize}
+\item the content of an integral period map is a prime sum (Proposition~\ref{prop:content});
+\item integrality is inherited along compositions (Proposition~\ref{prop:composition}).
+\end{itemize}
+Claims~A and~B were stated without derivation. This section records what tracing the Lean archive shows about how divisibility, nonvanishing and size are actually combined into the inequality $\ASK\lesssim\MAIN$. The archive's own organization is followed, in our notation. File references are to the copy of the archive described in \cite{golf}.
+
+Three kinds of statement occur, and each is labelled accordingly:
+\begin{itemize}
+\item an \emph{Input} is a hypothesis of the archive's assembly theorem. It is discharged elsewhere in the archive and was not traced here.
+\item a \emph{Lemma} or \emph{Proposition} is proved here; the archive proves the same statement.
+\item a \emph{Reading} is our interpretation of an archive definition.
+\end{itemize}
+
+\subsection{The data}\label{subsec:assembly-data}
+The archive works with a \emph{family} of theta chains rather than one. Its data are as follows; see the files \path{Formalism/LocalRingCardinality/DataDIV*.lean} and \path{Formalism/SharpRestriction/GlobalTheoremInputs.lean}.
+
+\begin{itemize}
+\item \emph{Words.} A finite index set whose elements $u$ we call \emph{words}. Each word $u$ determines a theta chain of length $\len$ as in Section~\ref{sec:chain}, with a finite-dimensional space of inputs of dimension $\dim_u$.
+\item \emph{Coefficient field.} A number field $L$ in which all periods are defined, with ring of integers $\mathcal O_L$. Each finite place $w$ of $L$ has residue characteristic $p(w)$ and ramification index $e_w$. Each place carries a weight $\ell_w\ge0$, with $\sum_{w\mid p}\ell_w=\log p$ for every rational prime $p$.
+\item \emph{Three Hermitian $\mathcal O_L$-modules for each word}, each with Hermitian metrics at the infinite places, so that they have Arakelov slopes as in Section~\ref{sec:slope}:
+\begin{itemize}
+\item $\mathit{Ref}_u$, the reference integral structure on the output of chain $u$ (\texttt{MramL});
+\item $\mathit{Lift}_u\subseteq\mathit{Ref}_u\otimes_{\mathcal O_L}L$, the $\mathcal O_L$-span of the lifted values (\texttt{NuLat});
+\item $\mathit{Rows}$, the module of test vectors, defined place by place (\texttt{RR}).
+\end{itemize}
+\item \emph{Period pairings.} $L$-bilinear maps $\per_u\colon(\mathit{Lift}_u\otimes_{\mathcal O_L}L)\times(\mathit{Rows}\otimes_{\mathcal O_L}L)\to L$ (\texttt{Bk}). Under each embedding $L\to\C$ they become, up to a nonzero scalar and unitary changes of variables, Bessel periods of the last group in the chain (\texttt{BesselId}).
+\item \emph{Steps and types.} Steps $j=1,\dots,\len$ index the theta lifts in each chain. A finite set of \emph{types} $t$ carries ramp scales $a_t>0$.
+\end{itemize}
+For each step $j$, type $t$ and prime $p$, the archive defines a nonnegative \emph{class sum} $\Lambda^{\mathrm{cls}}_{j,t}(p)$ (\texttt{vonMangoldtClassSum}). It is the expected divisibility at $p$ contributed by step $j$ for type $t$: a ramp-weighted count of the powers of $p$ up to the scale $a_t$, restricted to primes in the relevant Frobenius class. The archive's version of the prime sum of Claim~A is then
+\begin{equation}\label{eq:ask-archive}
+\ASK=\sum_{j=1}^{\len}\sum_t\Bigl(\sum_p 2\log p\cdot\Lambda^{\mathrm{cls}}_{j,t}(p)+d_{j,t}\Bigr),
+\end{equation}
+with small correction terms $d_{j,t}$ (\texttt{DeficitSplitLemmas.ASK}). The sum over $j$ is the sum over the steps of the chain. Each step contributes its own share of the expected divisibility.
+
+\subsection{Divisibility as lattice containment}
+\begin{definition}[local containment]
+Let $A,B$ be $\mathcal O_L$-submodules of an $L$-vector space and $k\ge0$. We say \emph{$A\subseteq\mathfrak p_w^{k}B$ at $w$} if for every $x\in A$ there is $s\in\mathcal O_L\smallsetminus\mathfrak p_w$ with $sx\in\mathfrak p_w^{k}B$. Equivalently, the inclusion holds after localizing at $w$ (\texttt{LocLe}).
+\end{definition}
+
+\noindent\textbf{Input I} (local divisibility; \texttt{LinkG}). There are exponents $\tau_w\ge0$ such that for every word $u$ and every place $w$ not above the auxiliary prime:
+\begin{enumerate}[label=(\roman*)]
+\item $\mathit{Lift}_u\subseteq\mathfrak p_w^{\lfloor e_w\tau_w\rfloor}\mathit{Ref}_u$ at $w$, and the length of $\mathit{Ref}_u/\mathit{Lift}_u$ at $w$ is at most $\dim_u(\tau_w+\iota_w)$, for small corrections $\iota_w\ge0$;
+\item there are per-step gains $\mathit{gain}_j(p)$ with $0\le\mathit{gain}_j(p)\le4\,|\{t\}|\,a/p$, such that at every ``served'' prime $p$ (an inert prime in the relevant range)
+\begin{equation}\label{eq:per-prime}
+\sum_{j}\sum_{t\in T_p}\bigl(\Lambda^{\mathrm{cls}}_{j,t}(p)-\mathit{lo}(p)\bigr)-\len\cdot\mathit{fl}(p)\ \le\ \sum_j\mathit{gain}_j(p)-\tau(p),
+\end{equation}
+for explicit losses $\mathit{lo}(p),\mathit{fl}(p)\ge0$ and a set $T_p$ of types. At non-served primes all gains and $\tau(p)$ vanish.
+\end{enumerate}
+
+\noindent\emph{Reading.} Inequality \eqref{eq:per-prime} is Claim~A in the precise form the archive uses. At each served prime, the divisibility actually obtained, counted step by step along the chain, is at least the expected count minus explicit losses. ``One unit per step'' (Lemma~\ref{lem:minor}) is the statement that each $\mathit{gain}_j(p)$ keeps pace with the class sums of step~$j$.
+
+The slope gain credited to the lifted lattices is
+\[
+\mathrm{Ga}=2\sum_w\ell_w\Bigl(\sum_j\mathit{gain}_j(w)-\tau_w\Bigr)\qquad(\texttt{GaW}),
+\]
+with $\mathit{gain}_j(w)=\mathit{gain}_j(p(w))$ and $\tau_w=\tau(p(w))$.
+
+\begin{lemma}[splitting the prime sum; \texttt{SplitLe}]\label{lem:split}
+Assume Input~I(ii), and let $S$ be the set of served primes. Then
+\[
+\ASK-\mathrm{Ga}\ \le\ \sum_{p\in S}2\log p\cdot\mathit{loss}(p)\ +\sum_{p\notin S}2\log p\sum_{j,t}\Lambda^{\mathrm{cls}}_{j,t}(p)\ +\ \sum_{j,t}d_{j,t},
+\]
+where $\mathit{loss}(p)=\sum_j\sum_{t\notin T_p}\Lambda^{\mathrm{cls}}_{j,t}(p)+\len\,|T_p|\,\mathit{lo}(p)+\len\,\mathit{fl}(p)$.
+\end{lemma}
+
+\begin{proof}
+Since the gains depend only on $p(w)$ and $\sum_{w\mid p}\ell_w=\log p$,
+\[
+\mathrm{Ga}=\sum_p2\log p\Bigl(\sum_j\mathit{gain}_j(p)-\tau(p)\Bigr).
+\]
+Hence
+\[
+\ASK-\mathrm{Ga}=\sum_p2\log p\cdot\Bigl[\sum_{j,t}\Lambda^{\mathrm{cls}}_{j,t}(p)-\Bigl(\sum_j\mathit{gain}_j(p)-\tau(p)\Bigr)\Bigr]+\sum_{j,t}d_{j,t}.
+\]
+For $p\notin S$ the gains and $\tau(p)$ vanish, so the bracket is $\sum_{j,t}\Lambda^{\mathrm{cls}}_{j,t}(p)$. For $p\in S$, split the types into $T_p$ and its complement and apply~\eqref{eq:per-prime}; the bracket is then at most $\mathit{loss}(p)$.
+\end{proof}
+
+So $\ASK$ and $\mathrm{Ga}$ differ by the losses at served primes plus the whole expected count at non-served primes. The archive bounds the average of $\ASK-\mathrm{Ga}$ over words by a separate small quantity (Input~VI below).
+
+\subsection{Dividing out the expected divisibility}
+\begin{construction}[\texttt{NprimeDef}]
+For each word $u$ let
+\[
+\mathfrak a_u=\prod_w\mathfrak p_w^{\lfloor e_w\sigma_{u,w}\rfloor}
+\]
+for exponents $\sigma_{u,w}$ derived from the $\tau_w$ and the gains. Put $\mathit{Div}_u:=\mathfrak a_u^{-1}\mathit{Lift}_u$, the lifted lattice divided by its expected divisibility.
+\end{construction}
+
+Dividing by $\mathfrak a_u$ raises the slope by the log-norm of $\mathfrak a_u$ divided by the rank:
+\[
+\mu(\mathit{Div}_u)=\mu(\mathit{Lift}_u)+\frac{\log\Nm\mathfrak a_u}{\mathrm{rank}}.
+\]
+The archive records this up to a bounded error (\texttt{NprimeMuR}, \texttt{LenTwist}).
+
+This is the content ideal of Definition~\ref{def:content}, used in the opposite direction. Instead of measuring how divisible the period map is, one divides the source by the divisibility one expects, and then asks that the period map remain integral.
+
+\noindent\textbf{Input II} (integrality of divided periods; part of \texttt{LinkDIV}, \texttt{OneMapIntoCC}). For every word $u$, $\per_u$ maps $\mathit{Div}_u$ into $\mathit{Rows}\dual=\Hom_{\mathcal O_L}(\mathit{Rows},\mathcal O_L)$. Equivalently, $\per_u(\mathit{Lift}_u,\mathit{Rows})\subseteq\mathfrak a_u$.
+
+\noindent\emph{Reading.} Input~II is where the integrality of the theta kernels (Proposition~\ref{prop:theta-integral}) and the stepwise divisibility (Lemma~\ref{lem:minor}) must be used. It says that every period of a lifted form against a test vector is divisible by the expected ideal.
+
+\subsection{Nonvanishing through near-orthogonality}
+\noindent\textbf{Input III} (Gram estimates; \texttt{LinkS}, \texttt{MatRec}). After normalizing bases, the matrices of the maps $\per_u$ have Gram blocks $K_{u,u'}$ (complex matrices of size $\dim_u\times\dim_{u'}$) satisfying the Hilbert--Schmidt bounds
+\[
+\|K_{u,u}-\mathrm{id}\|_{\mathrm{HS}}^2\le e_0\dim_u,\qquad
+\|K_{u,u'}\|_{\mathrm{HS}}^2\le(1+\eta_0)\frac{\dim_u\dim_{u'}}{D_*}\quad(u\neq u'),
+\]
+\[
+\textstyle\sum_u\dim_u\le(1+\eta_1)D_*,
+\]
+where $D_*$ is the dimension of the test space, and $\eta_0,\eta_1,\sqrt{e_0}\le\exp(-x^{\varepsilon/8})$.
+
+\noindent\emph{Reading.} The diagonal condition says that each normalized period map is, on average over its eigenvalues, exponentially close to an isometry. The off-diagonal condition says that the images of different words overlap no more than random subspaces of the same dimensions would.
+
+As far as we could trace, this is how nonvanishing enters. The archive does not prove that a single period is nonzero, for instance by a special $L$-value. Instead, the whole family of period maps is shown to be nearly an orthogonal system of nearly isometric maps. These Gram estimates also supply the correction terms in the averaged slope inequality below. They are estimates of Hermitian norms, i.e.\ analytic, and belong to the archimedean side (Claim~B).
+
+\subsection{The averaged slope inequality}
+Let $h_u$ be an upper bound for the height of $\per_u$, meaning the average over infinite places of the logarithm of its operator norm (\texttt{htMap}). Let $s$ be a weighted mean over $u$ of $\mu(\mathit{Div}_u)-h_u$.
+
+\noindent\textbf{Input IV} (\texttt{SlopeIneq}). With spread parameters $u_F,\mathit{HH}>0$ and $0\le\delta<1$, and $\eta,e\ge0$ coming from Input~III,
+\[
+s-\log\#\{\text{words}\}-\frac{4u_F\log(1+\mathit{HH}/u_F)+(\eta+4\sqrt e)\,\mathit{HH}}{1-\delta}\ \le\ \mu\bigl(\mathit{Rows}\dual\bigr).
+\]
+
+\noindent\emph{Reading.} Compare Theorem~C. For a single nonzero map, the slope of the source is bounded by the slope of the target plus the log of the norm. Input~IV is the same statement averaged over the family of words. Instead of nonvanishing of one map it uses the near-orthogonality of Input~III, and it pays the explicit spread terms.
+
+\subsection{Archimedean size}
+\noindent\textbf{Input V} (\texttt{LinkDIV}). For every word $u$,
+\[
+\mu\bigl(\mathit{Rows}\dual\bigr)+h_u-\mathrm{Fo}\ \le\ \MAIN_u+(\text{errors}),
+\]
+where $\mathrm{Fo}$ is a fixed correction term and
+\begin{equation}\label{eq:main-archive}
+\MAIN_u=\sum_{j=1}^{\len}\sum_t a_t\Bigl(\log a_t-1-\gamma_{\mathrm E}+\frac{L'}{L}(1,\chi)-\frac1f\sum_{\rho}\log w_{u,j,\rho}\Bigr)
+\end{equation}
+(\texttt{WeightedMeanData.Main}). Here $\chi$ is the auxiliary quadratic character, $f$ is a degree, and the $w_{u,j,\rho}$ are positive weights attached to the archimedean data.
+
+\noindent\emph{Reading.} By Stirling's formula, $a\log a-a=\log a!+O(\log a)$. The archive also defines
+\[
+\log\Omega=\gamma_{\mathrm E}+\log(\pi/v)-\tfrac{L'}{L}(1,\chi)
+\]
+(\texttt{logOm}), which is the logarithmic form of the Chowla--Selberg formula for the CM period. So, up to lower-order terms,
+\[
+\MAIN_u\approx\len\cdot\sum_t\log\frac{a_t!}{\Omega^{a_t}} .
+\]
+That is: $\len$ times the logarithmic size of the jets of order $a_t$ of a CM theta function, normalized by the period. The comparison $\ASK\lesssim\MAIN$ is therefore literally a comparison between the expected divisibility of jets and their size, the arithmetic form of Example~\ref{ex:additive}. The factor $\len$ appears on both sides: each step of the chain contributes once to each.
+
+\subsection{Assembly}
+The remaining inputs are bookkeeping on slopes:
+\begin{itemize}
+\item the divided lattices gain slope $\mathrm{Ga}$ over the reference lattices, up to explicit terms (\texttt{SlopesN});
+\item the reference slopes are bounded (\texttt{Slopes});
+\item the heights $h_u$ and certain exponents vary little between words (\texttt{HComp}, \texttt{EComp}, \texttt{Count});
+\item the average of $\ASK-\mathrm{Ga}$ over words is small (\texttt{Losses}).
+\end{itemize}
+Call these \textbf{Input VI}. The archive's assembly theorem (\texttt{MeanBoundSecondForm}) is an implication between real numbers. We state and prove a simplified form with the error terms grouped.
+
+\begin{proposition}[assembly]\label{prop:assembly}
+Let real numbers be given, indexed by the words $u$ (with uniform averages denoted $\mathbb E_u$), satisfying:
+\begin{enumerate}[label=(\alph*)]
+\item $\mu(\mathit{Div}_u)\ge\mu^{\mathrm{ref}}_u+\mathrm{Ga}_u+\mathrm{Fo}-E_1$ (divided lattices gain slope);
+\item $\mathbb E_u\bigl(\mu(\mathit{Div}_u)-h_u\bigr)-S\le\mu(\mathit{Rows}\dual)$ (averaged slope inequality, with spread $S$);
+\item $\mu(\mathit{Rows}\dual)+h_u-\mathrm{Fo}\le\MAIN_u+E_2$ for all $u$ (size);
+\item $\mathbb E_u(\ASK_u-\mathrm{Ga}_u)\le E_3$ (losses);
+\item $\mu^{\mathrm{ref}}_u\ge-E_4$ and $|h_u-h_{u'}|\le E_5$ for all $u,u'$.
+\end{enumerate}
+Then $\mathbb E_u\ASK_u\le\mathbb E_u\MAIN_u+E_1+E_2+E_3+E_4+E_5+S$.
+\end{proposition}
+
+\begin{proof}
+By (d) and (a),
+\[
+\mathbb E\ASK\le\mathbb E\,\mathrm{Ga}+E_3\le\mathbb E\,\mu(\mathit{Div})-\mathbb E\,\mu^{\mathrm{ref}}-\mathrm{Fo}+E_1+E_3 .
+\]
+Write $\mathbb E\,\mu(\mathit{Div})=\mathbb E(\mu(\mathit{Div})-h)+\mathbb E\,h$ and apply (b), then (e):
+\[
+\mathbb E\ASK\le\mu(\mathit{Rows}\dual)+S+\mathbb E\,h-\mathrm{Fo}+E_1+E_3+E_4 .
+\]
+By (e), $\mathbb E\,h\le h_u+E_5$ for every $u$. Applying (c) and averaging over $u$ gives
+\[
+\mu(\mathit{Rows}\dual)+\mathbb E\,h-\mathrm{Fo}\le\mathbb E\,\MAIN+E_2+E_5 .
+\]
+Combining the last two inequalities gives the claim.
+\end{proof}
+
+The archive's version keeps the weights, spreads and rounding explicit; its error term is \texttt{ErrX} in \texttt{MeanBoundSecondForm.lean}. The output $\mathbb E\ASK\le\mathbb E\MAIN+\mathrm{error}$ is then converted into the windowed bound of Claim~\ref{claim:window} by a character-balancing argument (\texttt{ChBalance}, \texttt{ChCore}), which we did not trace.
+
+\subsection{What this shows}
+\begin{enumerate}[label=(\arabic*)]
+\item The inequality is assembled from five substantive inputs:
+\begin{itemize}
+\item local containment and per-prime gains (I);
+\item integrality of divided periods (II);
+\item Gram estimates (III);
+\item the averaged slope inequality (IV);
+\item archimedean size (V).
+\end{itemize}
+Lemma~\ref{lem:split} and Proposition~\ref{prop:assembly} are elementary. All of the arithmetic content sits in the inputs.
+\item \emph{Nonvanishing} is not a separate statement about one period. It comes from near-orthogonality of the whole family (Input~III), an analytic estimate.
+\item \emph{Accumulation along the chain} is the per-prime inequality~\eqref{eq:per-prime} summed over steps~$j$. Its integral content is Inputs~I and~II.
+\item Section~\ref{sec:divisibility} gives a different route to Inputs~I--III. Input~II follows from a one-step local hypothesis by Theorem~\ref{thm:accumulate}. The rate at inert primes and the shape of $\ASK$ follow from Theorems~\ref{thm:LT-exp}--\ref{thm:jet-gain} and Proposition~\ref{prop:factorial}. Qualitative nonvanishing follows from Theorem~\ref{thm:nonvanishing}.
+\item In the archive, too, the interface between the structural part and the analytic part is a record of about forty real numbers (\texttt{WeightedMeanData.Data}). The disconnect between Sections~\ref{sec:duals}--\ref{sec:chain} and Section~\ref{sec:landau} is therefore not an artifact of this exposition. It is how the formal proof is organized.
+\end{enumerate}
+Inputs~I--V are discharged in the archive's \texttt{Development} and \texttt{PositivityTheory} directories, according to \cite{golf}. We have not traced those proofs.
+
+%=====================================================================
+\section{The balance, and the windowed prime bound}\label{sec:balance}
+%=====================================================================
+
+\subsection{Centred ramp sums}\label{subsec:ramp}
+All prime sums in the argument are \emph{ramp-smoothed}. For a Dirichlet character $\chi$ and $y\ge1$ define the ramp sum
+\[
+R_\chi(y)=\sum_{n\le y}\Lambda(n)\,\chi(n)\Bigl(\frac{y}{n}-1\Bigr).
+\]
+Define its \emph{centred} version $G_\chi$ by subtracting the exact main term:
+\[
+G_\chi(y)=
+\begin{cases}
+R_\chi(y)-y\log y+(1+\gamma_{\mathrm E})\,y, & \chi\ \text{trivial},\\[2pt]
+R_\chi(y)+y\,\dfrac{L'(1,\chi)}{L(1,\chi)}, & \chi\ \text{nontrivial},
+\end{cases}
+\]
+where $\gamma_{\mathrm E}$ is Euler's constant. Lemma~\ref{lem:laplace} below shows that these are exactly the terms that remove the singularity at $s=1$.
+
+The quantity $\ASK(a)$ of Claim~A is a ramp sum of this type, at ramp scale $a$, weighted towards primes inert in $\Q(\sqrt{-d})$. $\MAIN(a)$ is its main term.
+
+\begin{definition}\label{def:family}
+A \emph{positive family} $\mathcal F$ is a finite set of Dirichlet characters $\chi_1,\dots,\chi_r$ with real weights $a_1,\dots,a_r>0$. Its centred sum is
+\[
+G_{\mathcal F}(y)=\sum_{i=1}^r a_i\,\mathrm{Re}\,G_{\chi_i}(y).
+\]
+\end{definition}
+
+\subsection{What the construction provides}
+Section~\ref{sec:assembly} describes how the archive combines divisibility, near-orthogonality and size. In the form reported by the sources, the result is that, for $x$ the range of primes involved, $b$ a normalizing degree, and every $\varepsilon>0$,
+\begin{equation}\label{eq:balance}
+\frac{\ASK(a)-\MAIN(a)}{b}\ \le\ x^{O(\varepsilon)}\Bigl(\frac{x}{\len}+\len+\sqrt x\Bigr).
+\end{equation}
+The term $x/\len$ is the rounding loss, since divisibility arrives in whole units per step. The term $\len$ is the archimedean cost per step. Choosing $\len\approx\sqrt x$ makes the right side $x^{1/2+O(\varepsilon)}$; the audit \cite{golf} reports $x^{1/2-\varepsilon}\le\len\le x^{1/2+\varepsilon/2}$.
+
+Inequality~\eqref{eq:balance} concerns one ramp sum, weighted by the condition ``$p$ is inert in the auxiliary fields''. That condition is a condition on the Frobenius of $p$ in the abelian group $\Gal(E/\Q)$. By orthogonality of characters, the indicator function of a subset $S$ of a finite abelian group $\Gamma$ is
+\[
+\mathbf 1_S(g)=\frac1{|\Gamma|}\sum_{\chi\in\widehat\Gamma}\Bigl(\sum_{s\in S}\overline{\chi(s)}\Bigr)\chi(g).
+\]
+By class field theory the characters of $\Gal(E/\Q)$ are Dirichlet characters, so a Frobenius-weighted ramp sum is a linear combination of the ramp sums $R_\chi$. The sources choose $S$ so that the combination has positive weights. This gives the family of \cite{golf} with weight $1$ on the trivial character and $(3o+1)^{-1}$ on the even nontrivial characters of $2$-power conductor $2^{o}$.
+
+The auxiliary primes $q,d$ must be re-chosen as $x$ varies. The reason is that Hecke projections in the construction introduce denominators (congruence modules), controlled by Selmer and Tate--Shafarevich groups, and at each prime a bounded number of exceptional twists must be avoided; an interval lemma finds ranges of $x$ that avoid them. As a result, the bound is obtained only on \emph{windows}. The precise form of the output is the following.
+
+\begin{claim}[windowed prime bound; {\cite{Alpoge,golf}}]\label{claim:window}
+For each Dirichlet character $\psi$ there is a positive family $\mathcal F_\psi$ containing $\psi$, with this property: for every $\varepsilon>0$ there is $C>0$ such that for every $Y_0$ there exists $Y\ge Y_0$ with
+\[
+G_{\mathcal F_\psi}(y)\le C\,y^{1/2+\varepsilon}\qquad\text{for all }y\in[Y,Y^{3/2}].
+\]
+\end{claim}
+
+Claim~\ref{claim:window} is the form in which Claims~A and~B, Theorem~C and~\eqref{eq:balance} enter the analytic step. The passage from~\eqref{eq:balance} to Claim~\ref{claim:window} (character averaging, the choice of windows, and replacing $\ASK$ by the family sum) is reported from \cite{golf} and not verified here.
+
+\begin{remark}[why the classical Landau theorem is not enough]\label{rem:allx}
+If the bound in Claim~\ref{claim:window} held for \emph{all} large $y$, the classical theorem of Landau \cite[\S1.3]{MV} would finish the argument. That theorem says the Mellin transform of a nonnegative function is singular at the real point of its abscissa of convergence. But a bound for all $y$ is essentially as strong as the generalized Riemann hypothesis itself: under GRH the centred sums are $O(y^{1/2+\varepsilon})$ for all $y$. The construction does not provide such a bound, only windows.
+
+On a window, positivity holds only on a bounded range of $y$. So the Mellin transform of the positive quantity is not controlled, and Landau's continuation argument has nothing to act on. A different argument is needed. It is given in the next section, following the structure of the archive's proof (\texttt{zeroFree\_of\_rpow\_window}, with \texttt{landau\_window} and \texttt{lemmaL}, \cite{golf}).
+\end{remark}
+
+%=====================================================================
+\section{From windowed prime bounds to the absence of zeros}\label{sec:landau}
+%=====================================================================
+
+\begin{theorem}[windowed Landau theorem]\label{thm:window}
+Let $\mathcal F=\{(\chi_i,a_i)\}$ be a positive family, and let $0<\vartheta<1$, $\delta>0$ and $C>0$. Suppose that for every $Y_0$ there is $Y\ge Y_0$ with
+\begin{equation}\label{eq:window-hyp}
+G_{\mathcal F}(y)\le C\,y^{\vartheta}\qquad\text{for all }y\in[Y,Y^{1+\delta}].
+\end{equation}
+Then no $L(s,\chi_i)$ vanishes in the half-plane $\mathrm{Re}\,s>\vartheta$.
+\end{theorem}
+
+\begin{corollary}\label{cor:grh}
+Claim~\ref{claim:window} implies the generalized Riemann hypothesis for every Dirichlet $L$-function, and in particular the Riemann hypothesis.
+\end{corollary}
+
+\begin{proof}[Proof of the corollary]
+Apply Theorem~\ref{thm:window} to $\mathcal F_\psi$ with $\delta=\tfrac12$ and $\vartheta=\tfrac12+\varepsilon$, for every $\varepsilon>0$. This excludes zeros of $L(s,\psi)$ with $\mathrm{Re}\,s>\tfrac12$. For primitive $\psi$, the functional equation relates $L(s,\psi)$ to $L(1-s,\bar\psi)$ and so also excludes nontrivial zeros with $\mathrm{Re}\,s<\tfrac12$. An imprimitive character differs from the primitive one inducing it only by finitely many Euler factors, which vanish only on $\mathrm{Re}\,s=0$.
+\end{proof}
+
+The proof of Theorem~\ref{thm:window} has four steps:
+\begin{enumerate}[label=(\arabic*)]
+\item compute the Laplace transform of $G_{\mathcal F}$ and locate its poles;
+\item express Taylor coefficients far to the right as integrals against Gamma-type kernels;
+\item show that, for the right order, these kernels concentrate on one window, which bounds the coefficients from above;
+\item show that a zero with real part $>\vartheta$ forces the coefficients to be large, which contradicts step (3).
+\end{enumerate}
+We use only the following standard facts about $L$-functions \cite[Ch.~10--11]{MV}:
+\begin{itemize}
+\item for nontrivial $\chi$, $L(s,\chi)$ is entire, and $(s-1)\zeta(s)$ is entire;
+\item $L(s,\chi)\neq0$ for $\mathrm{Re}\,s\ge1$;
+\item the zeros in any bounded region are finite in number.
+\end{itemize}
+
+\subsection{Step 1: the Laplace transform and its poles}
+Write $g(u)=G_{\mathcal F}(e^u)$ for $u\ge0$.
+
+\begin{lemma}[growth]\label{lem:growth}
+There is $C_0$ with $|g(u)|\le C_0e^{2u}$ for all $u\ge0$.
+\end{lemma}
+
+\begin{proof}
+For $y\ge1$, $|R_\chi(y)|\le y\sum_{n\le y}\Lambda(n)/n\le y(\log y+O(1))$ by Mertens' theorem. The main terms are $O(y\log y)$. And $y\log y\le y^2$.
+\end{proof}
+
+\begin{lemma}[Laplace transform]\label{lem:laplace}
+For $\mathrm{Re}\,s>2$ put $\Phi(s)=\int_0^\infty g(u)e^{-su}\,du$. Then:
+\begin{enumerate}[label=(\alph*)]
+\item for $\mathrm{Re}\,s>2$,
+\[
+\Phi(s)=\sum_i\frac{a_i}{2}\left[\frac{-\frac{L'}{L}(s,\chi_i)-\frac{L'}{L}(s,\bar\chi_i)}{s(s-1)}\right]+\Phi_{\mathrm{main}}(s),
+\]
+where $\Phi_{\mathrm{main}}$ is the transform of the main terms;
+\item $\Phi$ extends meromorphically to $\mathrm{Re}\,s>0$. Its poles are exactly the set $Z$ of points $\rho$ with $\mathrm{Re}\,\rho>0$ at which some $L(s,\chi_i)$ or $L(s,\bar\chi_i)$ vanishes;
+\item every pole $\rho\in Z$ is simple, with residue
+\[
+c_\rho=-\frac{1}{\rho(\rho-1)}\sum_i\frac{a_i}{2}\bigl(m_i(\rho)+\bar m_i(\rho)\bigr)\neq0,
+\]
+where $m_i(\rho)$ and $\bar m_i(\rho)$ are the orders of vanishing of $L(s,\chi_i)$ and $L(s,\bar\chi_i)$ at $\rho$;
+\item if $\rho\in Z$ is real, then $c_\rho>0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) Substituting $y=e^u$, $\Phi(s)=\int_1^\infty G_{\mathcal F}(y)y^{-s-1}dy$. For each $n$,
+\[
+\int_n^\infty\Bigl(\frac yn-1\Bigr)y^{-s-1}dy=n^{-s}\Bigl(\frac1{s-1}-\frac1s\Bigr)=\frac{n^{-s}}{s(s-1)}.
+\]
+Summing against $\Lambda(n)\chi(n)$ gives $\int_1^\infty R_\chi(y)y^{-s-1}dy=-\frac{L'}{L}(s,\chi)/(s(s-1))$. Since $\mathrm{Re}\,R_\chi=\tfrac12(R_\chi+R_{\bar\chi})$, this gives the bracket. Also
+\[
+\int_1^\infty y\,y^{-s-1}dy=\frac1{s-1},\qquad \int_1^\infty y\log y\,y^{-s-1}dy=\frac1{(s-1)^2}.
+\]
+
+(b) The bracket is meromorphic on $\mathbb C$, and the main-term transforms are rational. We check that the poles at $s=1$ cancel.
+\begin{itemize}
+\item For trivial $\chi$: from $\zeta(s)=\frac1{s-1}+\gamma_{\mathrm E}+O(s-1)$ we get $-\frac{\zeta'}{\zeta}(s)=\frac1{s-1}-\gamma_{\mathrm E}+O(s-1)$. Expanding $\frac1s=1-(s-1)+\cdots$,
+\[
+\frac{-\zeta'/\zeta(s)}{s(s-1)}=\frac1{(s-1)^2}-\frac{1+\gamma_{\mathrm E}}{s-1}+O(1).
+\]
+This is cancelled by the transforms of $-y\log y$ and $+(1+\gamma_{\mathrm E})y$.
+\item For nontrivial $\chi$, the bracket has a simple pole at $1$ with residue $-\frac{L'}{L}(1,\chi)$. It is cancelled by the transform of $y\frac{L'}{L}(1,\chi)$.
+\end{itemize}
+The factor $1/s$ has its pole at $0$, outside $\mathrm{Re}\,s>0$. Since $L(s,\chi)\neq0$ on $\mathrm{Re}\,s\ge1$, the remaining poles in $\mathrm{Re}\,s>0$ are the poles of $L'/L$, which are the zeros.
+
+(c) Near a zero $\rho$ of order $m$, $\frac{L'}{L}(s)=\frac{m}{s-\rho}+O(1)$, which gives the residue formula. The sum is a positive combination of nonnegative integers, not all zero. So $c_\rho\neq0$: the positivity of the weights $a_i$ prevents cancellation between members of the family.
+
+(d) For real $\rho\in(0,1)$ we have $\rho(\rho-1)<0$, so $c_\rho>0$. Ramp smoothing is what produces the factor $1/(s(s-1))$, and hence the positive sign.
+\end{proof}
+
+\subsection{Step 2: Taylor coefficients as kernel integrals}
+For $\mathrm{Re}\,z>2$ and $k\ge0$ put
+\[
+a_k(z)=\frac{(-1)^k\Phi^{(k)}(z)}{k!},
+\]
+so that $\Phi(z-w)=\sum_k a_k(z)w^k$ near $w=0$. Differentiating under the integral, which is justified by Lemma~\ref{lem:growth}, gives
+\begin{equation}\label{eq:coeff}
+a_k(z)=\int_0^\infty g(u)\,\frac{u^k e^{-zu}}{k!}\,du .
+\end{equation}
+
+\begin{lemma}[only the positive part matters]\label{lem:pospart}
+For real $\sigma>2$, real $\gamma$ and $k\ge0$, with $K_k(u)=u^ke^{-\sigma u}/k!$ and $g^+=\max(g,0)$,
+\[
+|a_k(\sigma+i\gamma)|+a_k(\sigma)\ \le\ 2\int_0^\infty g^+(u)\,K_k(u)\,du .
+\]
+\end{lemma}
+
+\begin{proof}
+By \eqref{eq:coeff}, $|a_k(\sigma+i\gamma)|\le\int|g|K_k$ and $a_k(\sigma)=\int gK_k$, and $|g|+g=2g^+$.
+\end{proof}
+
+This is where one-sidedness is used. An \emph{upper} bound on $g$ controls the left side, even though $g$ itself may be very negative.
+
+\subsection{Step 3: the kernel concentrates on one window}
+\begin{lemma}[kernel estimates]\label{lem:kernel}
+Let $k\ge0$ and $\mu>0$.
+\begin{enumerate}[label=(\alph*)]
+\item $\sup_{u\ge0}u^ke^{-\mu u}/k!\le\mu^{-k}$.
+\item For $U>0$ and $t\ge0$: $\int_0^U u^ke^{-\mu u}/k!\,du\le e^{tU}(\mu+t)^{-k-1}$.
+\item For $V>0$ and $0\le t<\mu$: $\int_V^\infty u^ke^{-\mu u}/k!\,du\le e^{-tV}(\mu-t)^{-k-1}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) The maximum is at $u=k/\mu$, with value $k^ke^{-k}/(\mu^kk!)\le\mu^{-k}$, since $k^ke^{-k}\le k!$.
+(b) On $[0,U]$ we have $1\le e^{t(U-u)}$. So the integral is at most $e^{tU}\int_0^\infty u^ke^{-(\mu+t)u}/k!\,du=e^{tU}(\mu+t)^{-k-1}$.
+(c) On $[V,\infty)$ we have $1\le e^{t(u-V)}$, and the same computation applies.
+\end{proof}
+
+Shrinking $\delta$ only weakens the hypothesis~\eqref{eq:window-hyp}, so we may assume $\delta\le\tfrac12$. Fix
+\[
+\sigma\ \ge\ \frac{80}{\delta^2},\qquad
+\kappa=\sigma\Bigl(1+\frac\delta2\Bigr)+\frac4\delta,\qquad
+\tau=\frac\delta2 .
+\]
+For a window $[Y,Y^{1+\delta}]$ put $U=\log Y$, so that in the variable $u$ the window is $[U,(1+\delta)U]$, and take $k=\lfloor\kappa U\rfloor$.
+
+\begin{proposition}[upper bound]\label{prop:upper}
+There is a constant $C_3$, depending on $C,C_0,\delta,\sigma,\vartheta$ but not on $U$, such that for every window satisfying~\eqref{eq:window-hyp} with $U\ge1$, and every real $\gamma$,
+\[
+|a_k(\sigma+i\gamma)|+a_k(\sigma)\ \le\ C_3\,(1+U)\,(\sigma-\vartheta)^{-k}.
+\]
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:pospart} we must bound $\int g^+K_k$, which we split into three ranges.
+
+\emph{The window $[U,(1+\delta)U]$.} Here $g^+(u)\le Ce^{\vartheta u}$ by~\eqref{eq:window-hyp}. By Lemma~\ref{lem:kernel}(a) with $\mu=\sigma-\vartheta$,
+\[
+\int_U^{(1+\delta)U}Ce^{\vartheta u}K_k\,du\le C\delta U\,(\sigma-\vartheta)^{-k}.
+\]
+
+\emph{Below the window, $[0,U]$.} Here $g^+\le C_0e^{2u}$, so the integral is at most $C_0\int_0^Uu^ke^{-\lambda u}/k!\,du$ with $\lambda=\sigma-2$. Apply Lemma~\ref{lem:kernel}(b) with $t'=(\sigma-\vartheta)e^{\tau}-\lambda$. This is $\ge0$ since $\vartheta<2$, and $\lambda+t'=(\sigma-\vartheta)e^{\tau}$. The bound is
+\[
+C_0(\sigma-\vartheta)^{-k-1}\exp\bigl(t'U-\tau(k+1)\bigr).
+\]
+Using $e^\tau\le1+\tau+\tau^2$ for $0\le\tau\le1$, we get $t'\le\sigma(\tau+\tau^2)+2=\sigma(\tfrac\delta2+\tfrac{\delta^2}4)+2=\tau\kappa$. Since $k+1\ge\kappa U$, the exponent is $\le0$.
+
+\emph{Above the window, $[(1+\delta)U,\infty)$.} Apply Lemma~\ref{lem:kernel}(c) with $t=\lambda-(\sigma-\vartheta)e^{-\tau}$, so $0<\lambda-t=(\sigma-\vartheta)e^{-\tau}$. The bound is
+\[
+C_0(\sigma-\vartheta)^{-k-1}\exp\bigl(\tau(k+1)-t(1+\delta)U\bigr)\le C_0e^{\tau}(\sigma-\vartheta)^{-k-1}\exp\bigl((\tau\kappa-t(1+\delta))U\bigr),
+\]
+using $k+1\le\kappa U+1$. From $1-e^{-\tau}\ge\tau-\tau^2/2$ we get $t\ge\sigma(\tfrac\delta2-\tfrac{\delta^2}8)-2$, which is positive since $\sigma\geq 80/\delta^2$. Hence
+\[
+t(1+\delta)-\tau\kappa\ \ge\ \sigma\Bigl(\frac{\delta^2}8-\frac{\delta^3}8\Bigr)-4-2\delta\ \ge\ \frac{\sigma\delta^2}{16}-5\ \ge\ 0,
+\]
+using $\delta\le\tfrac12$ and $\sigma\ge80/\delta^2$. So the exponent is $\le0$.
+
+Adding the three ranges and doubling gives the claim, with $C_3=2\bigl(C\delta+C_0(1+e^{\tau})/(\sigma-\vartheta)\bigr)$.
+\end{proof}
+
+Note that $k=\lfloor\kappa U\rfloor\ge U$, so $1+U\le1+k$. The upper bound therefore grows like $(\sigma-\vartheta)^{-k}$ up to a factor polynomial in $k$.
+
+\subsection{Step 4: a zero to the right of $\vartheta$ forces large coefficients}
+Suppose, for contradiction, that $Z$ contains $\rho_0=\beta_0+i\gamma_0$ with $\beta_0>\vartheta$.
+
+\begin{lemma}[choice of base point]\label{lem:basepoint}
+The parameter $\sigma\ge80/\delta^2$ can be chosen, together with a real $\gamma$, so that, writing $z=\sigma+i\gamma$:
+\begin{enumerate}[label=(\alph*)]
+\item $z$ has a unique nearest point $\rho_*\in Z$, at distance $d<\sigma-\vartheta$;
+\item every other point of $Z$ is at distance $>d$ from $z$;
+\item either $\gamma=0$ and $\rho_*$ is real, or $\mathrm{dist}(\sigma,Z)>d$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+All points of $Z$ have real part $<1$. Any bounded region contains finitely many of them, so nearest points exist and distances to the second-nearest are strictly larger.
+
+\emph{Choice of $\sigma$.} Take $\sigma$ so large that $\sigma-\beta_0>\gamma_0^2/(2(\beta_0-\vartheta))$. Let $\rho_1$ be a point of $Z$ nearest to $\sigma$. Then
+\[
+\mathrm{Re}\,\rho_1\ \ge\ \sigma-|\sigma-\rho_0|\ \ge\ \sigma-\Bigl(\sigma-\beta_0+\frac{\gamma_0^2}{2(\sigma-\beta_0)}\Bigr)\ >\ \vartheta,
+\]
+using $\sqrt{A^2+B^2}\le A+B^2/(2A)$. A tie between a real point $\beta\in Z$ and a nonreal point $\beta'+i\gamma'\in Z$ for nearness to $\sigma$ means $(\sigma-\beta)^2=(\sigma-\beta')^2+\gamma'^2$. This equation is linear in $\sigma$ and has at most one solution. Two distinct real points are never equidistant from $\sigma>1$. Only finitely many points of $Z$ are relevant for $\sigma$ in a bounded interval. So we may move $\sigma$ slightly to ensure that if a real point is nearest to $\sigma$, it is the unique nearest point.
+
+\emph{Case 1: $\rho_1$ is real.} Take $\gamma=0$ and $\rho_*=\rho_1$. Then $d=\sigma-\rho_1<\sigma-\vartheta$.
+
+\emph{Case 2: $\rho_1$ is not real.} Then $d_0:=\mathrm{dist}(\sigma,Z)=|\sigma-\rho_1|>\sigma-\mathrm{Re}\,\rho_1$. The function $f(\gamma)=\mathrm{dist}(\sigma+i\gamma,Z)$ is continuous, and
+\[
+f(\mathrm{Im}\,\rho_1)\le\sigma-\mathrm{Re}\,\rho_1<\min(d_0,\sigma-\vartheta).
+\]
+For two distinct points $\rho\neq\rho'$ of $Z$, the equation $|\sigma+i\gamma-\rho|=|\sigma+i\gamma-\rho'|$ is linear in $\gamma$ when $\mathrm{Im}\,\rho\neq\mathrm{Im}\,\rho'$. When $\mathrm{Im}\,\rho=\mathrm{Im}\,\rho'$ it has no solution, since both real parts are less than $\sigma$. So each pair gives at most one $\gamma$ at which the nearest point is not unique. Only finitely many pairs are relevant near $\gamma=\mathrm{Im}\,\rho_1$. Choose $\gamma$ close to $\mathrm{Im}\,\rho_1$ avoiding these values, with $f(\gamma)<\min(d_0,\sigma-\vartheta)$.
+\end{proof}
+
+\begin{proposition}[lower bound]\label{prop:lower}
+With $z,\rho_*,d$ as in Lemma~\ref{lem:basepoint}, there are $c'>0$, $M$ and $r_1>d$ such that for all $k\ge0$
+\[
+|a_k(z)|+a_k(\sigma)\ \ge\ c'\,d^{-k}-M\,r_1^{-k}.
+\]
+\end{proposition}
+
+\begin{proof}
+Let $e=\min\bigl(\mathrm{dist}(z,Z\smallsetminus\{\rho_*\}),\ \sigma-\vartheta\bigr)$. Then $e>d$ by Lemma~\ref{lem:basepoint}, and the open disc $|s-z|<e$ lies in $\mathrm{Re}\,s>\vartheta$ and contains no point of $Z$ other than $\rho_*$. On it we can write $\Phi(s)=c_*/(s-\rho_*)+h(s)$ with $h$ analytic and $c_*=c_{\rho_*}\neq0$. Since
+\[
+\frac{c_*}{(z-w)-\rho_*}=\sum_{k\ge0}c_*(z-\rho_*)^{-k-1}w^k,
+\]
+we have $a_k(z)=c_*(z-\rho_*)^{-k-1}+h_k$. By Cauchy's estimate, $|h_k|\le M_1r^{-k}$ for any fixed $r$ with $d<r<e$.
+
+\emph{Case 1} ($\gamma=0$, $\rho_*$ real). Here $a_k(\sigma)$ is real, $c_*>0$ by Lemma~\ref{lem:laplace}(d), and $z-\rho_*=d>0$. So
+\[
+|a_k(\sigma)|+a_k(\sigma)\ \ge\ 2a_k(\sigma)\ \ge\ 2c_*d^{-k-1}-2M_1r^{-k}.
+\]
+
+\emph{Case 2} ($\mathrm{dist}(\sigma,Z)=d_0>d$). Fix $r_0$ with $d<r_0<d_0$. We have $d_0\le|\sigma-\rho_0|<\sigma-\vartheta$ by the choice of $\sigma$, so the disc $|s-\sigma|<d_0$ lies in $\mathrm{Re}\,s>\vartheta$ and contains no point of $Z$. Since $\Phi$ is analytic there, Cauchy's estimate gives $|a_k(\sigma)|\le M_2r_0^{-k}$. Hence
+\[
+|a_k(z)|+a_k(\sigma)\ \ge\ |c_*|d^{-k-1}-M_1r^{-k}-M_2r_0^{-k}.
+\]
+In both cases the claim follows with $r_1=\min(r,r_0)$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:window}]
+Choose $\sigma$, $\gamma$ and $z$ by Lemma~\ref{lem:basepoint}; note that $\sigma\ge80/\delta^2$. For each window supplied by the hypothesis, with $U=\log Y$ large, set $k=\lfloor\kappa U\rfloor$. Propositions~\ref{prop:upper} and~\ref{prop:lower} give
+\[
+c'\,d^{-k}\ \le\ M\,r_1^{-k}+C_3(1+k)(\sigma-\vartheta)^{-k}.
+\]
+Since $d<r_1$ and $d<\sigma-\vartheta$, the left side divided by the right side tends to infinity as $k\to\infty$. The hypothesis supplies windows with $U$, and hence $k$, arbitrarily large. This is a contradiction, so $Z$ contains no point with real part $>\vartheta$.
+\end{proof}
+
+\begin{remark}
+The three places where structure enters the proof are:
+\begin{itemize}
+\item the one-sidedness of the hypothesis, used only through the identity $|g|+g=2g^+$ (see Lemma~\ref{lem:pospart});
+\item ramp smoothing, which makes real poles have positive residue (see Lemma~\ref{lem:laplace}, part~(d));
+\item the positivity of the family weights, which prevents cancellation of residues (see Lemma~\ref{lem:laplace}, part~(c)).
+\end{itemize}
+The device of taking Taylor coefficients at a far-right point, where they become integrals against kernels concentrated on one window, replaces Landau's analytic continuation of the abscissa of convergence. The kernel $u^ke^{-\sigma u}/k!$ is the density of a Gamma distribution with mean $(k+1)/\sigma\approx(1+\delta/2)U$ and relative width $k^{-1/2}$. That is why a single window of logarithmic length $\delta U$ suffices.
+\end{remark}
+
+%=====================================================================
+\section{Where the analysis lives}\label{sec:analysis}
+%=====================================================================
+
+In the language of Section~\ref{sec:groupoids}, every analytic input is one of three operations that turn something categorical into a number:
+\begin{enumerate}[label=(\arabic*)]
+\item \emph{Evaluating a groupoid cardinality} as an $L$-value: the mass formula (\S\ref{subsec:mass}), and the Siegel--Weil and Rallis formulas in Claim~B.
+\item \emph{Supplying the archimedean half of an arithmetic degree}: Chowla--Selberg, Stirling and near-orthogonality in Claim~B, and the arithmetic volumes bounding $\mu_{\min}$ in Theorem~C.
+\item \emph{The Mellin transform between prime sums and zeros}: Theorem~\ref{thm:window}.
+\end{enumerate}
+Proposition~\ref{prop:poisson} also uses Poisson summation, but only to identify a model.
+
+Over a function field, all three operations become formal:
+\begin{itemize}
+\item groupoid cardinalities of moduli stacks of bundles are computed by the Tamagawa--Weil formula;
+\item degrees have no archimedean part;
+\item the zeta function is a rational function of $q^{-s}$, so prime sums and zeros are related by a finite identity (the Lefschetz trace formula).
+\end{itemize}
+This is the function field analogy \cite{nLab-FFA}. It is why the Riemann hypothesis over finite fields admits proofs, by Weil, by Stepanov--Bombieri and by Deligne, in which no estimate at infinity is needed.
+
+Over a number field, the arithmetic degree has an irreducible archimedean part. Claim~B and the lower bound for $\mu_{\min}$ are that part. Of these, near-orthogonality is the most analytic and the most likely to admit an algebraic replacement.
+
+%=====================================================================
+\section*{Acknowledgement of sources}
+%=====================================================================
+The formal proof is Alp\"oge's \cite{Alpoge}. The architecture described here is taken from \cite{Zhang,nasqret,golf}. Of these, \cite{nasqret} and parts of \cite{golf} are pseudonymous or AI-assisted, and their mutual agreement does not by itself establish agreement with the archive. The categorical formulation, the choice of orientations and duals, the proofs in Sections~\ref{sec:duals}--\ref{sec:chain}, Lemmas~\ref{lem:minor}--\ref{lem:covector} as stated, Theorem~C and the proof of Theorem~\ref{thm:window} are given here; the strategy of the latter follows the archive's \texttt{landau\_window}.
+
+\begin{thebibliography}{99}\small
+
+\bibitem{ABW} K.~Akin, D.~Buchsbaum, J.~Weyman, \emph{Schur functors and Schur complexes}, Adv.\ Math.\ \textbf{44} (1982), 207--278.
+
+\bibitem{Alpoge} L.~Alp\"oge, \emph{A remark on characters}, note and Lean~4 archive, \texttt{alpo.ge/remark.pdf}, 20 November 2026.
+
+\bibitem{BaezHoffnungWalker} J.~Baez, A.~Hoffnung, C.~Walker, \emph{Higher-dimensional algebra VII: Groupoidification}, Theory Appl.\ Categ.\ \textbf{24} (2010), 489--553; arXiv:0908.4305.
+
+\bibitem{Bombieri-Stepanov} E.~Bombieri, \emph{Counting points on curves over finite fields (d'apr\`es S.~A.~Stepanov)}, S\'em.\ Bourbaki, exp.~430 (1973).
+
+\bibitem{Borel-HC} A.~Borel, Harish-Chandra, \emph{Arithmetic subgroups of algebraic groups}, Ann.\ of Math.\ \textbf{75} (1962), 485--535.
+
+\bibitem{Bost-Bourbaki} J.-B.~Bost, \emph{P\'eriodes et isog\'enies des vari\'et\'es ab\'eliennes sur les corps de nombres}, S\'em.\ Bourbaki, exp.~795, Ast\'erisque \textbf{237} (1996), 115--161.
+
+\bibitem{Chowla-Selberg} S.~Chowla, A.~Selberg, \emph{On Epstein's zeta-function}, J.\ reine angew.\ Math.\ \textbf{227} (1967), 86--110.
+
+\bibitem{Gan-theta} W.~T.~Gan, S.~Takeda, \emph{A proof of the Howe duality conjecture}, J.\ Amer.\ Math.\ Soc.\ \textbf{29} (2016), 473--493.
+
+\bibitem{GHY} W.~T.~Gan, J.~Hanke, J.-K.~Yu, \emph{On an exact mass formula of Shimura}, Duke Math.\ J.\ \textbf{107} (2001), 103--133.
+
+\bibitem{GQT} W.~T.~Gan, Y.~Qiu, S.~Takeda, \emph{The regularized Siegel--Weil formula (the second term identity) and the Rallis inner product formula}, Invent.\ Math.\ \textbf{198} (2014), 739--831.
+
+\bibitem{Gillet-Soule} H.~Gillet, C.~Soul\'e, \emph{Arithmetic intersection theory}, Publ.\ Math.\ IH\'ES \textbf{72} (1990), 93--174.
+
+\bibitem{golf} \texttt{nil-commits/alpoge-rh-golf}, verification notes, definitional audit and source map for the Alp\"oge archive, GitHub, November 2026.
+
+\bibitem{Gross-AMF} B.~H.~Gross, \emph{Algebraic modular forms}, Israel J.\ Math.\ \textbf{113} (1999), 61--93.
+
+\bibitem{Gross-motive} B.~H.~Gross, \emph{On the motive of a reductive group}, Invent.\ Math.\ \textbf{130} (1997), 287--313.
+
+\bibitem{Ingham} A.~E.~Ingham, \emph{The Distribution of Prime Numbers}, Cambridge Tracts \textbf{30}, 1932.
+
+\bibitem{Kudla-seesaw} S.~Kudla, \emph{Seesaw dual reductive pairs}, in: Automorphic Forms of Several Variables (Katata 1983), Progr.\ Math.\ \textbf{46}, Birkh\"auser, 1984, 244--268.
+
+\bibitem{Kudla-splitting} S.~Kudla, \emph{Splitting metaplectic covers of dual reductive pairs}, Israel J.\ Math.\ \textbf{87} (1994), 361--401.
+
+\bibitem{Landherr} W.~Landherr, \emph{\"Aquivalenz Hermitescher Formen \"uber einem beliebigen algebraischen Zahlk\"orper}, Abh.\ Math.\ Sem.\ Hamburg \textbf{11} (1935), 245--248.
+
+\bibitem{Lang-EF} S.~Lang, \emph{Elliptic Functions}, 2nd ed., GTM \textbf{112}, Springer, 1987.
+
+\bibitem{LeanBlog} Lean community blog, \emph{Lean verification of the Riemann Hypothesis}, 21 November 2026.
+
+\bibitem{Lubin-Tate} J.~Lubin, J.~Tate, \emph{Formal complex multiplication in local fields}, Ann.\ of Math.\ \textbf{81} (1965), 380--387.
+
+\bibitem{MV} H.~Montgomery, R.~Vaughan, \emph{Multiplicative Number Theory I}, Cambridge, 2007.
+
+\bibitem{MVW} C.~M\oe glin, M.-F.~Vign\'eras, J.-L.~Waldspurger, \emph{Correspondances de Howe sur un corps $p$-adique}, LNM \textbf{1291}, Springer, 1987.
+
+\bibitem{Mumford-eq} D.~Mumford, \emph{On the equations defining abelian varieties I}, Invent.\ Math.\ \textbf{1} (1966), 287--354.
+
+\bibitem{nasqret} ``nasqret'', architecture guide to the Alp\"oge proof, November 2026 (pseudonymous).
+
+\bibitem{Neukirch} J.~Neukirch, \emph{Algebraic Number Theory}, Grundlehren \textbf{322}, Springer, 1999.
+
+\bibitem{nLab-Arakelov} nLab, \emph{Arakelov geometry}.
+
+\bibitem{nLab-cardinality} nLab, \emph{groupoid cardinality}.
+
+\bibitem{nLab-FFA} nLab, \emph{function field analogy}.
+
+\bibitem{nLab-GFT} nLab, \emph{geometric function theory}; \emph{groupoidification}; \emph{Hecke correspondence}.
+
+\bibitem{nLab-theta} nLab, \emph{theta function}; \emph{metaplectic representation}.
+
+\bibitem{Rallis} S.~Rallis, \emph{On the Howe duality conjecture}, Compositio Math.\ \textbf{51} (1984), 333--399.
+
+\bibitem{Scharlau} W.~Scharlau, \emph{Quadratic and Hermitian Forms}, Grundlehren \textbf{270}, Springer, 1985.
+
+\bibitem{Tate-thesis} J.~Tate, \emph{Fourier analysis in number fields and Hecke's zeta-functions}, in: Algebraic Number Theory (Cassels--Fr\"ohlich eds.), 1967.
+
+\bibitem{Weil-Acta} A.~Weil, \emph{Sur certains groupes d'op\'erateurs unitaires}, Acta Math.\ \textbf{111} (1964), 143--211.
+
+\bibitem{Zhang} S.-W.~Zhang, preliminary note on the Alp\"oge GRH argument, November 2026.
+
+\end{thebibliography}
+\end{document}

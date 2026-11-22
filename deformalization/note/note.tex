@@ -1,0 +1,198 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amssymb,amsmath,amsthm,mathtools}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- sync markers (read by scripts/check_sync.py) ----------
+% \lean{A.b, A.c}  : Lean declarations realizing this item
+% \leanok          : those declarations are fully proved (no sorry, standard axioms)
+% \notready        : deliberately not formalized yet
+\newcommand{\lean}[1]{\par\smallskip\noindent{\footnotesize\raggedright\textsf{Lean:} \path{#1}\par}}
+\newcommand{\leanok}{{\footnotesize\ \textsf{[formalized]}}}
+\newcommand{\notready}{\par\smallskip\noindent{\footnotesize\textsf{[not yet formalized]}}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\DeclareMathOperator{\Aut}{Aut}
+\newcommand{\Z}{\mathbb{Z}}
+
+\begin{document}
+\title{Finite groupoids, correspondences, and divisibility}
+\date{}
+\begin{abstract}
+A short note, kept in sync with the Lean library \texttt{GroupoidCorr}. It formalizes the structural part of the theta-chain account of the generalized Riemann hypothesis. That part has three pieces: integral pushforward along maps of finite groupoids, composition of correspondences, and the fact that divisibility orders add along a chain. Each numbered item names the Lean declarations that realize it. The script \texttt{scripts/check\_sync.py} checks that the two stay in correspondence.
+\end{abstract}
+\maketitle
+
+Throughout, $R$ is a commutative ring. In the application, $R$ is the ring of integers of a number field, or its localization at a prime.
+
+%======================================================================
+\section{Invariants, coinvariants and the norm map}
+%======================================================================
+
+Let $G$ be a finite group acting $R$-linearly on an $R$-module $V$ by $\rho$. The \emph{norm} of $v\in V$ is $\sum_{g\in G}\rho(g)v$.
+
+\begin{lemma}\label{lem:norm-map}
+\begin{enumerate}
+\item If $v$ is invariant, its norm is $|G|\,v$.
+\item For every $v$, $|G|\,v=\sum_g\bigl(v-\rho(g)v\bigr)+\sum_g\rho(g)v$.
+\item If the norm of $v$ vanishes, then $|G|\,v$ lies in the span of the elements $v-\rho(g)v$.
+\end{enumerate}
+Consequently the norm map from coinvariants to invariants has kernel and cokernel killed by $|G|$.
+\lean{GroupoidCorr.norm_of_invariant, GroupoidCorr.card_smul_eq_norm_add, GroupoidCorr.card_smul_mem_span_of_norm_eq_zero}
+\end{lemma}
+
+\begin{proof}
+(1) Every summand equals $v$. (2) Expand $\sum_g(v-\rho(g)v)=|G|\,v-\sum_g\rho(g)v$. (3) Substitute the vanishing norm into (2).
+
+For the consequence: by (1), the image of the norm map contains $|G|$ times every invariant, so $|G|$ kills the cokernel. By (3), $|G|$ kills the kernel, since the span of the $v-\rho(g)v$ is the kernel of the projection to coinvariants.
+\end{proof}
+
+%======================================================================
+\section{Local systems on groupoids and pushforward}
+%======================================================================
+
+\begin{definition}\label{def:local-system}
+A \emph{local system} of $R$-modules on a groupoid $X$ is a functor $F\colon X\to R\text{-Mod}$.
+\lean{GroupoidCorr.LocalSystem}
+\end{definition}
+
+\begin{definition}\label{def:section}
+A \emph{section} of $F$ is a family $(s_x)_{x\in X}$ with $s_x\in F(x)$ such that $F(g)(s_x)=s_y$ for every morphism $g\colon x\to y$.
+\lean{GroupoidCorr.Sec}
+\end{definition}
+
+\begin{definition}\label{def:fibre}
+Let $f\colon X\to Y$ be a functor of groupoids and $y\in Y$. The \emph{fibre} of $f$ over $y$ is the set of equivalence classes of pairs $(x,\alpha)$ with $\alpha\colon f(x)\to y$. Two pairs are equivalent, $(x,\alpha)\sim(x',\alpha')$, if some $\beta\colon x\to x'$ satisfies $f(\beta);\alpha'=\alpha$. Here $;$ denotes composition in diagrammatic order (first $f(\beta)$, then $\alpha'$), matching the composition operator of Lean's category theory library.
+\lean{GroupoidCorr.fibreSetoid, GroupoidCorr.Fibre}
+\end{definition}
+
+\begin{proof}[The relation is an equivalence relation]
+Reflexivity: take $\beta=\mathrm{id}$. Symmetry: if $f(\beta);\alpha'=\alpha$, then $f(\beta^{-1});\alpha=f(\beta^{-1});f(\beta);\alpha'=\alpha'$. Transitivity: if $f(\beta);\alpha'=\alpha$ and $f(\gamma);\alpha''=\alpha'$, then $f(\beta;\gamma);\alpha''=f(\beta);f(\gamma);\alpha''=\alpha$.
+\end{proof}
+
+\begin{lemma}\label{lem:summand-wd}
+Let $F$ be a local system on $Y$ and $s$ a section of $f^*F=F\circ f$. The element $F(\alpha)(s_x)\in F(y)$ depends only on the class of $(x,\alpha)$ in the fibre.
+\lean{GroupoidCorr.summand_wd}
+\end{lemma}
+
+\begin{proof}
+If $f(\beta);\alpha'=\alpha$, then
+\[
+F(\alpha')(s_{x'})=F(\alpha')\bigl(F(f\beta)(s_x)\bigr)=F\bigl(f(\beta);\alpha'\bigr)(s_x)=F(\alpha)(s_x),
+\]
+using the compatibility of $s$ along $\beta$ and the functoriality of $F$.
+\end{proof}
+
+\begin{definition}\label{def:pushforward}
+Assume all fibres of $f$ are finite. The \emph{pushforward} of a section $s$ of $f^*F$ is
+\[
+(f_!s)_y=\sum_{[(x,\alpha)]\in\text{fibre over }y}F(\alpha)(s_x)\ \in F(y).
+\]
+It is a finite sum with integer coefficients: nothing is divided.
+\lean{GroupoidCorr.pushVal}
+\end{definition}
+
+\begin{proposition}\label{prop:push-section}
+$f_!s$ is a section of $F$.
+\lean{GroupoidCorr.pushVal_compat, GroupoidCorr.push}
+\end{proposition}
+
+\begin{proof}
+Let $g\colon y\to y'$. Post-composition $(x,\alpha)\mapsto(x,\alpha;g)$ respects the equivalence relation, and it is a bijection from the fibre over $y$ to the fibre over $y'$, with inverse given by post-composition with $g^{-1}$. It carries the summand $F(\alpha)(s_x)$ to $F(\alpha;g)(s_x)=F(g)\bigl(F(\alpha)(s_x)\bigr)$. Since $F(g)$ is additive, summing gives $F(g)\bigl((f_!s)_y\bigr)=(f_!s)_{y'}$.
+\end{proof}
+
+\begin{proposition}[base change]\label{prop:base-change}
+Let $W=X\times_YZ$ be the $2$-fibre product: its objects are triples $(x,z,\gamma\colon f(x)\to g(z))$, and its morphisms are pairs of morphisms compatible with the $\gamma$'s. Let $f'\colon W\to Z$ and $g'\colon W\to X$ be the projections. Then $g^*f_!=f'_!\,g'^*$.
+\notready
+\end{proposition}
+
+\begin{proof}
+For $z\in Z$, the fibre of $f'$ over $z$ is in bijection with the fibre of $f$ over $g(z)$, compatibly with summands.
+\end{proof}
+
+\begin{proposition}[groupoid cardinality and adjointness]\label{prop:adjoint}
+For finite groupoids and faithful $f$, write
+\[
+\langle a,b\rangle_X=\sum_{[x]}\frac{a(x)\,\overline{b(x)}}{|\Aut x|}
+\]
+for $\mathbb C$-valued functions on isomorphism classes. Then $\langle f_!a,b\rangle_Y=\langle a,f^*b\rangle_X$.
+\notready
+\end{proposition}
+
+\begin{proof}
+$\Aut(y)$ acts on the fibre over $y$. Its orbits are the classes $[x]$ with $f(x)\cong y$, and the stabilizers are isomorphic to $\Aut(x)$ by faithfulness. Apply the orbit--stabilizer formula.
+\end{proof}
+
+%======================================================================
+\section{Correspondences, composition, and divisibility}
+%======================================================================
+
+\begin{definition}\label{def:correspondence}
+A \emph{correspondence} from $(X,F)$ to $(X',F')$ consists of:
+\begin{itemize}
+\item a groupoid $C$;
+\item functors $\mathrm{src}\colon C\to X$ and $\mathrm{tgt}\colon C\to X'$, with the fibres of $\mathrm{tgt}$ finite;
+\item a \emph{kernel} $K\colon\mathrm{src}^*F\to\mathrm{tgt}^*F'$, a morphism of local systems on $C$.
+\end{itemize}
+Its operator is $T_C=\mathrm{tgt}_!\circ K\circ\mathrm{src}^*$.
+\notready
+\end{definition}
+
+\begin{proposition}[composition]\label{prop:composition}
+The composite of the operators of two correspondences is the operator of their $2$-fibre product, with the composite kernel.
+\notready
+\end{proposition}
+
+\begin{proof}
+Write $T_{C_2}T_{C_1}=\mathrm{tgt}_{2!}K_2\,\mathrm{src}_2^*\,\mathrm{tgt}_{1!}K_1\,\mathrm{src}_1^*$ and replace $\mathrm{src}_2^*\mathrm{tgt}_{1!}$ by base change (Proposition~\ref{prop:base-change}).
+\end{proof}
+
+Operators of correspondences are $R$-linear, since pullback, kernels and pushforward are. So the divisibility statement reduces to linear algebra.
+
+\begin{definition}\label{def:chain}
+For $R$-linear maps $K_i\colon M_i\to M_{i+1}$, the composite of the first $n$ steps is
+\[
+K_{(n)}=K_{n-1}\circ\cdots\circ K_0\colon M_0\to M_n,\qquad K_{(0)}=\mathrm{id}.
+\]
+\lean{GroupoidCorr.chainComp}
+\end{definition}
+
+\begin{theorem}[orders add along a chain]\label{thm:orders-add}
+Let $\varpi\in R$, and suppose $K_i=\varpi^{r_i}K_i'$ for $R$-linear maps $K_i'$. Then
+\[
+K_{(n)}=\varpi^{\,r_0+\cdots+r_{n-1}}\,K'_{(n)} .
+\]
+\lean{GroupoidCorr.chainComp_eq_pow_smul}
+\end{theorem}
+
+\begin{proof}
+Induction on $n$. For $n=0$ both sides are the identity. For the step,
+\[
+K_{(n+1)}=K_n\circ K_{(n)}=\bigl(\varpi^{r_n}K_n'\bigr)\circ\bigl(\varpi^{S}K'_{(n)}\bigr)=\varpi^{S+r_n}\,K'_{(n+1)},
+\]
+where $S=r_0+\cdots+r_{n-1}$, because composition is bilinear.
+\end{proof}
+
+\begin{corollary}\label{cor:divisible-values}
+If a bilinear period pairing satisfies $\mathit{per}=\varpi^{S}\mathit{per}'$ with $\mathit{per}'$ integral, then every value of $\mathit{per}$ lies in the ideal $(\varpi^{S})$.
+\lean{GroupoidCorr.values_mem_span_pow}
+\end{corollary}
+
+\begin{proof}
+$\mathit{per}(x)(y)=\varpi^{S}\cdot\mathit{per}'(x)(y)$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:orders-add} and Corollary~\ref{cor:divisible-values} together give the divisibility of the periods of a theta chain once each step's kernel is divisible by $\varpi^{r_i}$. This is Theorem~8.11 and Corollary~8.12 of the main account. The reduction from the groupoid-level statement to the linear one uses Proposition~\ref{prop:composition} and the $R$-linearity of pushforward.
+\end{remark}
+
+\end{document}
