@@ -482,4 +482,66 @@ Let $\mathfrak p_1,\dots,\mathfrak p_m$ be distinct nonzero primes of $R$ and $e
 (1) Powers of distinct maximal ideals are pairwise coprime, so $\bigcap_i\mathfrak p_i^{e_i}=\prod_i\mathfrak p_i^{e_i}$. (2) $\mathfrak a\neq0$ is invertible as a fractional ideal, so $\alpha\,\mathit{per}(v)(w)\in\mathfrak a^{-1}\mathfrak a=R$. (3) Lemma~\ref{lem:local-global} gives the hypothesis of (1).
 \end{proof}
 
+%======================================================================
+\section{Content of the period map, and Claim A}
+%======================================================================
+
+This section is Section~7 (Definition~7.3, Proposition~7.4) and Theorem~8.13 of the main account. Let $\mathit{per}\colon N\times P\to R$ be bilinear over a commutative ring $R$.
+
+\begin{definition}\label{def:content}
+For an ideal $I$, $\mathit{per}$ \emph{vanishes modulo $I$} if every value $\mathit{per}(v)(w)$ reduces to $0$ in $R/I$. By tensor--hom adjunction this is the same as $\mathit{per}\otimes_RR/I=0$ as a map $N\otimes_RR/I\to\mathrm{Hom}_R(P,R/I)$, because the target is an $R/I$-module. The \emph{content} $\mathrm{cont}(\mathit{per})$ is the ideal spanned by the values. For a Dedekind domain $R$ and a nonzero prime $\mathfrak p$, $\ord_{\mathfrak p}(\mathit{per})$ is the exponent of $\mathfrak p$ in $\mathrm{cont}(\mathit{per})$.
+\lean{GroupoidCorr.content, GroupoidCorr.VanishesMod, GroupoidCorr.ordP}\leanok
+\end{definition}
+
+\begin{proposition}\label{prop:content}
+\begin{enumerate}
+\item $\mathit{per}$ vanishes modulo $I$ if and only if $\mathrm{cont}(\mathit{per})\subseteq I$. Over a Dedekind domain with $\mathrm{cont}(\mathit{per})\ne0$, $\ord_{\mathfrak p}(\mathit{per})$ is the largest $r$ such that $\mathit{per}$ vanishes modulo $\mathfrak p^r$, and $\mathrm{cont}(\mathit{per})=\prod_{\mathfrak p}\mathfrak p^{\ord_{\mathfrak p}(\mathit{per})}$.
+\item Vanishing modulo $I$ survives composition with linear maps on either side, and any ring map $R\to S$ that kills $I$.
+\end{enumerate}
+\lean{GroupoidCorr.vanishesMod_iff, GroupoidCorr.le_ordP_iff, GroupoidCorr.content_factorization, GroupoidCorr.VanishesMod.comp, GroupoidCorr.VanishesMod.map}\leanok
+\end{proposition}
+
+\begin{proof}
+(1) The content is spanned by the values. Over a Dedekind domain, $\mathrm{cont}\subseteq\mathfrak p^r$ if and only if $\mathfrak p^r\mid\mathrm{cont}$, and the product formula is unique factorization of ideals. (2) Composition and base change preserve the zero map.
+\end{proof}
+
+Now let $E$ be a number field and $R=\mathcal O_E$. For a prime $\mathfrak q$ of $\mathcal O_E$ over $p$, write $e(\mathfrak q)$ and $f(\mathfrak q)$ for its ramification index and inertia degree.
+
+\begin{lemma}\label{lem:norm-bound}
+Let $C\ne0$ be an ideal of $\mathcal O_E$, and $T$ a finite set of rational primes. If $C\subseteq\mathfrak q^{n(\mathfrak q)}$ for every prime $\mathfrak q$ above a prime in $T$, then
+\[
+\sum_{p\in T}\sum_{\mathfrak q\mid p}n(\mathfrak q)\,f(\mathfrak q)\log p\ \le\ \log\Nm C .
+\]
+\lean{GroupoidCorr.log_absNorm_ge}\leanok
+\end{lemma}
+
+\begin{proof}
+The $\mathfrak q$ are distinct nonzero primes, so $C\subseteq\prod\mathfrak q^{n(\mathfrak q)}$. Then $\Nm\prod\mathfrak q^{n(\mathfrak q)}$ divides $\Nm C\ne0$, and $\Nm\mathfrak q=p^{f(\mathfrak q)}$.
+\end{proof}
+
+This is the inequality half of the main account's formula $\log\Nm\mathrm{cont}(\mathit{per})=\sum_{\mathfrak p}\ord_{\mathfrak p}(\mathit{per})\,f_{\mathfrak p}\log p$, and it is the half that Claim~A uses.
+
+\begin{theorem}[Claim A from Hypothesis J]\label{thm:claimA}
+Let $\chi=\chi_{-d}$ be as in Definition~\ref{def:quad-char}, and let $a_1,\dots,a_\ell\ge1$ be the jet orders of the steps of a chain, all at most $A$. Let $\mathit{per}$ be the period map of the chain over $\mathcal O_E$, with $\mathrm{cont}(\mathit{per})\ne0$. Assume that for every prime $\mathfrak q$ of $\mathcal O_E$ above an inert $p\le A$ there are $m_1,\dots,m_\ell\ge0$ such that:
+\begin{itemize}
+\item $m_i\ge e(\mathfrak q)\,g_p(a_i)$ whenever $p\le a_i$, with $g_p$ as in Corollary~\ref{cor:factorial-gain};
+\item $\mathit{per}$ vanishes modulo $\mathfrak q^{m_1+\cdots+m_\ell}$.
+\end{itemize}
+Then
+\[
+\log\Nm\mathrm{cont}(\mathit{per})\ \ge\ \frac{[E:\mathbb Q]}2\sum_{i=1}^{\ell}\Bigl(\ASK^\flat(a_i)-\frac{a_i\log d}{d-1}-4\pi(a_i)\log a_i\Bigr).
+\]
+\lean{GroupoidCorr.claimA_core, GroupoidCorr.claimA}\leanok
+\end{theorem}
+
+The hypothesis is what Hypothesis~J of the main account provides, which is not formalized here. Hypothesis~J and Theorem~\ref{thm:jet-gain} make step $i$ divisible by $\mathfrak q^{m_i}$ with $m_i\ge e(\mathfrak q)g_p(a_i)$. Orders add along the chain (Theorem~\ref{thm:orders-add-corr}, Corollary~\ref{cor:divisible-values} and Lemma~\ref{lem:local-global}), so the period map vanishes modulo $\mathfrak q^{\sum m_i}$.
+
+\begin{proof}
+Put $G(p)=\sum_{i:\,p\le a_i}g_p(a_i)$. By Lemma~\ref{lem:norm-bound} with $n(\mathfrak q)=\sum_im_i\ge e(\mathfrak q)G(p)$, and by the fundamental identity $\sum_{\mathfrak q\mid p}e(\mathfrak q)f(\mathfrak q)=[E:\mathbb Q]$,
+\[
+[E:\mathbb Q]\sum_{p\le A\ \mathrm{inert}}\log p\cdot G(p)\ \le\ \log\Nm\mathrm{cont}(\mathit{per}).
+\]
+Exchanging the sums over $p$ and $i$, the left side is $\frac{[E:\mathbb Q]}2\sum_i\sum_{p\le a_i\ \mathrm{inert}}2\log p\cdot g_p(a_i)$. Bound each inner sum from below by Corollary~\ref{cor:factorial-gain}.
+\end{proof}
+
 \end{document}

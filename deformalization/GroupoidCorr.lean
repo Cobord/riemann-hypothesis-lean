@@ -11,3 +11,5 @@ import GroupoidCorr.OneStep
 import GroupoidCorr.Factorial
 import GroupoidCorr.Divided
 import GroupoidCorr.QuadCharJacobi
+import GroupoidCorr.Content
+import GroupoidCorr.ClaimA

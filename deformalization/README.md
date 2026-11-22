@@ -9,7 +9,8 @@ A short note (`note/note.tex`) and a Lean 4 library (`GroupoidCorr/`) kept in on
 - denominators of the Lubin–Tate exponential and divisibility of jets at inert primes;
 - the one-step minor lemma behind each unit of divisibility;
 - the factorial identity relating the prime sum to the inert factorial ideal;
-- integrality of divided periods over a Dedekind domain.
+- integrality of divided periods over a Dedekind domain;
+- the content of the period map, and Claim A from (the consequence of) Hypothesis J.
 
 ```
 lake exe cache get && lake build
