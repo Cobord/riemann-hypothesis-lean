@@ -165,17 +165,32 @@ F(g\delta)\bigl(F(\gamma)(s_x)\bigr)=F(\gamma;g\delta)(s_x)=F\bigl(f\beta;\gamma
 (3) The bijection of (2) carries the summand $F(g\delta)\bigl(F(\gamma)(s_x)\bigr)$ to $F(\gamma;g\delta)(s_x)$. These are equal by functoriality. Sum over the fibre.
 \end{proof}
 
-\begin{proposition}[groupoid cardinality and adjointness]\label{prop:adjoint}
-For finite groupoids and faithful $f$, write
+\begin{definition}\label{def:finite-groupoid}
+A groupoid is \emph{finite} if it has finitely many isomorphism classes of objects and every automorphism group is finite. Then every hom-set is finite, and the fibres of any functor between finite groupoids are finite. A $\mathbb C$-valued function on isomorphism classes is the same as a section of the constant local system $\mathbb C$. For two such functions put
 \[
-\langle a,b\rangle_X=\sum_{[x]}\frac{a(x)\,\overline{b(x)}}{|\Aut x|}
+\langle a,b\rangle_X=\sum_{[x]}\frac{a(x)\,\overline{b(x)}}{|\Aut x|},
 \]
-for $\mathbb C$-valued functions on isomorphism classes. Then $\langle f_!a,b\rangle_Y=\langle a,f^*b\rangle_X$.
-\notready
+computed on chosen representatives of the classes. Because $a$, $b$ and $|\Aut x|$ are constant on isomorphism classes, the result does not depend on the choice.
+\lean{GroupoidCorr.FinGroupoid, GroupoidCorr.ginner}\leanok
+\end{definition}
+
+\begin{proposition}[groupoid cardinality and adjointness]\label{prop:adjoint}
+Let $f\colon X\to Y$ be a faithful functor of finite groupoids, $a$ a section of $f^*\mathbb C$ and $b$ a section of $\mathbb C$ on $Y$. Then $\langle f_!a,b\rangle_Y=\langle a,f^*b\rangle_X$.
+\lean{GroupoidCorr.ginner_push}\leanok
 \end{proposition}
 
 \begin{proof}
-$\Aut(y)$ acts on the fibre over $y$. Its orbits are the classes $[x]$ with $f(x)\cong y$, and the stabilizers are isomorphic to $\Aut(x)$ by faithfulness. Apply the orbit--stabilizer formula.
+Fix representatives $x$ of the classes of $X$ and $y$ of those of $Y$. Count the triples $([x],[y],\alpha\colon f(x)\to y)$ in two ways.
+
+First fix $y$. The map $([x],\alpha)\mapsto[(x,\alpha)]$ onto the fibre over $y$ is surjective. The triples over the class $[(x',\alpha')]$ are the $([x'],f(\beta);\alpha')$ with $\beta\colon x\to x'$, where $x$ is the representative of the class of $x'$. These are pairwise distinct by faithfulness, so there are $|\Aut x'|$ of them. Hence
+\[
+(f_!a)(y)=\sum_{[x]}\sum_{\alpha\colon f(x)\to y}\frac{a(x)}{|\Aut x|}.
+\]
+Now fix $x$. The set $\mathrm{Hom}(f(x),y)$ is empty unless $[y]=[f(x)]$, and then it has $|\Aut y|$ elements. Therefore
+\[
+\langle f_!a,b\rangle_Y=\sum_{[x]}\sum_{[y]}\bigl|\mathrm{Hom}(f(x),y)\bigr|\,\frac{a(x)}{|\Aut x|}\,\frac{\overline{b(y)}}{|\Aut y|}=\sum_{[x]}\frac{a(x)\,\overline{b(f(x))}}{|\Aut x|}=\langle a,f^*b\rangle_X.
+\]
+This is the orbit--stabilizer formula for the action of $\Aut(y)$ on the fibre over $y$, written as a count.
 \end{proof}
 
 %======================================================================

@@ -64,17 +64,27 @@ Both must exit 0.
 
 ## Current status
 
-`lake build` is clean, with no `sorry`. Every note item that has Lean declarations is `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`. The items done: `lem:norm-map`, `def:local-system`, `def:section`, `def:fibre`, `lem:summand-wd`, `def:pushforward`, `prop:push-section`, `def:chain`, `thm:orders-add`, `cor:divisible-values`.
+`lake build` is clean, with no `sorry`. All 19 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
 
-`prop:push-section` goes through the helpers `FibrePair.postcomp`, `Fibre.postcompEquiv` (the fibre bijection, with inverse from `inv g`) and `summand_postcomp`. `pushVal` picks its `Fintype` instance with `Fintype.ofFinite`, so proofs that unfold it should bring the same instance into scope (`let _ : ∀ z, Fintype (Fibre f z) := fun z => Fintype.ofFinite _`). Rewriting under `pushVal` with `rw` trips over `Fibre` vs `Quotient`; use `refine`/`exact` instead.
+Files:
+- `NormMap.lean`: Section 1.
+- `Pushforward.lean`: local systems, sections, fibres, pushforward.
+- `BaseChange.lean`: the 2-fibre product, which is Mathlib's `Comma f g` with a hand-built `Groupoid` instance, and base change.
+- `Functoriality.lean`: `Sec.pull`, `Sec.map`, naturality of pushforward, and `(k ⋙ h)_! = h_! k_!` for faithful `h`.
+- `Correspondence.lean`: `Corr` (apex `C` is a parameter), `Corr.op`, `Corr.comp`, `Corr.op_comp`.
+- `Adjoint.lean`: `FinGroupoid`, the pairing `ginner`, and `ginner_push`, proved by double counting.
+- `Divisibility.lean`: chains of linear maps.
 
-Next tasks, in order:
+Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
 
-1. Formalize `prop:base-change`: define the 2-fibre product groupoid and the fibre bijection.
-2. `def:correspondence` and `prop:composition`.
-3. `prop:adjoint`: groupoid cardinality, orbit–stabilizer.
+Lean gotchas:
+- `Fibre` and `FibrePair` are `abbrev`s. Without that, `rw` under `pushVal` trips over `Fibre` vs `Quotient`.
+- Proofs that unfold `pushVal` should bring the same instance into scope: `let _ : ∀ z, Fintype (Fibre f z) := fun z => Fintype.ofFinite _`.
+- Use `h.map_id`, not `Functor.map_id`: with `open CategoryTheory` the latter resolves to the monad lemma.
+- `Comma.homMk` does not exist at this Mathlib commit. Build `CommaMorphism` structures directly.
+- When destructuring `Quotient.exact`, give the witness type explicitly (`obtain ⟨γ, hγ⟩ : ∃ γ : a ⟶ b, … := Quotient.exact h`).
 
-After that, natural extensions from the main account:
+Natural extensions from the main account (not started):
 - the reduction of `thm:orders-add` from linear maps to kernels on iterated fibre products;
 - Theorems 8.3–8.4, the Lubin–Tate exponential bound and the divisibility of jets. These are elementary power-series statements.
 
