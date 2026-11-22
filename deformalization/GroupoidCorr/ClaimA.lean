@@ -37,6 +37,43 @@ theorem above_injective (T : Finset ℕ) (x y : Above E T) (h : x.2.1 = y.2.1) :
   subst this
   rfl
 
+/-- [note: prop:content] (c) `log Nm cont(per) = ∑_𝔭 ord_𝔭(per) · log Nm 𝔭`, where
+`Nm 𝔭 = p ^ f(𝔭|p)`. -/
+theorem log_absNorm_content {N P : Type*} [AddCommGroup N] [Module (𝓞 E) N] [AddCommGroup P]
+    [Module (𝓞 E) P] (per : N →ₗ[𝓞 E] P →ₗ[𝓞 E] 𝓞 E) (hC : content per ≠ ⊥) :
+    Real.log (Ideal.absNorm (content per)) =
+      ∑ᶠ v : IsDedekindDomain.HeightOneSpectrum (𝓞 E),
+        (ordP v per : ℝ) * Real.log (Ideal.absNorm v.asIdeal) := by
+  classical
+  have hfin := Ideal.hasFiniteMulSupport (R := 𝓞 E) hC
+  set s := hfin.toFinset
+  have hsub : Function.mulSupport
+      (fun v : IsDedekindDomain.HeightOneSpectrum (𝓞 E) => v.asIdeal ^ ordP v per) ⊆ s := by
+    intro v hv; exact hfin.mem_toFinset.mpr hv
+  have hprod : content per = ∏ v ∈ s, v.asIdeal ^ ordP v per := by
+    conv_lhs => rw [← content_factorization per hC]
+    exact finprod_eq_prod_of_mulSupport_subset _ hsub
+  have hne : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 E), Ideal.absNorm v.asIdeal ≠ 0 :=
+    fun v h => v.ne_bot (Ideal.absNorm_eq_zero_iff.mp h)
+  rw [finsum_eq_sum_of_support_subset _ (s := s) ?_, hprod, map_prod, Nat.cast_prod,
+    Real.log_prod]
+  · refine Finset.sum_congr rfl fun v _ => ?_
+    rw [map_pow, Nat.cast_pow, Real.log_pow]
+  · intro v _
+    rw [map_pow, Nat.cast_pow]
+    exact pow_ne_zero _ (by exact_mod_cast hne v)
+  · intro v hv
+    apply hsub
+    intro h1
+    simp only at h1
+    apply hv
+    have h0 : ordP v per = 0 := by
+      by_contra h0
+      have : v.asIdeal ^ ordP v per ≤ v.asIdeal := Ideal.pow_le_self h0
+      rw [h1, Ideal.one_eq_top, top_le_iff] at this
+      exact v.isPrime.ne_top this
+    simp [h0]
+
 /-- [note: lem:norm-bound] If `C ≤ 𝔮 ^ n(𝔮)` for every prime `𝔮` above the primes in `T`, then
 `∑ n(𝔮) f(𝔮|p) log p ≤ log Nm C`. -/
 theorem log_absNorm_ge (C : Ideal (𝓞 E)) (hC : C ≠ ⊥) (T : Finset ℕ)

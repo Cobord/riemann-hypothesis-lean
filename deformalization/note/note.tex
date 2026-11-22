@@ -497,12 +497,13 @@ For an ideal $I$, $\mathit{per}$ \emph{vanishes modulo $I$} if every value $\mat
 \begin{enumerate}
 \item $\mathit{per}$ vanishes modulo $I$ if and only if $\mathrm{cont}(\mathit{per})\subseteq I$. Over a Dedekind domain with $\mathrm{cont}(\mathit{per})\ne0$, $\ord_{\mathfrak p}(\mathit{per})$ is the largest $r$ such that $\mathit{per}$ vanishes modulo $\mathfrak p^r$, and $\mathrm{cont}(\mathit{per})=\prod_{\mathfrak p}\mathfrak p^{\ord_{\mathfrak p}(\mathit{per})}$.
 \item Vanishing modulo $I$ survives composition with linear maps on either side, and any ring map $R\to S$ that kills $I$.
+\item If $R=\mathcal O_E$ for a number field $E$ and $\mathrm{cont}(\mathit{per})\ne0$, then $\log\Nm\mathrm{cont}(\mathit{per})=\sum_{\mathfrak p}\ord_{\mathfrak p}(\mathit{per})\log\Nm\mathfrak p$, where $\Nm\mathfrak p=p^{f_{\mathfrak p}}$.
 \end{enumerate}
-\lean{GroupoidCorr.vanishesMod_iff, GroupoidCorr.le_ordP_iff, GroupoidCorr.content_factorization, GroupoidCorr.VanishesMod.comp, GroupoidCorr.VanishesMod.map}\leanok
+\lean{GroupoidCorr.vanishesMod_iff, GroupoidCorr.le_ordP_iff, GroupoidCorr.content_factorization, GroupoidCorr.VanishesMod.comp, GroupoidCorr.VanishesMod.map, GroupoidCorr.log_absNorm_content}\leanok
 \end{proposition}
 
 \begin{proof}
-(1) The content is spanned by the values. Over a Dedekind domain, $\mathrm{cont}\subseteq\mathfrak p^r$ if and only if $\mathfrak p^r\mid\mathrm{cont}$, and the product formula is unique factorization of ideals. (2) Composition and base change preserve the zero map.
+(1) The content is spanned by the values. Over a Dedekind domain, $\mathrm{cont}\subseteq\mathfrak p^r$ if and only if $\mathfrak p^r\mid\mathrm{cont}$, and the product formula is unique factorization of ideals. (2) Composition and base change preserve the zero map. (3) Apply the multiplicative norm to the product formula of (1), whose product has finitely many factors $\neq R$.
 \end{proof}
 
 Now let $E$ be a number field and $R=\mathcal O_E$. For a prime $\mathfrak q$ of $\mathcal O_E$ over $p$, write $e(\mathfrak q)$ and $f(\mathfrak q)$ for its ramification index and inertia degree.
@@ -519,7 +520,7 @@ Let $C\ne0$ be an ideal of $\mathcal O_E$, and $T$ a finite set of rational prim
 The $\mathfrak q$ are distinct nonzero primes, so $C\subseteq\prod\mathfrak q^{n(\mathfrak q)}$. Then $\Nm\prod\mathfrak q^{n(\mathfrak q)}$ divides $\Nm C\ne0$, and $\Nm\mathfrak q=p^{f(\mathfrak q)}$.
 \end{proof}
 
-This is the inequality half of the main account's formula $\log\Nm\mathrm{cont}(\mathit{per})=\sum_{\mathfrak p}\ord_{\mathfrak p}(\mathit{per})\,f_{\mathfrak p}\log p$, and it is the half that Claim~A uses.
+Lemma~\ref{lem:norm-bound} is the form of Proposition~\ref{prop:content}(3) that Claim~A uses: it needs only lower bounds on the exponents, and only at finitely many primes.
 
 \begin{theorem}[Claim A from Hypothesis J]\label{thm:claimA}
 Let $\chi=\chi_{-d}$ be as in Definition~\ref{def:quad-char}, and let $a_1,\dots,a_\ell\ge1$ be the jet orders of the steps of a chain, all at most $A$. Let $\mathit{per}$ be the period map of the chain over $\mathcal O_E$, with $\mathrm{cont}(\mathit{per})\ne0$. Assume that for every prime $\mathfrak q$ of $\mathcal O_E$ above an inert $p\le A$ there are $m_1,\dots,m_\ell\ge0$ such that:
