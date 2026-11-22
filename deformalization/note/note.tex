@@ -391,7 +391,7 @@ In $\overline B$, using the first identity in the proof of Lemma~\ref{lem:minor}
 \section{The prime sum is the norm of a factorial ideal}
 %======================================================================
 
-This section is Section~8.5 of the main account. Let $d$ be a prime, $K=\mathbb Q(\sqrt{-d})$, and $\chi=\chi_{-d}$ its quadratic character. A prime $p\ne d$ is \emph{split} in $K$ if $\chi(p)=1$ and \emph{inert} if $\chi(p)=-1$. That $\chi$ has these properties, and that they describe the splitting of primes in $K$, is standard and not formalized here.
+This section is Section~8.5 of the main account. Let $d$ be a prime, $K=\mathbb Q(\sqrt{-d})$, and $\chi=\chi_{-d}$ its quadratic character. A prime $p\ne d$ is \emph{split} in $K$ if $\chi(p)=1$ and \emph{inert} if $\chi(p)=-1$. The identities below use only the properties in Definition~\ref{def:quad-char}. Definition~\ref{def:chi-neg-d} and Proposition~\ref{prop:chi-split} construct $\chi_{-d}$ and verify the usual splitting criteria. That these criteria describe the splitting of primes in $K$ is standard and not formalized.
 
 \begin{definition}\label{def:quad-char}
 We use only that $\chi\colon\mathbb N\to\mathbb Z$ is completely multiplicative with $\chi(1)=1$, that $\chi(p)\in\{\pm1\}$ for primes $p\ne d$, and that $\chi(d)=0$. Put
@@ -401,6 +401,25 @@ We use only that $\chi\colon\mathbb N\to\mathbb Z$ is completely multiplicative 
 where $\Lambda$ is the von Mangoldt function.
 \lean{GroupoidCorr.QuadChar, GroupoidCorr.inertPrimes, GroupoidCorr.askFlat}\leanok
 \end{definition}
+
+\begin{definition}\label{def:chi-neg-d}
+For a prime $d\equiv3\pmod4$, put $\chi_{-d}(n)=\bigl(\tfrac nd\bigr)$, the Legendre symbol. It satisfies the properties of Definition~\ref{def:quad-char}: complete multiplicativity, $\chi_{-d}(d)=0$, and $\chi_{-d}(p)=\pm1$ for primes $p\ne d$. For odd $d$, the condition $d\equiv3\pmod4$ is forced by Definition~\ref{def:quad-char}: for $d\equiv1\pmod 4$ the prime $2$ also ramifies in $K$. The remaining case $d=2$, with character $\chi_{-8}$, is not treated here.
+\lean{GroupoidCorr.chiNeg, GroupoidCorr.quadCharOf}\leanok
+\end{definition}
+
+\begin{proposition}\label{prop:chi-split}
+Let $d\equiv3\pmod4$ be prime.
+\begin{enumerate}
+\item For an odd prime $p$, $\chi_{-d}(p)=\bigl(\tfrac{-d}{p}\bigr)$.
+\item For an odd prime $p\ne d$, $\chi_{-d}(p)=1$ if and only if $-d$ is a square mod $p$.
+\item $\chi_{-d}(2)=1$ if and only if $d\equiv7\pmod8$.
+\end{enumerate}
+\lean{GroupoidCorr.chiNeg_eq_legendreSym, GroupoidCorr.chiNeg_eq_one_iff, GroupoidCorr.chiNeg_two_eq_one_iff}\leanok
+\end{proposition}
+
+\begin{proof}
+(1) $\bigl(\tfrac{-d}{p}\bigr)=\bigl(\tfrac{-1}{p}\bigr)\bigl(\tfrac dp\bigr)$. By reciprocity, $\bigl(\tfrac pd\bigr)=\bigl(\tfrac dp\bigr)$ if $p\equiv1\pmod 4$, where $\bigl(\tfrac{-1}p\bigr)=1$. And $\bigl(\tfrac pd\bigr)=-\bigl(\tfrac dp\bigr)$ if $p\equiv3\pmod4$, where $\bigl(\tfrac{-1}p\bigr)=-1$. (2) Euler's criterion, since $p\nmid d$. (3) $\bigl(\tfrac2d\bigr)=1$ if and only if $d\equiv\pm1\pmod8$.
+\end{proof}
 
 \begin{proposition}[the factorial identity]\label{prop:factorial}
 \[
