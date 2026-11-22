@@ -6,7 +6,8 @@ A short note (`note/note.tex`) and a Lean 4 library (`GroupoidCorr/`) kept in on
 - integral pushforward over fibres;
 - base change and composition of correspondences;
 - additivity of divisibility along chains;
-- denominators of the Lubin–Tate exponential and divisibility of jets at inert primes.
+- denominators of the Lubin–Tate exponential and divisibility of jets at inert primes;
+- the one-step minor lemma behind each unit of divisibility.
 
 ```
 lake exe cache get && lake build

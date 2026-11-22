@@ -354,4 +354,35 @@ Legendre's formula gives $(p-1)\ord_p(a!)=a-s$. For (1), subtract $a-1$; also $s
 In case (2) the gain is $\frac{ap}{p^2-1}-\frac{(p+1)s-1}{p^2-1}=\sum_{k\text{ odd}}a/p^k-O(\log_pa)$, since $s\le(p-1)(\log_pa+1)$. This is the pattern $k/p+k/p^3+\cdots-O(\log k)$ for jets of CM theta functions at inert primes (main account, Corollary~8.5).
 \end{remark}
 
+%======================================================================
+\section{The one-step lemma}
+%======================================================================
+
+This section is Section~8.3 of the main account. It is the local source of each unit of divisibility in the chain, and the conceptual content of \texttt{key\_minor\_dvd} and \texttt{key\_pow\_dvd} in the archive. Let $B$ be a commutative ring, $p$ a prime, and $\varpi\in B$ with $\varpi^2=p$. For a matrix $M$, $M^{(p^e)}$ is the matrix of $p^e$-th powers of its entries. Vectors $v$ act on the left of matrices ($vM$), and columns $w$ on the right ($Mw$).
+
+\begin{lemma}\label{lem:minor}
+Let $M,M'$ be $(n+1)\times(n+1)$ matrices over $B$ with $M^{(p^e)}\equiv M'\pmod p$ entrywise. Let $v,v'\in B^{n+1}$ be row vectors whose coordinates of index $\ge1$ are divisible by $\varpi$. Then every $2\times2$ minor of the matrix with rows $(vM)^{(p^e)}$ and $v'M'$ is divisible by $\varpi$.
+\lean{GroupoidCorr.minor_dvd}\leanok
+\end{lemma}
+
+\begin{proof}
+Work in $\overline B=B/\varpi B$. If $\overline B=0$ there is nothing to prove. Otherwise $p=\varpi^2=0$ in $\overline B$, so $\overline B$ has characteristic $p$ and $x\mapsto x^{p^e}$ is a ring homomorphism. Since $\bar v_i=0$ for $i\ge1$ and $\overline M^{(p^e)}=\overline{M'}$, we get
+\[
+\overline{(vM)_c^{\,p^e}}=\bar v_0^{\,p^e}\,\overline{M'}_{0c},\qquad \overline{(v'M')_c}=\bar v'_0\,\overline{M'}_{0c}.
+\]
+The two rows are proportional, so all $2\times2$ minors vanish in $\overline B$.
+\end{proof}
+
+\begin{lemma}[covector form]\label{lem:covector}
+With $M,M',v$ as in Lemma~\ref{lem:minor}, let $M''$ be a matrix with $M'M''=1$, and let $w\in B^{n+1}$ be a column vector with $w_0$ divisible by $\varpi$. Then
+\[
+\sum_a\bigl((vM)_a\bigr)^{p^e}\,(M''w)_a\equiv0\pmod\varpi .
+\]
+\lean{GroupoidCorr.covector_dvd}\leanok
+\end{lemma}
+
+\begin{proof}
+In $\overline B$, using the first identity in the proof of Lemma~\ref{lem:minor}, the sum is $\bar v_0^{\,p^e}\sum_a\overline{M'}_{0a}(\overline{M''}\,\bar w)_a=\bar v_0^{\,p^e}(\overline{M'}\,\overline{M''}\,\bar w)_0=\bar v_0^{\,p^e}\bar w_0=0$.
+\end{proof}
+
 \end{document}

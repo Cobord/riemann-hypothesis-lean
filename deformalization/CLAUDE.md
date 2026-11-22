@@ -64,7 +64,7 @@ Both must exit 0.
 
 ## Current status
 
-`lake build` is clean, with no `sorry`. All 26 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
+`lake build` is clean, with no `sorry`. All 28 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
 
 Files:
 - `NormMap.lean`: Section 1.
@@ -75,6 +75,7 @@ Files:
 - `Adjoint.lean`: `FinGroupoid`, the pairing `ginner`, and `ginner_push`, proved by double counting.
 - `Divisibility.lean`: chains of linear maps.
 - `Chain.lean`: kernel scaling (`Corr.smul`), the identity correspondence, and bundled correspondences `BCorr` with the apex as a field, all in one universe `Type u`. Also chains `chain` and `thm:orders-add-corr` (`chain_eq_pow_smul`). This is the kernel-level version of `thm:orders-add`.
+- `OneStep.lean`: Section 5 of the note, which is Section 8.3 of the main account (`lem:minor`, `lem:covector`). The proofs work in `B ⧸ (ϖ)`, which is either the zero ring or of characteristic `p`.
 - `LubinTate.lean`: Section 4 of the note, which is Section 8.2 of the main account. `LTData` bundles the hypotheses; `[p]_F(exp Z) = exp(pZ)` is an assumption, used in coefficient form. Bounds are integral: `ϖ ^ (n-1) * c_n ∈ O` with `ϖ ^ (q-1) = p`, which stands for `ord_p(c_n) ≥ -(n-1)/(q-1)`. Proof via the scaled series `G(Z) = ϖ⁻¹ E(ϖ Z)`. `cor:height` is an exact integer identity from Mathlib's Legendre formula (`sub_one_mul_padicValNat_factorial`).
 
 Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
@@ -90,7 +91,6 @@ Lean gotchas:
 - When destructuring `Quotient.exact`, give the witness type explicitly (`obtain ⟨γ, hγ⟩ : ∃ γ : a ⟶ b, … := Quotient.exact h`).
 
 Natural extensions from the main account (not started):
-- Lemmas 8.6–8.7 (`lem:minor`, `lem:covector`): the one-step minor divisibility mod `ϖ` (Frobenius is additive mod `p`).
 - Building a Lubin–Tate formal group and its exponential, so that `LTData.hE` is a theorem rather than a hypothesis.
 
 ## Context
