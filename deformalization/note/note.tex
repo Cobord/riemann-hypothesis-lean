@@ -22,6 +22,7 @@
 \newtheorem{remark}[theorem]{Remark}
 
 \DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\ord}{ord}
 \newcommand{\Z}{\mathbb{Z}}
 
 \begin{document}
@@ -295,6 +296,62 @@ Induction on $n$, as in Theorem~\ref{thm:orders-add}, with Lemma~\ref{lem:corr-s
 
 \begin{remark}
 Theorem~\ref{thm:orders-add-corr}, with Corollary~\ref{cor:divisible-values} applied to the period pairing, gives the divisibility of the periods of a theta chain once each step's kernel is divisible by $\varpi^{r_i}$. This is Theorem~8.11 and Corollary~8.12 of the main account. Theorem~\ref{thm:orders-add} is the same statement for the operators alone, which are $R$-linear maps.
+\end{remark}
+
+%======================================================================
+\section{Denominators of the Lubin--Tate exponential}
+%======================================================================
+
+This section is Section~8.2 of the main account. There $\mathcal O$ is a complete discrete valuation ring, unramified over $\Z_p$, with residue field $\mathbb F_q$. $F$ is a formal group over $\mathcal O$ with $[p]_F(T)=pT+\sum_{k\ge2}e_kT^k\equiv T^q\pmod p$, and $\exp_F(Z)=\sum_{n\ge1}c_nZ^n$ is the inverse of its normalized logarithm. The formal group enters only through the identity $[p]_F(\exp_F Z)=\exp_F(pZ)$, so we take that identity as a hypothesis.
+
+To avoid fractional valuations, we adjoin a root $\varpi$ of $\varpi^{q-1}=p$. Then $\ord_p(x)\ge-m/(q-1)$ means exactly that $\varpi^{m}x$ is integral. The only consequence of ``unramified'' that is used is that $p^m-1$ is a unit for $m\ge1$.
+
+\begin{theorem}[denominators of the Lubin--Tate exponential]\label{thm:LT-exp}
+Let $O$ be a subring of a field $K$, and let $q\ge2$. Let $\varpi\in O$ with $\varpi^{q-1}=p\ne0$, and suppose $p^m-1$ is a unit of $O$ for every $m\ge1$. Let $e_k\in O$ for $k\ge2$, with $e_k\in pO$ for $k\ne q$. Let $E=\sum_nc_nZ^n\in K[[Z]]$ with $c_0=0$ and $c_1=1$, such that for every $n$
+\[
+p^nc_n=p\,c_n+\sum_{k=2}^{n}e_k\,[Z^n]E^k .
+\]
+This is the coefficient of $Z^n$ in $[p](E(Z))=E(pZ)$. Then $\varpi^{n-1}c_n\in O$ for all $n\ge1$, that is, $\ord_p(c_n)\ge-(n-1)/(q-1)$.
+\lean{GroupoidCorr.LTData, GroupoidCorr.LTData.exp_coeff_mem}\leanok
+\end{theorem}
+
+\begin{proof}
+Put $G(Z)=\varpi^{-1}E(\varpi Z)=\sum_n g_nZ^n$, so $g_n=\varpi^{n-1}c_n$ and $[Z^n]E^k=\varpi^{k-n}[Z^n]G^k$. We show $g_n\in O$ by strong induction on $n$. For $n\le1$, $g_0=0$ and $g_1=1$. For $n\ge2$, multiply the identity by $\varpi^{n-1}$:
+\[
+p\,(p^{n-1}-1)\,g_n=\sum_{k=2}^{n}e_k\varpi^{k-1}\,[Z^n]G^k .
+\]
+For $k\ge2$, $[Z^n]G^k$ involves only $g_m$ with $m<n$, because $g_0=0$. So it lies in $O$ by induction. Each $e_k\varpi^{k-1}$ is divisible by $p$: for $k=q$ because $\varpi^{q-1}=p$, and for $k\ne q$ because $p\mid e_k$. Divide by $p$ and by the unit $p^{n-1}-1$.
+\end{proof}
+
+\begin{theorem}[divisibility of jets]\label{thm:jet-gain}
+In the setting of Theorem~\ref{thm:LT-exp}, let $f=\sum_mf_mT^m$ with $f_m\in O$, and let $b_a=[Z^a]f(E(Z))=\sum_{m=0}^{a}f_m[Z^a]E^m$. Then $\varpi^{a-1}b_a\in O$ for $a\ge1$. Hence $\varpi^{a-1}\,a!\,b_a\in a!\,O$.
+
+When $\partial$ is the invariant derivation with $\partial\lambda_F=1$, we have $(\partial^af)(0)=a!\,b_a$, since $\partial=d/dZ$ in the coordinate $Z=\lambda_F(T)$. So this says
+\[
+\ord_p\bigl((\partial^af)(0)\bigr)\ \ge\ \ord_p(a!)-\frac{a-1}{q-1}.
+\]
+\lean{GroupoidCorr.LTData.jet_coeff_mem, GroupoidCorr.LTData.jet_factorial_mem}\leanok
+\end{theorem}
+
+\begin{proof}
+The term $m=0$ vanishes because $a\ge1$. For $m\ge1$, $\varpi^{a-1}f_m[Z^a]E^m=f_m\varpi^{m-1}[Z^a]G^m$, and $G$ has integral coefficients by the proof of Theorem~\ref{thm:LT-exp}.
+\end{proof}
+
+\begin{corollary}[height decides the gain]\label{cor:height}
+Let $p$ be prime, $a\ge1$, and $s=s_p(a)$ the sum of the base-$p$ digits of $a$.
+\begin{enumerate}
+\item Split primes ($q=p$): $(p-1)\bigl(\ord_p(a!)-\tfrac{a-1}{p-1}\bigr)=1-s\le0$. There is no gain.
+\item Inert primes ($q=p^2$): $(p^2-1)\bigl(\ord_p(a!)-\tfrac{a-1}{p^2-1}\bigr)=ap-(p+1)s+1$.
+\end{enumerate}
+\lean{GroupoidCorr.height_split, GroupoidCorr.height_inert}\leanok
+\end{corollary}
+
+\begin{proof}
+Legendre's formula gives $(p-1)\ord_p(a!)=a-s$. For (1), subtract $a-1$; also $s\ge1$, since the leading digit is nonzero. For (2), multiply Legendre's formula by $p+1$ and subtract $a-1$.
+\end{proof}
+
+\begin{remark}
+In case (2) the gain is $\frac{ap}{p^2-1}-\frac{(p+1)s-1}{p^2-1}=\sum_{k\text{ odd}}a/p^k-O(\log_pa)$, since $s\le(p-1)(\log_pa+1)$. This is the pattern $k/p+k/p^3+\cdots-O(\log k)$ for jets of CM theta functions at inert primes (main account, Corollary~8.5).
 \end{remark}
 
 \end{document}

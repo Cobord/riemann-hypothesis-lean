@@ -6,3 +6,4 @@ import GroupoidCorr.Divisibility
 import GroupoidCorr.Correspondence
 import GroupoidCorr.Adjoint
 import GroupoidCorr.Chain
+import GroupoidCorr.LubinTate

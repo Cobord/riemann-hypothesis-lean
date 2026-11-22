@@ -5,7 +5,8 @@ A short note (`note/note.tex`) and a Lean 4 library (`GroupoidCorr/`) kept in on
 - finite groupoids and local systems;
 - integral pushforward over fibres;
 - base change and composition of correspondences;
-- additivity of divisibility along chains.
+- additivity of divisibility along chains;
+- denominators of the Lubin–Tate exponential and divisibility of jets at inert primes.
 
 ```
 lake exe cache get && lake build
