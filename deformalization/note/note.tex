@@ -23,6 +23,8 @@
 
 \DeclareMathOperator{\Aut}{Aut}
 \DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\Nm}{Nm}
+\newcommand{\ASK}{\mathrm{ASK}}
 \newcommand{\Z}{\mathbb{Z}}
 
 \begin{document}
@@ -383,6 +385,53 @@ With $M,M',v$ as in Lemma~\ref{lem:minor}, let $M''$ be a matrix with $M'M''=1$,
 
 \begin{proof}
 In $\overline B$, using the first identity in the proof of Lemma~\ref{lem:minor}, the sum is $\bar v_0^{\,p^e}\sum_a\overline{M'}_{0a}(\overline{M''}\,\bar w)_a=\bar v_0^{\,p^e}(\overline{M'}\,\overline{M''}\,\bar w)_0=\bar v_0^{\,p^e}\bar w_0=0$.
+\end{proof}
+
+%======================================================================
+\section{The prime sum is the norm of a factorial ideal}
+%======================================================================
+
+This section is Section~8.5 of the main account. Let $d$ be a prime, $K=\mathbb Q(\sqrt{-d})$, and $\chi=\chi_{-d}$ its quadratic character. A prime $p\ne d$ is \emph{split} in $K$ if $\chi(p)=1$ and \emph{inert} if $\chi(p)=-1$. That $\chi$ has these properties, and that they describe the splitting of primes in $K$, is standard and not formalized here.
+
+\begin{definition}\label{def:quad-char}
+We use only that $\chi\colon\mathbb N\to\mathbb Z$ is completely multiplicative with $\chi(1)=1$, that $\chi(p)\in\{\pm1\}$ for primes $p\ne d$, and that $\chi(d)=0$. Put
+\[
+\ASK^\flat(a)=\sum_{n\le a}\Lambda(n)\bigl(1-\chi(n)\bigr)\Bigl\lfloor\frac an\Bigr\rfloor ,
+\]
+where $\Lambda$ is the von Mangoldt function.
+\lean{GroupoidCorr.QuadChar, GroupoidCorr.inertPrimes, GroupoidCorr.askFlat}\leanok
+\end{definition}
+
+\begin{proposition}[the factorial identity]\label{prop:factorial}
+\[
+\ASK^\flat(a)=\sum_{p\le a\ \mathrm{inert}}2\log p\sum_{k\ \mathrm{odd}}\Bigl\lfloor\frac a{p^k}\Bigr\rfloor\ +\ \log d\cdot\ord_d(a!).
+\]
+\lean{GroupoidCorr.askFlat_eq}\leanok
+\end{proposition}
+
+\begin{proof}
+$\Lambda$ is supported on prime powers $p^k$ with $k\ge1$, where $\Lambda(p^k)=\log p$. So the sum is $\sum_{p\le a}\sum_{k\ge1}\log p\,(1-\chi(p)^k)\lfloor a/p^k\rfloor$. The weight $1-\chi(p)^k$ is $1-(-1)^k$ for inert $p$, which is $2$ for odd $k$ and $0$ for even $k$. It is $0$ for split $p$, and $1$ for $p=d$. Legendre's formula $\ord_d(a!)=\sum_{k\ge1}\lfloor a/d^k\rfloor$ handles the last case. If $d>a$, both sides of its term vanish.
+\end{proof}
+
+\begin{remark}
+An inert prime has norm $p^2$. So the first sum is $\log\Nm_{K/\mathbb Q}\mathfrak f_K(a)$ for the \emph{inert factorial ideal} $\mathfrak f_K(a)=\prod_{p\ \mathrm{inert}}(p)^{\sum_{k\ \mathrm{odd}}\lfloor a/p^k\rfloor}$. The weight $1-\chi(n)$ vanishes exactly where height-two divided powers give no gain (Corollary~\ref{cor:height}), namely at split primes and at even powers of inert primes.
+\end{remark}
+
+\begin{corollary}\label{cor:factorial-gain}
+For a prime $p$ put $g_p(a)=\ord_p(a!)-\frac{a-1}{p^2-1}$. By Theorem~\ref{thm:jet-gain}, jets of order $a$ of integral functions are divisible by $p^{g_p(a)}$ at an inert prime $p$. For $a\ge1$,
+\[
+\sum_{p\le a\ \mathrm{inert}}2\log p\cdot g_p(a)\ \ge\ \ASK^\flat(a)-\frac{a\log d}{d-1}-4\pi(a)\log a .
+\]
+The left side is $\log\Nm_{K/\mathbb Q}\mathfrak g(a)$ for $\mathfrak g(a)=\prod_{p\ \mathrm{inert}}(p)^{g_p(a)}$.
+\lean{GroupoidCorr.jetBound, GroupoidCorr.factorial_gain}\leanok
+\end{corollary}
+
+\begin{proof}
+Split Legendre's sum $\ord_p(a!)=\sum_{k\ge1}\lfloor a/p^k\rfloor$ into odd and even $k$. The even part is Legendre's sum in base $q=p^2$, so $(q-1)\sum_{j\ge1}\lfloor a/q^j\rfloor=a-s_q(a)$, where $s_q$ is the base-$q$ digit sum. Hence
+\[
+g_p(a)=\sum_{k\ \mathrm{odd}}\Bigl\lfloor\frac a{p^k}\Bigr\rfloor+\frac{1-s_q(a)}{q-1}\ \ge\ \sum_{k\ \mathrm{odd}}\Bigl\lfloor\frac a{p^k}\Bigr\rfloor-(\log_pa+1).
+\]
+The inequality holds because $s_q(a)\le(q-1)(\lfloor\log_qa\rfloor+1)$ and $\lfloor\log_qa\rfloor\le\lfloor\log_pa\rfloor$. Next, $2\log p\,(\log_pa+1)\le2\log a+2\log p\le4\log a$ for $p\le a$, and there are at most $\pi(a)$ inert primes $p\le a$. Finally, $\log d\cdot\ord_d(a!)\le a\log d/(d-1)$, since $(d-1)\ord_d(a!)=a-s_d(a)\le a$. Combine with Proposition~\ref{prop:factorial}.
 \end{proof}
 
 \end{document}

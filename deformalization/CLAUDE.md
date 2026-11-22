@@ -64,7 +64,7 @@ Both must exit 0.
 
 ## Current status
 
-`lake build` is clean, with no `sorry`. All 28 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
+`lake build` is clean, with no `sorry`. All 31 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
 
 Files:
 - `NormMap.lean`: Section 1.
@@ -76,6 +76,7 @@ Files:
 - `Divisibility.lean`: chains of linear maps.
 - `Chain.lean`: kernel scaling (`Corr.smul`), the identity correspondence, and bundled correspondences `BCorr` with the apex as a field, all in one universe `Type u`. Also chains `chain` and `thm:orders-add-corr` (`chain_eq_pow_smul`). This is the kernel-level version of `thm:orders-add`.
 - `OneStep.lean`: Section 5 of the note, which is Section 8.3 of the main account (`lem:minor`, `lem:covector`). The proofs work in `B ⧸ (ϖ)`, which is either the zero ring or of characteristic `p`.
+- `Factorial.lean`: Section 6 of the note, which is Section 8.5 of the main account. `QuadChar d` records the properties of `χ_{-d}` that are used; `χ_{-d}` itself and the splitting of primes are not formalized. `askFlat_eq` is Proposition 8.9, by reindexing the `Λ`-sum over prime powers with `Finset.sum_bij_ne_zero`. `factorial_gain` is Corollary 8.10; its proof writes the even-`k` part of Legendre's sum as Legendre's sum in base `p²` (`legendre_base`), which avoids geometric series.
 - `LubinTate.lean`: Section 4 of the note, which is Section 8.2 of the main account. `LTData` bundles the hypotheses; `[p]_F(exp Z) = exp(pZ)` is an assumption, used in coefficient form. Bounds are integral: `ϖ ^ (n-1) * c_n ∈ O` with `ϖ ^ (q-1) = p`, which stands for `ord_p(c_n) ≥ -(n-1)/(q-1)`. Proof via the scaled series `G(Z) = ϖ⁻¹ E(ϖ Z)`. `cor:height` is an exact integer identity from Mathlib's Legendre formula (`sub_one_mul_padicValNat_factorial`).
 
 Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
@@ -88,9 +89,12 @@ Lean gotchas:
 - To prove two `BCorr`s with the same apex equal, `show` both as `⟨C, T⟩` and rewrite in `T`. For `Corr` equality, use `unfold …; congr 1; ext`.
 - Inside `namespace LTData`, a bare `mk` resolves to `LTData.mk`; write `PowerSeries.mk`.
 - `push_cast` turns `padicValNat` into `padicValRat`; cast with `exact_mod_cast` and `Nat.cast_sub` instead.
+- With `open ArithmeticFunction`, the notation `Λ` is ambiguous; write `vonMangoldt n`.
 - When destructuring `Quotient.exact`, give the witness type explicitly (`obtain ⟨γ, hγ⟩ : ∃ γ : a ⟶ b, … := Quotient.exact h`).
 
 Natural extensions from the main account (not started):
+- §8.6 is already covered by `thm:orders-add-corr` together with `cor:divisible-values`. Corollary 8.12 (divided periods) needs invertible ideals of a Dedekind domain.
+- Defining `χ_{-d}` from Mathlib's Jacobi symbol and proving the `QuadChar` properties.
 - Building a Lubin–Tate formal group and its exponential, so that `LTData.hE` is a theorem rather than a hypothesis.
 
 ## Context

@@ -8,3 +8,4 @@ import GroupoidCorr.Adjoint
 import GroupoidCorr.Chain
 import GroupoidCorr.LubinTate
 import GroupoidCorr.OneStep
+import GroupoidCorr.Factorial
