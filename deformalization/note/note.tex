@@ -110,13 +110,28 @@ $f_!s$ is a section of $F$.
 Let $g\colon y\to y'$. Post-composition $(x,\alpha)\mapsto(x,\alpha;g)$ respects the equivalence relation (if $f(\beta);\alpha'=\alpha$ then $f(\beta);\alpha';g=\alpha;g$), and it is a bijection from the fibre over $y$ to the fibre over $y'$, with inverse given by post-composition with $g^{-1}$. It carries the summand $F(\alpha)(s_x)$ to $F(\alpha;g)(s_x)=F(g)\bigl(F(\alpha)(s_x)\bigr)$. Since $F(g)$ is additive, summing gives $F(g)\bigl((f_!s)_y\bigr)=(f_!s)_{y'}$.
 \end{proof}
 
+\begin{definition}\label{def:fibre-product}
+Let $f\colon X\to Y$ and $g\colon Z\to Y$ be functors of groupoids. The \emph{$2$-fibre product} $W=X\times_YZ$ has as objects the triples $(x,z,\gamma)$ with $\gamma\colon f(x)\to g(z)$. A morphism $(x,z,\gamma)\to(x',z',\gamma')$ is a pair $(\beta\colon x\to x',\ \delta\colon z\to z')$ with $f(\beta);\gamma'=\gamma;g(\delta)$. It is a groupoid, with $(\beta,\delta)^{-1}=(\beta^{-1},\delta^{-1})$. Write $g'\colon W\to X$ and $f'\colon W\to Z$ for the projections. In Lean, $W$ is Mathlib's comma category $\mathrm{Comma}(f,g)$. Mathlib does not provide its groupoid structure, so we build it by hand.
+\lean{GroupoidCorr.commaGroupoid}\leanok
+\end{definition}
+
 \begin{proposition}[base change]\label{prop:base-change}
-Let $W=X\times_YZ$ be the $2$-fibre product: its objects are triples $(x,z,\gamma\colon f(x)\to g(z))$, and its morphisms are pairs of morphisms compatible with the $\gamma$'s. Let $f'\colon W\to Z$ and $g'\colon W\to X$ be the projections. Then $g^*f_!=f'_!\,g'^*$.
-\notready
+In the setting of Definition~\ref{def:fibre-product}, assume the fibres of $f$ are finite. Let $F$ be a local system on $Y$ and $s$ a section of $f^*F$. Then:
+\begin{enumerate}
+\item The family $\tilde s_{(x,z,\gamma)}=F(\gamma)(s_x)$ is a section of $f'^*g^*F$. This is $g'^*s$, transported along the natural isomorphism $\gamma\colon g'^*f^*F\cong f'^*g^*F$.
+\item For each $z\in Z$, post-composition with $g$ gives a bijection from the fibre of $f'$ over $z$ to the fibre of $f$ over $g(z)$. In particular, the fibres of $f'$ are finite.
+\item $(f'_!\tilde s)_z=(f_!s)_{g(z)}$ for every $z\in Z$. That is, $g^*f_!=f'_!\,g'^*$.
+\end{enumerate}
+\lean{GroupoidCorr.baseChangeSec, GroupoidCorr.bcFibreEquiv, GroupoidCorr.pushVal_baseChange}\leanok
 \end{proposition}
 
 \begin{proof}
-For $z\in Z$, the fibre of $f'$ over $z$ is in bijection with the fibre of $f$ over $g(z)$, compatibly with summands.
+(1) For a morphism $(\beta,\delta)$, functoriality and the compatibility of $s$ along $\beta$ give
+\[
+F(g\delta)\bigl(F(\gamma)(s_x)\bigr)=F(\gamma;g\delta)(s_x)=F\bigl(f\beta;\gamma'\bigr)(s_x)=F(\gamma')(s_{x'}).
+\]
+(2) The map sends the class of $((x,z_0,\gamma),\delta\colon z_0\to z)$ to the class of $(x,\gamma;g(\delta))$. A morphism $(\beta,\delta_1)$ between pairs maps to $\beta$. The inverse sends $(x,\alpha)$ to $((x,z,\alpha),\mathrm{id}_z)$. The composite on the fibre of $f'$ is related to the identity by the morphism $(\mathrm{id}_x,\delta^{-1})$. The other composite is the identity.
+(3) The bijection of (2) carries the summand $F(g\delta)\bigl(F(\gamma)(s_x)\bigr)$ to $F(\gamma;g\delta)(s_x)$. These are equal by functoriality. Sum over the fibre.
 \end{proof}
 
 \begin{proposition}[groupoid cardinality and adjointness]\label{prop:adjoint}

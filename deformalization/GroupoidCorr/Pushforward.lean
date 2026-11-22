@@ -21,7 +21,7 @@ namespace GroupoidCorr
 
 open scoped BigOperators
 
-universe u v w
+universe u v w u₁ v₁ u₂ v₂
 
 /-- [note: def:local-system] A local system of `R`-modules on a groupoid `X`. -/
 abbrev LocalSystem (R : Type w) [CommRing R] (X : Type u) [Groupoid.{v} X] : Type _ :=
@@ -37,7 +37,7 @@ structure Sec {X : Type u} [Groupoid.{v} X] (F : LocalSystem R X) where
   /-- compatibility with morphisms -/
   compat : ∀ {x y : X} (g : x ⟶ y), (F.map g).hom (val x) = val y
 
-variable {X : Type u} [Groupoid.{v} X] {Y : Type u} [Groupoid.{v} Y]
+variable {X : Type u₁} [Groupoid.{v₁} X] {Y : Type u₂} [Groupoid.{v₂} Y]
 
 /-- Pairs `(x, α)` with `α : f x ⟶ y`. -/
 def FibrePair (f : X ⥤ Y) (y : Y) : Type _ := Σ x : X, (f.obj x ⟶ y)

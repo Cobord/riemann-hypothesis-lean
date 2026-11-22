@@ -1,3 +1,4 @@
 import GroupoidCorr.NormMap
 import GroupoidCorr.Pushforward
+import GroupoidCorr.BaseChange
 import GroupoidCorr.Divisibility
