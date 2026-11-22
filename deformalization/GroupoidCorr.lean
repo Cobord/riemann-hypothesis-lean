@@ -1,4 +1,6 @@
 import GroupoidCorr.NormMap
 import GroupoidCorr.Pushforward
 import GroupoidCorr.BaseChange
+import GroupoidCorr.Functoriality
 import GroupoidCorr.Divisibility
+import GroupoidCorr.Correspondence

@@ -101,7 +101,6 @@ noncomputable def bcFibreEquiv (f : X ⥤ Y) (g : Z ⥤ Y) (z : Z) :
     | h p =>
       show Quotient.mk _ (bcPair f g z (bcPairInv f g z p)) = Quotient.mk _ p
       simp [bcPair, bcPairInv]
-      rfl
 
 instance finite_fibre_snd (f : X ⥤ Y) (g : Z ⥤ Y) [∀ y, Finite (Fibre f y)] (z : Z) :
     Finite (Fibre (Comma.snd f g) z) :=

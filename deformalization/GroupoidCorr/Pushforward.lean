@@ -40,7 +40,7 @@ structure Sec {X : Type u} [Groupoid.{v} X] (F : LocalSystem R X) where
 variable {X : Type u₁} [Groupoid.{v₁} X] {Y : Type u₂} [Groupoid.{v₂} Y]
 
 /-- Pairs `(x, α)` with `α : f x ⟶ y`. -/
-def FibrePair (f : X ⥤ Y) (y : Y) : Type _ := Σ x : X, (f.obj x ⟶ y)
+abbrev FibrePair (f : X ⥤ Y) (y : Y) : Type _ := Σ x : X, (f.obj x ⟶ y)
 
 /-- [note: def:fibre] Two pairs are identified when a morphism `β : x ⟶ x'` carries one to the
 other: `f β ≫ α' = α`. -/
@@ -55,7 +55,7 @@ def fibreSetoid (f : X ⥤ Y) (y : Y) : Setoid (FibrePair f y) where
         rw [Functor.map_comp, Category.assoc, h', h]⟩ }
 
 /-- [note: def:fibre] The fibre of `f` over `y`: isomorphism classes of pairs `(x, α)`. -/
-def Fibre (f : X ⥤ Y) (y : Y) : Type _ := Quotient (fibreSetoid f y)
+abbrev Fibre (f : X ⥤ Y) (y : Y) : Type _ := Quotient (fibreSetoid f y)
 
 /-- The summand `F(α)(s x)` attached to a pair `(x, α)`. -/
 def summand (f : X ⥤ Y) (F : LocalSystem R Y) (s : Sec (f ⋙ F)) (y : Y)
@@ -107,14 +107,12 @@ def Fibre.postcompEquiv (f : X ⥤ Y) {y y' : Y} (g : y ⟶ y') : Fibre f y ≃ 
       show Quotient.mk _ (FibrePair.postcomp f (Groupoid.inv g) (FibrePair.postcomp f g p)) =
         Quotient.mk _ p
       simp [FibrePair.postcomp]
-      rfl
   right_inv := fun q => by
     induction q using Quotient.inductionOn with
     | h p =>
       show Quotient.mk _ (FibrePair.postcomp f g (FibrePair.postcomp f (Groupoid.inv g) p)) =
         Quotient.mk _ p
       simp [FibrePair.postcomp]
-      rfl
 
 /-- Post-composition carries the summand `F(α)(s x)` to `F(g)(F(α)(s x))`. -/
 theorem summand_postcomp (f : X ⥤ Y) (F : LocalSystem R Y) (s : Sec (f ⋙ F)) {y y' : Y}

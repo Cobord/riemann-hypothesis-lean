@@ -110,9 +110,40 @@ $f_!s$ is a section of $F$.
 Let $g\colon y\to y'$. Post-composition $(x,\alpha)\mapsto(x,\alpha;g)$ respects the equivalence relation (if $f(\beta);\alpha'=\alpha$ then $f(\beta);\alpha';g=\alpha;g$), and it is a bijection from the fibre over $y$ to the fibre over $y'$, with inverse given by post-composition with $g^{-1}$. It carries the summand $F(\alpha)(s_x)$ to $F(\alpha;g)(s_x)=F(g)\bigl(F(\alpha)(s_x)\bigr)$. Since $F(g)$ is additive, summing gives $F(g)\bigl((f_!s)_y\bigr)=(f_!s)_{y'}$.
 \end{proof}
 
+\begin{definition}\label{def:pull-map}
+Let $f\colon X\to Y$ be a functor and $s$ a section of a local system $F$ on $Y$. The \emph{pullback} $f^*s$ is the section $(s_{f(x)})_x$ of $f^*F$. If $K\colon F\to G$ is a morphism of local systems on $X$, that is, a natural transformation, then $K(s)=(K_x(s_x))_x$ is a section of $G$.
+\lean{GroupoidCorr.Sec.pull, GroupoidCorr.Sec.map}\leanok
+\end{definition}
+
+\begin{lemma}\label{lem:push-natural}
+Let $k\colon A\to B$ have finite fibres, $K\colon G\to G'$ a morphism of local systems on $B$, and $s$ a section of $k^*G$. Then $K_b\bigl((k_!s)_b\bigr)=\bigl(k_!(k^*K)(s)\bigr)_b$ for every $b$.
+\lean{GroupoidCorr.pushVal_map}\leanok
+\end{lemma}
+
+\begin{proof}
+$K_b$ is additive, and $K_b\bigl(G(\beta)(s_a)\bigr)=G'(\beta)\bigl(K_{k(a)}(s_a)\bigr)$ by naturality.
+\end{proof}
+
+\begin{lemma}\label{lem:push-comp}
+Let $k\colon A\to B$ and $h\colon B\to C$ have finite fibres, with $h$ \emph{faithful}. Then the fibres of $h\circ k$ are finite, and $(h\circ k)_!s=h_!(k_!s)$ for every section $s$ of $(h\circ k)^*F$.
+\lean{GroupoidCorr.pushVal_comp}\leanok
+\end{lemma}
+
+\begin{proof}
+Fix $c\in C$ and choose a representative $(b_q,\alpha_q)$ of each class $q$ in the fibre of $h$ over $c$. The map
+\[
+\textstyle\coprod_q\,(\text{fibre of }k\text{ over }b_q)\longrightarrow\text{fibre of }h\circ k\text{ over }c,\qquad (q,[(a,\beta)])\mapsto[(a,h(\beta);\alpha_q)]
+\]
+is well defined and surjective: given $(a,\varepsilon)$, let $q=[(k(a),\varepsilon)]$ and pick $\beta\colon k(a)\to b_q$ with $h(\beta);\alpha_q=\varepsilon$. This proves finiteness. It is injective when $h$ is faithful. If $(a,h\beta;\alpha_q)\sim(a',h\beta';\alpha_{q'})$ via $\gamma$, then $\beta^{-1};k(\gamma);\beta'$ shows $q=q'$. Cancelling $\alpha_q$ and using faithfulness gives $k(\gamma);\beta'=\beta$. The summand at $(q,[(a,\beta)])$ is $F(h\beta;\alpha_q)(s_a)=F(\alpha_q)\bigl(F(h\beta)(s_a)\bigr)$. Summing over the inner fibre gives the summand $F(\alpha_q)\bigl((k_!s)_{b_q}\bigr)$ of $h_!(k_!s)$.
+\end{proof}
+
+\begin{remark}
+Faithfulness of $h$ cannot be dropped. For a finite group $G$, take $k\colon\mathrm{pt}\to BG$, $h\colon BG\to\mathrm{pt}$ and a constant local system. Then $h_!k_!$ is multiplication by $|G|$, while $(h\circ k)_!$ is the identity. This is why the main account requires the target legs of correspondences to be faithful. Pushforward itself, and base change, need no faithfulness.
+\end{remark}
+
 \begin{definition}\label{def:fibre-product}
-Let $f\colon X\to Y$ and $g\colon Z\to Y$ be functors of groupoids. The \emph{$2$-fibre product} $W=X\times_YZ$ has as objects the triples $(x,z,\gamma)$ with $\gamma\colon f(x)\to g(z)$. A morphism $(x,z,\gamma)\to(x',z',\gamma')$ is a pair $(\beta\colon x\to x',\ \delta\colon z\to z')$ with $f(\beta);\gamma'=\gamma;g(\delta)$. It is a groupoid, with $(\beta,\delta)^{-1}=(\beta^{-1},\delta^{-1})$. Write $g'\colon W\to X$ and $f'\colon W\to Z$ for the projections. In Lean, $W$ is Mathlib's comma category $\mathrm{Comma}(f,g)$. Mathlib does not provide its groupoid structure, so we build it by hand.
-\lean{GroupoidCorr.commaGroupoid}\leanok
+Let $f\colon X\to Y$ and $g\colon Z\to Y$ be functors of groupoids. The \emph{$2$-fibre product} $W=X\times_YZ$ has as objects the triples $(x,z,\gamma)$ with $\gamma\colon f(x)\to g(z)$. A morphism $(x,z,\gamma)\to(x',z',\gamma')$ is a pair $(\beta\colon x\to x',\ \delta\colon z\to z')$ with $f(\beta);\gamma'=\gamma;g(\delta)$. It is a groupoid, with $(\beta,\delta)^{-1}=(\beta^{-1},\delta^{-1})$. Write $g'\colon W\to X$ and $f'\colon W\to Z$ for the projections. If $f$ is faithful, so is $f'$: if $(\beta,\delta)$ and $(\beta_1,\delta)$ are morphisms $(x,z,\gamma)\to(x',z',\gamma')$, then $f(\beta);\gamma'=\gamma;g(\delta)=f(\beta_1);\gamma'$, so $f(\beta)=f(\beta_1)$ and $\beta=\beta_1$. In Lean, $W$ is Mathlib's comma category $\mathrm{Comma}(f,g)$. Mathlib does not provide its groupoid structure, so we build it by hand.
+\lean{GroupoidCorr.commaGroupoid, GroupoidCorr.Corr.snd_faithful}\leanok
 \end{definition}
 
 \begin{proposition}[base change]\label{prop:base-change}
@@ -154,21 +185,29 @@ $\Aut(y)$ acts on the fibre over $y$. Its orbits are the classes $[x]$ with $f(x
 \begin{definition}\label{def:correspondence}
 A \emph{correspondence} from $(X,F)$ to $(X',F')$ consists of:
 \begin{itemize}
-\item a groupoid $C$;
-\item functors $\mathrm{src}\colon C\to X$ and $\mathrm{tgt}\colon C\to X'$, with the fibres of $\mathrm{tgt}$ finite;
+\item a groupoid $C$ (in Lean, a parameter of the structure);
+\item functors $\mathrm{src}\colon C\to X$ and $\mathrm{tgt}\colon C\to X'$, with $\mathrm{tgt}$ faithful and with finite fibres;
 \item a \emph{kernel} $K\colon\mathrm{src}^*F\to\mathrm{tgt}^*F'$, a morphism of local systems on $C$.
 \end{itemize}
-Its operator is $T_C=\mathrm{tgt}_!\circ K\circ\mathrm{src}^*$.
-\notready
+Its operator, on sections, is $T_C=\mathrm{tgt}_!\circ K\circ\mathrm{src}^*$.
+\lean{GroupoidCorr.Corr, GroupoidCorr.Corr.op}\leanok
 \end{definition}
 
 \begin{proposition}[composition]\label{prop:composition}
-The composite of the operators of two correspondences is the operator of their $2$-fibre product, with the composite kernel.
-\notready
+Let $C_1$ be a correspondence from $(X,F)$ to $(X',F')$ and $C_2$ one from $(X',F')$ to $(X'',F'')$. Let $W=C_1\times_{X'}C_2$ be the $2$-fibre product of $\mathrm{tgt}_1$ and $\mathrm{src}_2$, with projections $g'\colon W\to C_1$ and $f'\colon W\to C_2$. Give $W$ the legs $\mathrm{src}_1\circ g'$ and $\mathrm{tgt}_2\circ f'$, and the kernel
+\[
+K_{(c_1,c_2,\gamma)}=K_{2,c_2}\circ F'(\gamma)\circ K_{1,c_1}.
+\]
+This is a correspondence $C_2\circ C_1$ from $(X,F)$ to $(X'',F'')$, and $T_{C_2}\circ T_{C_1}=T_{C_2\circ C_1}$.
+\lean{GroupoidCorr.Corr.comp, GroupoidCorr.Corr.op_comp}\leanok
 \end{proposition}
 
 \begin{proof}
-Write $T_{C_2}T_{C_1}=\mathrm{tgt}_{2!}K_2\,\mathrm{src}_2^*\,\mathrm{tgt}_{1!}K_1\,\mathrm{src}_1^*$ and replace $\mathrm{src}_2^*\mathrm{tgt}_{1!}$ by base change (Proposition~\ref{prop:base-change}).
+The kernel is natural: for a morphism $(\beta,\delta)$ of $W$, use the naturality of $K_1$ along $\beta$, then $\mathrm{tgt}_1(\beta);\gamma'=\gamma;\mathrm{src}_2(\delta)$, then the naturality of $K_2$ along $\delta$. The leg $\mathrm{tgt}_2\circ f'$ is faithful by Definition~\ref{def:fibre-product}. Its fibres are finite by Proposition~\ref{prop:base-change}(2) and Lemma~\ref{lem:push-comp}. For the identity, write $u=K_1(\mathrm{src}_1^*s)$. Then
+\[
+K_2\,\mathrm{src}_2^*\,\mathrm{tgt}_{1!}u=K_2\,f'_!\tilde u=f'_!\bigl((f'^*K_2)(\tilde u)\bigr)
+\]
+by base change (Proposition~\ref{prop:base-change}) and Lemma~\ref{lem:push-natural}. Apply $\mathrm{tgt}_{2!}$ and use Lemma~\ref{lem:push-comp} for the faithful $\mathrm{tgt}_2$. This gives $(\mathrm{tgt}_2\circ f')_!$ of the section $K_{2,c_2}\bigl(F'(\gamma)(K_{1,c_1}(s_{\mathrm{src}_1c_1}))\bigr)$, which is $T_{C_2\circ C_1}s$.
 \end{proof}
 
 Operators of correspondences are $R$-linear, since pullback, kernels and pushforward are. So the divisibility statement reduces to linear algebra.
