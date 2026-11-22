@@ -260,8 +260,41 @@ If a bilinear period pairing satisfies $\mathit{per}=\varpi^{S}\mathit{per}'$ wi
 $\mathit{per}(x)(y)=\varpi^{S}\cdot\mathit{per}'(x)(y)$.
 \end{proof}
 
+The same statement holds one level up, for the kernels themselves.
+
+\begin{lemma}\label{lem:corr-smul}
+For $c\in R$ and a correspondence $C$, write $cC$ for the same groupoid and legs with kernel $cK$. Then $T_{cC}=c\,T_C$, and $(dC_2)\circ(cC_1)=cd\,(C_2\circ C_1)$.
+\lean{GroupoidCorr.Corr.smul, GroupoidCorr.Corr.op_smul, GroupoidCorr.Corr.comp_smul}\leanok
+\end{lemma}
+
+\begin{proof}
+Pullback and pushforward are $R$-linear, so the first identity holds summand by summand. For the second, the composite kernel $K_{2,c_2}\circ F'(\gamma)\circ K_{1,c_1}$ is bilinear in $(K_1,K_2)$.
+\end{proof}
+
+\begin{definition}\label{def:corr-id}
+The \emph{identity correspondence} on $(X,F)$ has groupoid $X$, both legs the identity and kernel the identity. Its fibres are single points, and its operator is the identity.
+\lean{GroupoidCorr.Corr.id, GroupoidCorr.Corr.op_id}\leanok
+\end{definition}
+
+\begin{definition}\label{def:corr-chain}
+Given correspondences $C_i$ from $(X_i,F_i)$ to $(X_{i+1},F_{i+1})$, put $C_{(0)}$ equal to the identity correspondence on $(X_0,F_0)$, and $C_{(n+1)}=C_n\circ C_{(n)}$ (Proposition~\ref{prop:composition}). Then $T_{C_{(0)}}=\mathrm{id}$ and $T_{C_{(n+1)}}=T_{C_n}\circ T_{C_{(n)}}$. In Lean the groupoid of a correspondence is a field (\texttt{BCorr}), because it changes along the chain. All groupoids are taken in a single universe, which the $2$-fibre product preserves.
+\lean{GroupoidCorr.chain, GroupoidCorr.chain_op_zero, GroupoidCorr.chain_op_succ}\leanok
+\end{definition}
+
+\begin{theorem}[orders add along a chain of correspondences]\label{thm:orders-add-corr}
+Let $\varpi\in R$, and suppose $C_i=\varpi^{r_i}C_i'$ for correspondences $C_i'$, in the sense of Lemma~\ref{lem:corr-smul}. Then
+\[
+C_{(n)}=\varpi^{\,r_0+\cdots+r_{n-1}}\,C'_{(n)},\qquad\text{hence}\qquad T_{C_{(n)}}=\varpi^{\,r_0+\cdots+r_{n-1}}\,T_{C'_{(n)}}.
+\]
+\lean{GroupoidCorr.chain_eq_pow_smul, GroupoidCorr.chain_op_eq_pow_smul}\leanok
+\end{theorem}
+
+\begin{proof}
+Induction on $n$, as in Theorem~\ref{thm:orders-add}, with Lemma~\ref{lem:corr-smul} in place of the bilinearity of composition. For $n=0$, $1\cdot C=C$. The operator statement follows from $T_{cC}=c\,T_C$.
+\end{proof}
+
 \begin{remark}
-Theorem~\ref{thm:orders-add} and Corollary~\ref{cor:divisible-values} together give the divisibility of the periods of a theta chain once each step's kernel is divisible by $\varpi^{r_i}$. This is Theorem~8.11 and Corollary~8.12 of the main account. The reduction from the groupoid-level statement to the linear one uses Proposition~\ref{prop:composition} and the $R$-linearity of pushforward.
+Theorem~\ref{thm:orders-add-corr}, with Corollary~\ref{cor:divisible-values} applied to the period pairing, gives the divisibility of the periods of a theta chain once each step's kernel is divisible by $\varpi^{r_i}$. This is Theorem~8.11 and Corollary~8.12 of the main account. Theorem~\ref{thm:orders-add} is the same statement for the operators alone, which are $R$-linear maps.
 \end{remark}
 
 \end{document}

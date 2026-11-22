@@ -64,7 +64,7 @@ Both must exit 0.
 
 ## Current status
 
-`lake build` is clean, with no `sorry`. All 19 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
+`lake build` is clean, with no `sorry`. All 23 note items are `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`.
 
 Files:
 - `NormMap.lean`: Section 1.
@@ -74,6 +74,7 @@ Files:
 - `Correspondence.lean`: `Corr` (apex `C` is a parameter), `Corr.op`, `Corr.comp`, `Corr.op_comp`.
 - `Adjoint.lean`: `FinGroupoid`, the pairing `ginner`, and `ginner_push`, proved by double counting.
 - `Divisibility.lean`: chains of linear maps.
+- `Chain.lean`: kernel scaling (`Corr.smul`), the identity correspondence, and bundled correspondences `BCorr` with the apex as a field, all in one universe `Type u`. Also chains `chain` and `thm:orders-add-corr` (`chain_eq_pow_smul`). This is the kernel-level version of `thm:orders-add`.
 
 Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
 
@@ -82,10 +83,10 @@ Lean gotchas:
 - Proofs that unfold `pushVal` should bring the same instance into scope: `let _ : ∀ z, Fintype (Fibre f z) := fun z => Fintype.ofFinite _`.
 - Use `h.map_id`, not `Functor.map_id`: with `open CategoryTheory` the latter resolves to the monad lemma.
 - `Comma.homMk` does not exist at this Mathlib commit. Build `CommaMorphism` structures directly.
+- To prove two `BCorr`s with the same apex equal, `show` both as `⟨C, T⟩` and rewrite in `T`. For `Corr` equality, use `unfold …; congr 1; ext`.
 - When destructuring `Quotient.exact`, give the witness type explicitly (`obtain ⟨γ, hγ⟩ : ∃ γ : a ⟶ b, … := Quotient.exact h`).
 
 Natural extensions from the main account (not started):
-- the reduction of `thm:orders-add` from linear maps to kernels on iterated fibre products;
 - Theorems 8.3–8.4, the Lubin–Tate exponential bound and the divisibility of jets. These are elementary power-series statements.
 
 ## Context
