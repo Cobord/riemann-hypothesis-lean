@@ -62,23 +62,17 @@ Both must exit 0.
    - kernels of correspondences point from `src^*` to `tgt^*`;
    - pushforward sums, never averages.
 
-## Current status (written without a local build; verify first)
+## Current status
 
-The Lean files were written in an environment where Mathlib could not be fetched, so **they have not been compiled yet.** No note item is marked `\leanok`.
+`lake build` is clean, with no `sorry`. Every note item that has Lean declarations is `\leanok`, and `check_sync.py --axioms` passes using only `propext`, `Classical.choice` and `Quot.sound`. The items done: `lem:norm-map`, `def:local-system`, `def:section`, `def:fibre`, `lem:summand-wd`, `def:pushforward`, `prop:push-section`, `def:chain`, `thm:orders-add`, `cor:divisible-values`.
 
-First tasks, in order:
+`prop:push-section` goes through the helpers `FibrePair.postcomp`, `Fibre.postcompEquiv` (the fibre bijection, with inverse from `inv g`) and `summand_postcomp`. `pushVal` picks its `Fintype` instance with `Fintype.ofFinite`, so proofs that unfold it should bring the same instance into scope (`let _ : ∀ z, Fintype (Fibre f z) := fun z => Fintype.ofFinite _`). Rewriting under `pushVal` with `rw` trips over `Fibre` vs `Quotient`; use `refine`/`exact` instead.
 
-1. `lake exe cache get && lake build`. Fix compile errors, keeping statements as they are where possible. Likely spots:
-   - `ModuleCat` hom application (`(F.map g).hom x`);
-   - the `simp`/`rw` chains in `fibreSetoid` and `summand_wd`;
-   - the `rw` chain in `chainComp_eq_pow_smul`.
-2. Once a file builds with no `sorry`, mark its note items `\leanok` and run the checker with `--axioms`. The expected candidates are:
-   - `lem:norm-map`, `def:local-system`, `def:section`, `def:fibre`, `lem:summand-wd`, `def:pushforward`;
-   - `def:chain`, `thm:orders-add`, `cor:divisible-values`.
-3. Prove `pushVal_compat` (`prop:push-section`). The note's proof: post-composition with `g` is a bijection of fibres (inverse by `inv g`), carrying summands to summands. Then use `map_sum` for the linear map `(F.map g).hom`.
-4. Formalize `prop:base-change`: define the 2-fibre product groupoid and the fibre bijection.
-5. `def:correspondence` and `prop:composition`.
-6. `prop:adjoint`: groupoid cardinality, orbit–stabilizer.
+Next tasks, in order:
+
+1. Formalize `prop:base-change`: define the 2-fibre product groupoid and the fibre bijection.
+2. `def:correspondence` and `prop:composition`.
+3. `prop:adjoint`: groupoid cardinality, orbit–stabilizer.
 
 After that, natural extensions from the main account:
 - the reduction of `thm:orders-add` from linear maps to kernels on iterated fibre products;

@@ -47,7 +47,7 @@ Let $G$ be a finite group acting $R$-linearly on an $R$-module $V$ by $\rho$. Th
 \item If the norm of $v$ vanishes, then $|G|\,v$ lies in the span of the elements $v-\rho(g)v$.
 \end{enumerate}
 Consequently the norm map from coinvariants to invariants has kernel and cokernel killed by $|G|$.
-\lean{GroupoidCorr.norm_of_invariant, GroupoidCorr.card_smul_eq_norm_add, GroupoidCorr.card_smul_mem_span_of_norm_eq_zero}
+\lean{GroupoidCorr.norm_of_invariant, GroupoidCorr.card_smul_eq_norm_add, GroupoidCorr.card_smul_mem_span_of_norm_eq_zero}\leanok
 \end{lemma}
 
 \begin{proof}
@@ -62,17 +62,17 @@ For the consequence: by (1), the image of the norm map contains $|G|$ times ever
 
 \begin{definition}\label{def:local-system}
 A \emph{local system} of $R$-modules on a groupoid $X$ is a functor $F\colon X\to R\text{-Mod}$.
-\lean{GroupoidCorr.LocalSystem}
+\lean{GroupoidCorr.LocalSystem}\leanok
 \end{definition}
 
 \begin{definition}\label{def:section}
 A \emph{section} of $F$ is a family $(s_x)_{x\in X}$ with $s_x\in F(x)$ such that $F(g)(s_x)=s_y$ for every morphism $g\colon x\to y$.
-\lean{GroupoidCorr.Sec}
+\lean{GroupoidCorr.Sec}\leanok
 \end{definition}
 
 \begin{definition}\label{def:fibre}
 Let $f\colon X\to Y$ be a functor of groupoids and $y\in Y$. The \emph{fibre} of $f$ over $y$ is the set of equivalence classes of pairs $(x,\alpha)$ with $\alpha\colon f(x)\to y$. Two pairs are equivalent, $(x,\alpha)\sim(x',\alpha')$, if some $\beta\colon x\to x'$ satisfies $f(\beta);\alpha'=\alpha$. Here $;$ denotes composition in diagrammatic order (first $f(\beta)$, then $\alpha'$), matching the composition operator of Lean's category theory library.
-\lean{GroupoidCorr.fibreSetoid, GroupoidCorr.Fibre}
+\lean{GroupoidCorr.fibreSetoid, GroupoidCorr.Fibre}\leanok
 \end{definition}
 
 \begin{proof}[The relation is an equivalence relation]
@@ -81,7 +81,7 @@ Reflexivity: take $\beta=\mathrm{id}$. Symmetry: if $f(\beta);\alpha'=\alpha$, t
 
 \begin{lemma}\label{lem:summand-wd}
 Let $F$ be a local system on $Y$ and $s$ a section of $f^*F=F\circ f$. The element $F(\alpha)(s_x)\in F(y)$ depends only on the class of $(x,\alpha)$ in the fibre.
-\lean{GroupoidCorr.summand_wd}
+\lean{GroupoidCorr.summand_wd}\leanok
 \end{lemma}
 
 \begin{proof}
@@ -98,16 +98,16 @@ Assume all fibres of $f$ are finite. The \emph{pushforward} of a section $s$ of 
 (f_!s)_y=\sum_{[(x,\alpha)]\in\text{fibre over }y}F(\alpha)(s_x)\ \in F(y).
 \]
 It is a finite sum with integer coefficients: nothing is divided.
-\lean{GroupoidCorr.pushVal}
+\lean{GroupoidCorr.pushVal}\leanok
 \end{definition}
 
 \begin{proposition}\label{prop:push-section}
 $f_!s$ is a section of $F$.
-\lean{GroupoidCorr.pushVal_compat, GroupoidCorr.push}
+\lean{GroupoidCorr.pushVal_compat, GroupoidCorr.push}\leanok
 \end{proposition}
 
 \begin{proof}
-Let $g\colon y\to y'$. Post-composition $(x,\alpha)\mapsto(x,\alpha;g)$ respects the equivalence relation, and it is a bijection from the fibre over $y$ to the fibre over $y'$, with inverse given by post-composition with $g^{-1}$. It carries the summand $F(\alpha)(s_x)$ to $F(\alpha;g)(s_x)=F(g)\bigl(F(\alpha)(s_x)\bigr)$. Since $F(g)$ is additive, summing gives $F(g)\bigl((f_!s)_y\bigr)=(f_!s)_{y'}$.
+Let $g\colon y\to y'$. Post-composition $(x,\alpha)\mapsto(x,\alpha;g)$ respects the equivalence relation (if $f(\beta);\alpha'=\alpha$ then $f(\beta);\alpha';g=\alpha;g$), and it is a bijection from the fibre over $y$ to the fibre over $y'$, with inverse given by post-composition with $g^{-1}$. It carries the summand $F(\alpha)(s_x)$ to $F(\alpha;g)(s_x)=F(g)\bigl(F(\alpha)(s_x)\bigr)$. Since $F(g)$ is additive, summing gives $F(g)\bigl((f_!s)_y\bigr)=(f_!s)_{y'}$.
 \end{proof}
 
 \begin{proposition}[base change]\label{prop:base-change}
@@ -163,7 +163,7 @@ For $R$-linear maps $K_i\colon M_i\to M_{i+1}$, the composite of the first $n$ s
 \[
 K_{(n)}=K_{n-1}\circ\cdots\circ K_0\colon M_0\to M_n,\qquad K_{(0)}=\mathrm{id}.
 \]
-\lean{GroupoidCorr.chainComp}
+\lean{GroupoidCorr.chainComp}\leanok
 \end{definition}
 
 \begin{theorem}[orders add along a chain]\label{thm:orders-add}
@@ -171,7 +171,7 @@ Let $\varpi\in R$, and suppose $K_i=\varpi^{r_i}K_i'$ for $R$-linear maps $K_i'$
 \[
 K_{(n)}=\varpi^{\,r_0+\cdots+r_{n-1}}\,K'_{(n)} .
 \]
-\lean{GroupoidCorr.chainComp_eq_pow_smul}
+\lean{GroupoidCorr.chainComp_eq_pow_smul}\leanok
 \end{theorem}
 
 \begin{proof}
@@ -184,7 +184,7 @@ where $S=r_0+\cdots+r_{n-1}$, because composition is bilinear.
 
 \begin{corollary}\label{cor:divisible-values}
 If a bilinear period pairing satisfies $\mathit{per}=\varpi^{S}\mathit{per}'$ with $\mathit{per}'$ integral, then every value of $\mathit{per}$ lies in the ideal $(\varpi^{S})$.
-\lean{GroupoidCorr.values_mem_span_pow}
+\lean{GroupoidCorr.values_mem_span_pow}\leanok
 \end{corollary}
 
 \begin{proof}

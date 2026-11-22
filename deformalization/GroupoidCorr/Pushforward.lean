@@ -9,7 +9,8 @@ Mirrors `note/note.tex`, Section 2.
 * `Sec F`             — compatible families of elements (`def:section`);
 * `Fibre f y`         — isomorphism classes of pairs `(x, α : f x ⟶ y)` (`def:fibre`);
 * `pushVal f F s y`   — the sum over the fibre of `F(α)(s x)` (`def:pushforward`);
-* `push f F s`        — the same, as a section of `F` (`prop:push-section`).
+* `push f F s`        — the same, as a section of `F` (`prop:push-section`), via the
+                        fibre bijection `Fibre.postcompEquiv` and `summand_postcomp`.
 
 Nothing here divides: pushforward is a finite sum with integer coefficients.
 -/
@@ -79,13 +80,63 @@ noncomputable def pushVal (f : X ⥤ Y) [∀ y, Finite (Fibre f y)] (F : LocalSy
   exact ∑ q : Fibre f y,
     Quotient.lift (s := fibreSetoid f y) (summand f F s y) (summand_wd f F s y) q
 
+/-- Post-composition `(x, α) ↦ (x, α ≫ g)` on pairs. -/
+def FibrePair.postcomp (f : X ⥤ Y) {y y' : Y} (g : y ⟶ y') (p : FibrePair f y) :
+    FibrePair f y' :=
+  ⟨p.1, p.2 ≫ g⟩
+
+/-- Post-composition respects the equivalence relation defining the fibre. -/
+theorem FibrePair.postcomp_rel (f : X ⥤ Y) {y y' : Y} (g : y ⟶ y') (a b : FibrePair f y)
+    (hab : (fibreSetoid f y).r a b) :
+    (fibreSetoid f y').r (FibrePair.postcomp f g a) (FibrePair.postcomp f g b) := by
+  obtain ⟨β, h⟩ := hab
+  exact ⟨β, by simp only [FibrePair.postcomp]; rw [← Category.assoc, h]⟩
+
+/-- Post-composition with `g` as a map of fibres. -/
+def Fibre.postcomp (f : X ⥤ Y) {y y' : Y} (g : y ⟶ y') : Fibre f y → Fibre f y' :=
+  Quotient.map (FibrePair.postcomp f g) (FibrePair.postcomp_rel f g)
+
+/-- Post-composition with `g` is a bijection of fibres, with inverse post-composition with
+`inv g`. -/
+def Fibre.postcompEquiv (f : X ⥤ Y) {y y' : Y} (g : y ⟶ y') : Fibre f y ≃ Fibre f y' where
+  toFun := Fibre.postcomp f g
+  invFun := Fibre.postcomp f (Groupoid.inv g)
+  left_inv := fun q => by
+    induction q using Quotient.inductionOn with
+    | h p =>
+      show Quotient.mk _ (FibrePair.postcomp f (Groupoid.inv g) (FibrePair.postcomp f g p)) =
+        Quotient.mk _ p
+      simp [FibrePair.postcomp]
+      rfl
+  right_inv := fun q => by
+    induction q using Quotient.inductionOn with
+    | h p =>
+      show Quotient.mk _ (FibrePair.postcomp f g (FibrePair.postcomp f (Groupoid.inv g) p)) =
+        Quotient.mk _ p
+      simp [FibrePair.postcomp]
+      rfl
+
+/-- Post-composition carries the summand `F(α)(s x)` to `F(g)(F(α)(s x))`. -/
+theorem summand_postcomp (f : X ⥤ Y) (F : LocalSystem R Y) (s : Sec (f ⋙ F)) {y y' : Y}
+    (g : y ⟶ y') (p : FibrePair f y) :
+    summand f F s y' (FibrePair.postcomp f g p) = (F.map g).hom (summand f F s y p) := by
+  simp [summand, FibrePair.postcomp, Functor.map_comp, ModuleCat.hom_comp]
+  rfl
+
 /-- [note: prop:push-section] The pushforward is compatible with the morphisms of `Y`.
-Proof idea (note): post-composition with `g : y ⟶ y'` is a bijection between the fibres
-over `y` and `y'`, and it carries summands to summands. -/
+Proof (note): post-composition with `g : y ⟶ y'` is a bijection between the fibres
+over `y` and `y'` (`Fibre.postcompEquiv`), and it carries summands to summands
+(`summand_postcomp`); then use additivity of `F(g)`. -/
 theorem pushVal_compat (f : X ⥤ Y) [∀ y, Finite (Fibre f y)] (F : LocalSystem R Y)
     (s : Sec (f ⋙ F)) {y y' : Y} (g : y ⟶ y') :
     (F.map g).hom (pushVal f F s y) = pushVal f F s y' := by
-  sorry
+  classical
+  let _ : ∀ z, Fintype (Fibre f z) := fun z => Fintype.ofFinite _
+  unfold pushVal
+  refine (map_sum (F.map g).hom _ _).trans
+    (Fintype.sum_equiv (Fibre.postcompEquiv f g) _ _ fun q => ?_)
+  induction q using Quotient.inductionOn with
+  | h p => exact (summand_postcomp f F s g p).symm
 
 /-- [note: prop:push-section] The pushforward as a section of `F`. -/
 noncomputable def push (f : X ⥤ Y) [∀ y, Finite (Fibre f y)] (F : LocalSystem R Y)
