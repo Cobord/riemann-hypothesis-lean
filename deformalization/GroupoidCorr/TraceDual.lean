@@ -53,7 +53,7 @@ theorem trace_dual_self (f : B →ₗ[A] A) :
       rw [← hbb j, hydef, map_sum, LinearMap.sum_apply]
       simp only [LinearMap.map_smul, LinearMap.smul_apply, smul_eq_mul]
       simp only [bd, LinearMap.BilinForm.apply_dualBasis_left, mul_ite, mul_one, mul_zero,
-        Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     intro c
     have := congrArg (fun g => g c) this
     simpa [g₁, g₂, traceForm_apply] using this

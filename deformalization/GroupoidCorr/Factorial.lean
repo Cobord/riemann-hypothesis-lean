@@ -86,7 +86,7 @@ theorem sum_vonMangoldt (a : ℕ) (G : ℕ → ℝ) (hG : ∀ n, a < n → G n =
 /-- Legendre's formula with the sum over `1 ≤ k ≤ a`. -/
 theorem padicValNat_factorial_Icc (p : ℕ) [Fact p.Prime] (a : ℕ) :
     padicValNat p a.factorial = ∑ k ∈ Icc 1 a, a / p ^ k := by
-  rw [padicValNat_factorial (b := a + 1) (Nat.lt_succ_of_le (Nat.log_le_self p a))]
+  rw [Nat.padicValNat_def, multiplicity_factorial (b := a + 1) (Nat.lt_succ_of_le (Nat.log_le_self p a))]
   rfl
 
 /-- [note: prop:factorial] The factorial identity:
@@ -106,8 +106,8 @@ theorem askFlat_eq {d : ℕ} (Q : QuadChar d) (a : ℕ) :
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Q.map_pow, hp]
     rcases Nat.even_or_odd k with he | ho
-    · rw [if_neg (Nat.not_odd_iff_even.mpr he)]; push_cast; rw [he.neg_one_pow]; ring
-    · rw [if_pos ho]; push_cast; rw [ho.neg_one_pow]; ring
+    · rw [ite_eq_right (Nat.not_odd_iff_even.mpr he)]; push_cast; rw [he.neg_one_pow]; ring
+    · rw [ite_eq_left ho]; push_cast; rw [ho.neg_one_pow]; ring
   have h_split : ∀ p, Q.χ p = 1 → h p = 0 := by
     intro p hp
     simp only [hh]
@@ -190,7 +190,7 @@ theorem legendre_base (q a : ℕ) (hq : 1 < q) :
 /-- The base-`q` digit sum is at most `(q-1)(log_q a + 1)`. -/
 theorem digit_sum_le_log (q a : ℕ) (hq : 1 < q) (ha : a ≠ 0) :
     (q.digits a).sum ≤ (q - 1) * (Nat.log q a + 1) := by
-  have := List.sum_le_card_nsmul (q.digits a) (q - 1)
+  have := List.sum_le_length_nsmul (q.digits a) (q - 1)
     (fun x hx => Nat.le_sub_one_of_lt (Nat.digits_lt_base hq hx))
   rw [Nat.length_digits q a hq ha, smul_eq_mul] at this
   linarith
@@ -283,7 +283,8 @@ theorem factorial_gain {d : ℕ} (Q : QuadChar d) (a : ℕ) (ha : 1 ≤ a) :
   -- the ramified prime contributes at most `a log d / (d-1)`
   have hd1 : (1 : ℝ) < d := by exact_mod_cast hd.one_lt
   have hram : Real.log d * padicValNat d a.factorial ≤ a * Real.log d / (d - 1) := by
-    have h := sub_one_mul_padicValNat_factorial (p := d) a
+    have h : (d - 1) * padicValNat d a.factorial = a - (d.digits a).sum := by
+      rw [Nat.padicValNat_def]; exact hd.sub_one_mul_multiplicity_factorial
     have hle : (d - 1) * padicValNat d a.factorial ≤ a := by rw [h]; omega
     have hle' : ((d : ℝ) - 1) * padicValNat d a.factorial ≤ a := by
       have := (Nat.cast_le (α := ℝ)).mpr hle

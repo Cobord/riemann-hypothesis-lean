@@ -177,7 +177,7 @@ theorem jet_coeff_mem (f : ℕ → K) (hf : ∀ m, f m ∈ D.O) (a : ℕ) (ha : 
   have hϖ0 := D.ϖ_ne_zero
   have hGall : ∀ k, coeff a (D.G ^ k) ∈ D.O := fun k =>
     coeff_pow_mem_of_lt D.O D.G (a + 1) (fun m _ => D.coeff_G_mem m) k a (by omega)
-  rw [Finset.sum_range_succ', pow_zero, coeff_one, if_neg (by omega), mul_zero, add_zero,
+  rw [Finset.sum_range_succ', pow_zero, coeff_one, ite_eq_right (by omega), mul_zero, add_zero,
     Finset.mul_sum]
   refine D.O.sum_mem fun m _ => ?_
   have : D.ϖ ^ (a - 1) * (f (m + 1) * coeff a (D.E ^ (m + 1))) =
@@ -206,7 +206,8 @@ end LTData
 theorem height_split (p : ℕ) [hp : Fact p.Prime] (a : ℕ) (ha : 1 ≤ a) :
     ((p : ℤ) - 1) * padicValNat p a.factorial - ((a : ℤ) - 1) = 1 - ((p.digits a).sum : ℤ) ∧
       1 ≤ (p.digits a).sum := by
-  have h := sub_one_mul_padicValNat_factorial (p := p) a
+  have h : (p - 1) * padicValNat p a.factorial = a - (p.digits a).sum := by
+    rw [Nat.padicValNat_def]; exact hp.out.sub_one_mul_multiplicity_factorial
   have hs := Nat.digit_sum_le p a
   have hp1 : 1 ≤ p := hp.out.one_lt.le
   refine ⟨?_, ?_⟩
@@ -226,7 +227,8 @@ theorem height_split (p : ℕ) [hp : Fact p.Prime] (a : ℕ) (ha : 1 ≤ a) :
 theorem height_inert (p : ℕ) [hp : Fact p.Prime] (a : ℕ) :
     ((p : ℤ) ^ 2 - 1) * padicValNat p a.factorial - ((a : ℤ) - 1) =
       a * p - (p + 1) * (p.digits a).sum + 1 := by
-  have h := sub_one_mul_padicValNat_factorial (p := p) a
+  have h : (p - 1) * padicValNat p a.factorial = a - (p.digits a).sum := by
+    rw [Nat.padicValNat_def]; exact hp.out.sub_one_mul_multiplicity_factorial
   have hs := Nat.digit_sum_le p a
   have hp1 : 1 ≤ p := hp.out.one_lt.le
   have h' : ((p : ℤ) - 1) * padicValNat p a.factorial = a - (p.digits a).sum := by

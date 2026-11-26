@@ -96,7 +96,7 @@ theorem log_absNorm_ge (C : Ideal (𝓞 E)) (hC : C ≠ ⊥) (T : Finset ℕ)
     rw [← IsDedekindDomain.inf_pow_eq_prod_of_prime univ (fun x : Above E T => x.2.1) n
       (fun x _ => hprime x) (fun x _ y _ hxy h => hxy (above_injective T x y h))]
     rw [Finset.inf_eq_iInf]
-    simp only [Submodule.mem_iInf, SetLike.le_def]
+    simp only [Submodule.mem_iInf, IsConcreteLE.le_iff]
     exact fun a ha x _ => hn x ha
   have hdvd := Ideal.absNorm_dvd_absNorm_of_le hle
   have hCpos : 0 < Ideal.absNorm C :=

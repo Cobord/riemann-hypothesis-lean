@@ -71,7 +71,7 @@ def compKernel (T₁ : Corr F F' C₁) (T₂ : Corr F' F'' C₂) :
         F'.map a.hom ≫ F'.map (T₂.src.map e.right) := by
       rw [← F'.map_comp, ← F'.map_comp, e.w]
     dsimp at h1 h2 ⊢
-    simp only [Category.assoc, Comma.fst_map, Comma.snd_map]
+    simp only [Category.assoc]
     rw [reassoc_of% h1, reassoc_of% h3, h2]
 
 /-- [note: prop:composition] The composite correspondence on the 2-fibre product
