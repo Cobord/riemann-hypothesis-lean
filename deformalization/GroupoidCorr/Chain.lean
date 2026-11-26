@@ -80,6 +80,7 @@ section identity
 
 variable {X : Type u₁} [Groupoid.{v₁} X]
 
+/-- [note: def:corr-id] The fibres of the identity functor have at most one element. -/
 instance subsingleton_fibre_id (x : X) : Subsingleton (Fibre (𝟭 X) x) := by
   constructor
   intro p p'

@@ -37,7 +37,7 @@ variable {X : Type u₁} [Groupoid.{v₁} X] {Y : Type u₂} [Groupoid.{v₂} Y]
 
 instance [FinGroupoid X] : Finite (Pi0 X) := FinGroupoid.finite_classes
 
-/-- In a finite groupoid all hom-sets are finite. -/
+/-- [note: def:finite-groupoid] In a finite groupoid all hom-sets are finite. -/
 instance finite_hom [FinGroupoid X] (x y : X) : Finite (x ⟶ y) := by
   by_cases h : Nonempty (x ⟶ y)
   · obtain ⟨i⟩ := h
@@ -103,7 +103,7 @@ theorem toFibre_surjective (y : Y) : Function.Surjective (toFibre f y) := by
     obtain ⟨i⟩ := out_hom p.1
     exact ⟨⟨Quotient.mk _ p.1, f.map i ≫ p.2⟩, Quotient.sound ⟨i, rfl⟩⟩
 
-/-- Fibres of a functor between finite groupoids are finite. -/
+/-- [note: def:finite-groupoid] Fibres of a functor between finite groupoids are finite. -/
 instance finite_fibre_of_fin [FinGroupoid X] [FinGroupoid Y] (y : Y) : Finite (Fibre f y) :=
   Finite.of_surjective _ (toFibre_surjective f y)
 

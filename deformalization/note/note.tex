@@ -50,15 +50,17 @@ Let $G$ be a finite group acting $R$-linearly on an $R$-module $V$ by $\rho$. Th
 \item For every $v$, $|G|\,v=\sum_g\bigl(v-\rho(g)v\bigr)+\sum_g\rho(g)v$.
 \item If the norm of $v$ vanishes, then $|G|\,v$ lies in the span of the elements $v-\rho(g)v$.
 \end{enumerate}
-Consequently the norm map from coinvariants to invariants has kernel and cokernel killed by $|G|$.
 \lean{GroupoidCorr.norm_of_invariant, GroupoidCorr.card_smul_eq_norm_add, GroupoidCorr.card_smul_mem_span_of_norm_eq_zero}\leanok
 \end{lemma}
 
 \begin{proof}
 (1) Every summand equals $v$. (2) Expand $\sum_g(v-\rho(g)v)=|G|\,v-\sum_g\rho(g)v$. (3) Substitute the vanishing norm into (2).
 
-For the consequence: by (1), the image of the norm map contains $|G|$ times every invariant, so $|G|$ kills the cokernel. By (3), $|G|$ kills the kernel, since the span of the $v-\rho(g)v$ is the kernel of the projection to coinvariants.
 \end{proof}
+
+\begin{remark}[not formalized]
+Consequently the norm map from coinvariants to invariants has kernel and cokernel killed by $|G|$: by (1), the image of the norm map contains $|G|$ times every invariant, and by (3), $|G|$ kills the kernel, since the span of the $v-\rho(g)v$ is the kernel of the projection to coinvariants.
+\end{remark}
 
 %======================================================================
 \section{Local systems on groupoids and pushforward}
@@ -130,7 +132,7 @@ $K_b$ is additive, and $K_b\bigl(G(\beta)(s_a)\bigr)=G'(\beta)\bigl(K_{k(a)}(s_a
 
 \begin{lemma}\label{lem:push-comp}
 Let $k\colon A\to B$ and $h\colon B\to C$ have finite fibres, with $h$ \emph{faithful}. Then the fibres of $h\circ k$ are finite, and $(h\circ k)_!s=h_!(k_!s)$ for every section $s$ of $(h\circ k)^*F$.
-\lean{GroupoidCorr.pushVal_comp}\leanok
+\lean{GroupoidCorr.finite_fibre_comp, GroupoidCorr.pushVal_comp}\leanok
 \end{lemma}
 
 \begin{proof}
@@ -153,12 +155,16 @@ Let $f\colon X\to Y$ and $g\colon Z\to Y$ be functors of groupoids. The \emph{$2
 \begin{proposition}[base change]\label{prop:base-change}
 In the setting of Definition~\ref{def:fibre-product}, assume the fibres of $f$ are finite. Let $F$ be a local system on $Y$ and $s$ a section of $f^*F$. Then:
 \begin{enumerate}
-\item The family $\tilde s_{(x,z,\gamma)}=F(\gamma)(s_x)$ is a section of $f'^*g^*F$. This is $g'^*s$, transported along the natural isomorphism $\gamma\colon g'^*f^*F\cong f'^*g^*F$.
+\item The family $\tilde s_{(x,z,\gamma)}=F(\gamma)(s_x)$ is a section of $f'^*g^*F$.
 \item For each $z\in Z$, post-composition with $g$ gives a bijection from the fibre of $f'$ over $z$ to the fibre of $f$ over $g(z)$. In particular, the fibres of $f'$ are finite.
 \item $(f'_!\tilde s)_z=(f_!s)_{g(z)}$ for every $z\in Z$. That is, $g^*f_!=f'_!\,g'^*$.
 \end{enumerate}
-\lean{GroupoidCorr.baseChangeSec, GroupoidCorr.bcFibreEquiv, GroupoidCorr.pushVal_baseChange}\leanok
+\lean{GroupoidCorr.baseChangeSec, GroupoidCorr.bcFibreEquiv, GroupoidCorr.finite_fibre_snd, GroupoidCorr.pushVal_baseChange}\leanok
 \end{proposition}
+
+\begin{remark}[not formalized]
+The section $\tilde s$ of (1) is $g'^*s$, transported along the natural isomorphism $\gamma\colon g'^*f^*F\cong f'^*g^*F$.
+\end{remark}
 
 \begin{proof}
 (1) For a morphism $(\beta,\delta)$, functoriality and the compatibility of $s$ along $\beta$ give
@@ -170,13 +176,17 @@ F(g\delta)\bigl(F(\gamma)(s_x)\bigr)=F(\gamma;g\delta)(s_x)=F\bigl(f\beta;\gamma
 \end{proof}
 
 \begin{definition}\label{def:finite-groupoid}
-A groupoid is \emph{finite} if it has finitely many isomorphism classes of objects and every automorphism group is finite. Then every hom-set is finite, and the fibres of any functor between finite groupoids are finite. A $\mathbb C$-valued function on isomorphism classes is the same as a section of the constant local system $\mathbb C$. For two such functions put
+A groupoid is \emph{finite} if it has finitely many isomorphism classes of objects and every automorphism group is finite. Then every hom-set is finite, and the fibres of any functor between finite groupoids are finite. For functions $a,b\colon X\to\mathbb C$ put
 \[
 \langle a,b\rangle_X=\sum_{[x]}\frac{a(x)\,\overline{b(x)}}{|\Aut x|},
 \]
-computed on chosen representatives of the classes. Because $a$, $b$ and $|\Aut x|$ are constant on isomorphism classes, the result does not depend on the choice.
-\lean{GroupoidCorr.FinGroupoid, GroupoidCorr.ginner}\leanok
+computed on chosen representatives $x$ of the isomorphism classes.
+\lean{GroupoidCorr.FinGroupoid, GroupoidCorr.finite_hom, GroupoidCorr.finite_fibre_of_fin, GroupoidCorr.ginner}\leanok
 \end{definition}
+
+\begin{remark}[not formalized]
+A $\mathbb C$-valued function on isomorphism classes is the same as a section of the constant local system $\mathbb C$. For such functions the pairing does not depend on the choice of representatives, because $a$, $b$ and $|\Aut x|$ are constant on isomorphism classes.
+\end{remark}
 
 \begin{proposition}[groupoid cardinality and adjointness]\label{prop:adjoint}
 Let $f\colon X\to Y$ be a faithful functor of finite groupoids, $a$ a section of $f^*\mathbb C$ and $b$ a section of $\mathbb C$ on $Y$. Then $\langle f_!a,b\rangle_Y=\langle a,f^*b\rangle_X$.
@@ -229,7 +239,7 @@ K_2\,\mathrm{src}_2^*\,\mathrm{tgt}_{1!}u=K_2\,f'_!\tilde u=f'_!\bigl((f'^*K_2)(
 by base change (Proposition~\ref{prop:base-change}) and Lemma~\ref{lem:push-natural}. Apply $\mathrm{tgt}_{2!}$ and use Lemma~\ref{lem:push-comp} for the faithful $\mathrm{tgt}_2$. This gives $(\mathrm{tgt}_2\circ f')_!$ of the section $K_{2,c_2}\bigl(F'(\gamma)(K_{1,c_1}(s_{\mathrm{src}_1c_1}))\bigr)$, which is $T_{C_2\circ C_1}s$.
 \end{proof}
 
-Operators of correspondences are $R$-linear, since pullback, kernels and pushforward are. So the divisibility statement reduces to linear algebra.
+Operators of correspondences are $R$-linear, since pullback, kernels and pushforward are; the Lean library records only their compatibility with scalars (Lemma~\ref{lem:corr-smul} below). So the divisibility statement reduces to linear algebra.
 
 \begin{definition}\label{def:chain}
 For $R$-linear maps $K_i\colon M_i\to M_{i+1}$, the composite of the first $n$ steps is
@@ -276,8 +286,8 @@ Pullback and pushforward are $R$-linear, so the first identity holds summand by 
 \end{proof}
 
 \begin{definition}\label{def:corr-id}
-The \emph{identity correspondence} on $(X,F)$ has groupoid $X$, both legs the identity and kernel the identity. Its fibres are single points, and its operator is the identity.
-\lean{GroupoidCorr.Corr.id, GroupoidCorr.Corr.op_id}\leanok
+The \emph{identity correspondence} on $(X,F)$ has groupoid $X$, both legs the identity and kernel the identity. Its fibres have at most one element, and its operator is the identity.
+\lean{GroupoidCorr.Corr.id, GroupoidCorr.Corr.subsingleton_fibre_id, GroupoidCorr.Corr.op_id}\leanok
 \end{definition}
 
 \begin{definition}\label{def:corr-chain}
@@ -297,7 +307,7 @@ C_{(n)}=\varpi^{\,r_0+\cdots+r_{n-1}}\,C'_{(n)},\qquad\text{hence}\qquad T_{C_{(
 Induction on $n$, as in Theorem~\ref{thm:orders-add}, with Lemma~\ref{lem:corr-smul} in place of the bilinearity of composition. For $n=0$, $1\cdot C=C$. The operator statement follows from $T_{cC}=c\,T_C$.
 \end{proof}
 
-\begin{remark}
+\begin{remark}[not formalized]
 Theorem~\ref{thm:orders-add-corr}, with Corollary~\ref{cor:divisible-values} applied to the period pairing, gives the divisibility of the periods of a theta chain once each step's kernel is divisible by $\varpi^{r_i}$. This is Theorem~8.11 and Corollary~8.12 of the main account. Theorem~\ref{thm:orders-add} is the same statement for the operators alone, which are $R$-linear maps.
 \end{remark}
 
@@ -310,13 +320,15 @@ This section is Section~8.2 of the main account. There $\mathcal O$ is a complet
 To avoid fractional valuations, we adjoin a root $\varpi$ of $\varpi^{q-1}=p$. Then $\ord_p(x)\ge-m/(q-1)$ means exactly that $\varpi^{m}x$ is integral. The only consequence of ``unramified'' that is used is that $p^m-1$ is a unit for $m\ge1$.
 
 \begin{theorem}[denominators of the Lubin--Tate exponential]\label{thm:LT-exp}
-Let $O$ be a subring of a field $K$, and let $q\ge2$. Let $\varpi\in O$ with $\varpi^{q-1}=p\ne0$, and suppose $p^m-1$ is a unit of $O$ for every $m\ge1$. Let $e_k\in O$ for $k\ge2$, with $e_k\in pO$ for $k\ne q$. Let $E=\sum_nc_nZ^n\in K[[Z]]$ with $c_0=0$ and $c_1=1$, such that for every $n$
+Let $O$ be a subring of a field $K$, and let $q\ge2$. Let $\varpi\in O$ with $\varpi^{q-1}=p\ne0$, and suppose $p^m-1$ is a unit of $O$ for every $m\ge1$. Let $(e_k)_{k\ge0}$ be a sequence in $O$ with $e_k\in pO$ for $k\ne q$; only the $e_k$ with $k\ge2$ enter below. Let $E=\sum_nc_nZ^n\in K[[Z]]$ with $c_0=0$ and $c_1=1$, such that for every $n$
 \[
 p^nc_n=p\,c_n+\sum_{k=2}^{n}e_k\,[Z^n]E^k .
 \]
-This is the coefficient of $Z^n$ in $[p](E(Z))=E(pZ)$. Then $\varpi^{n-1}c_n\in O$ for all $n\ge1$, that is, $\ord_p(c_n)\ge-(n-1)/(q-1)$.
+This is the coefficient of $Z^n$ in $[p](E(Z))=E(pZ)$. Then $\varpi^{n-1}c_n\in O$ for all $n\ge1$.
 \lean{GroupoidCorr.LTData, GroupoidCorr.LTData.exp_coeff_mem}\leanok
 \end{theorem}
+
+In the setting of the main account, where $O$ is a valuation ring and $\ord_p(\varpi)=1/(q-1)$, this says $\ord_p(c_n)\ge-(n-1)/(q-1)$.
 
 \begin{proof}
 Put $G(Z)=\varpi^{-1}E(\varpi Z)=\sum_n g_nZ^n$, so $g_n=\varpi^{n-1}c_n$ and $[Z^n]E^k=\varpi^{k-n}[Z^n]G^k$. We show $g_n\in O$ by strong induction on $n$. For $n\le1$, $g_0=0$ and $g_1=1$. For $n\ge2$, multiply the identity by $\varpi^{n-1}$:
@@ -328,13 +340,15 @@ For $k\ge2$, $[Z^n]G^k$ involves only $g_m$ with $m<n$, because $g_0=0$. So it l
 
 \begin{theorem}[divisibility of jets]\label{thm:jet-gain}
 In the setting of Theorem~\ref{thm:LT-exp}, let $f=\sum_mf_mT^m$ with $f_m\in O$, and let $b_a=[Z^a]f(E(Z))=\sum_{m=0}^{a}f_m[Z^a]E^m$. Then $\varpi^{a-1}b_a\in O$ for $a\ge1$. Hence $\varpi^{a-1}\,a!\,b_a\in a!\,O$.
+\lean{GroupoidCorr.LTData.jet_coeff_mem, GroupoidCorr.LTData.jet_factorial_mem}\leanok
+\end{theorem}
 
-When $\partial$ is the invariant derivation with $\partial\lambda_F=1$, we have $(\partial^af)(0)=a!\,b_a$, since $\partial=d/dZ$ in the coordinate $Z=\lambda_F(T)$. So this says
+\begin{remark}[not formalized]
+When $E=\exp_F$ and $\partial$ is the invariant derivation with $\partial\lambda_F=1$, we have $(\partial^af)(0)=a!\,b_a$, since $\partial=d/dZ$ in the coordinate $Z=\lambda_F(T)$. So, in the setting of the main account, the theorem says
 \[
 \ord_p\bigl((\partial^af)(0)\bigr)\ \ge\ \ord_p(a!)-\frac{a-1}{q-1}.
 \]
-\lean{GroupoidCorr.LTData.jet_coeff_mem, GroupoidCorr.LTData.jet_factorial_mem}\leanok
-\end{theorem}
+\end{remark}
 
 \begin{proof}
 The term $m=0$ vanishes because $a\ge1$. For $m\ge1$, $\varpi^{a-1}f_m[Z^a]E^m=f_m\varpi^{m-1}[Z^a]G^m$, and $G$ has integral coefficients by the proof of Theorem~\ref{thm:LT-exp}.
@@ -404,9 +418,12 @@ where $\Lambda$ is the von Mangoldt function.
 \end{definition}
 
 \begin{definition}\label{def:chi-neg-d}
-For a prime $d\equiv3\pmod4$, put $\chi_{-d}(n)=\bigl(\tfrac nd\bigr)$, the Legendre symbol. It satisfies the properties of Definition~\ref{def:quad-char}: complete multiplicativity, $\chi_{-d}(d)=0$, and $\chi_{-d}(p)=\pm1$ for primes $p\ne d$. For odd $d$, the condition $d\equiv3\pmod4$ is forced by Definition~\ref{def:quad-char}: for $d\equiv1\pmod 4$ the prime $2$ also ramifies in $K$. The remaining case $d=2$, with character $\chi_{-8}$, is not treated here.
-\lean{GroupoidCorr.chiNeg, GroupoidCorr.quadCharOf}\leanok
+For a prime $d\equiv3\pmod4$, put $\chi_{-d}(n)=\bigl(\tfrac nd\bigr)$, the Legendre symbol. It satisfies the properties of Definition~\ref{def:quad-char}: complete multiplicativity, $\chi_{-d}(d)=0$, and $\chi_{-d}(p)=\pm1$ for primes $p\ne d$. \lean{GroupoidCorr.chiNeg, GroupoidCorr.quadCharOf}\leanok
 \end{definition}
+
+\begin{remark}[not formalized]
+For odd $d$, the condition $d\equiv3\pmod4$ is what makes $d$ the only prime ramified in $K$, as Definition~\ref{def:quad-char} requires: for $d\equiv1\pmod 4$ the prime $2$ also ramifies. The remaining case $d=2$, with character $\chi_{-8}$, is not treated here.
+\end{remark}
 
 \begin{proposition}\label{prop:chi-split}
 Let $d\equiv3\pmod4$ be prime.
@@ -438,13 +455,16 @@ An inert prime has norm $p^2$. So the first sum is $\log\Nm_{K/\mathbb Q}\mathfr
 \end{remark}
 
 \begin{corollary}\label{cor:factorial-gain}
-For a prime $p$ put $g_p(a)=\ord_p(a!)-\frac{a-1}{p^2-1}$. By Theorem~\ref{thm:jet-gain}, jets of order $a$ of integral functions are divisible by $p^{g_p(a)}$ at an inert prime $p$. For $a\ge1$,
+For a prime $p$ put $g_p(a)=\ord_p(a!)-\frac{a-1}{p^2-1}$. For $a\ge1$,
 \[
 \sum_{p\le a\ \mathrm{inert}}2\log p\cdot g_p(a)\ \ge\ \ASK^\flat(a)-\frac{a\log d}{d-1}-4\pi(a)\log a .
 \]
-The left side is $\log\Nm_{K/\mathbb Q}\mathfrak g(a)$ for $\mathfrak g(a)=\prod_{p\ \mathrm{inert}}(p)^{g_p(a)}$.
 \lean{GroupoidCorr.jetBound, GroupoidCorr.factorial_gain}\leanok
 \end{corollary}
+
+\begin{remark}[not formalized]
+By Theorem~\ref{thm:jet-gain} and Corollary~\ref{cor:height}, in the setting of the main account, jets of order $a$ of integral functions have $\ord_p\ge g_p(a)$ at an inert prime $p$. Since $\Nm_{K/\mathbb Q}(p)=p^2$, the left side is the weighted count $\sum_p g_p(a)\log\Nm_{K/\mathbb Q}(p)$; when the $g_p(a)$ are integers it is $\log\Nm_{K/\mathbb Q}\prod_{p\ \mathrm{inert}}(p)^{g_p(a)}$.
+\end{remark}
 
 \begin{proof}
 Split Legendre's sum $\ord_p(a!)=\sum_{k\ge1}\lfloor a/p^k\rfloor$ into odd and even $k$. The even part is Legendre's sum in base $q=p^2$, so $(q-1)\sum_{j\ge1}\lfloor a/q^j\rfloor=a-s_q(a)$, where $s_q$ is the base-$q$ digit sum. Hence
@@ -458,7 +478,7 @@ The inequality holds because $s_q(a)\le(q-1)(\lfloor\log_qa\rfloor+1)$ and $\lfl
 \section{Divided periods are integral}
 %======================================================================
 
-This section is Corollary~8.12 of the main account. Let $R$ be a Dedekind domain with fraction field $K$, and let $\mathit{per}\colon N\times P\to R$ be an $R$-bilinear period pairing. Extend it $K$-linearly in the first variable, so that $\mathit{per}(\alpha v)(w)=\alpha\,\mathit{per}(v)(w)$ for $\alpha\in K$. At a prime $\mathfrak p$, Theorem~\ref{thm:orders-add-corr} and Corollary~\ref{cor:divisible-values}, applied over $R_{\mathfrak p}$ with some $\varpi\in\mathfrak p$, show that every value of the period map of a chain is $\varpi^{e}$ times an element of $R_{\mathfrak p}$, with $e=e(\mathfrak p)=\sum_ir_i(\mathfrak p)$. The next lemma returns this to $R$.
+This section is Corollary~8.12 of the main account. Let $R$ be a Dedekind domain with fraction field $K$, and let $\mathit{per}\colon N\times P\to R$ be an $R$-bilinear period pairing. Extend it $K$-linearly in the first variable, so that $\mathit{per}(\alpha v)(w)=\alpha\,\mathit{per}(v)(w)$ for $\alpha\in K$. In the application, at a prime $\mathfrak p$, Theorem~\ref{thm:orders-add-corr} and Corollary~\ref{cor:divisible-values}, applied over $R_{\mathfrak p}$ with some $\varpi\in\mathfrak p$, would show that every value of the period map of a chain is $\varpi^{e}$ times an element of $R_{\mathfrak p}$, with $e=e(\mathfrak p)=\sum_ir_i(\mathfrak p)$. This deduction is not formalized: the library does not define the period map of a chain. The next lemma returns such a statement to $R$.
 
 \begin{lemma}\label{lem:local-global}
 Let $\mathfrak p\ne0$ be a prime of $R$, $\varpi\in\mathfrak p$ and $e\ge0$. If $x\in R$ satisfies $x=\varpi^e y$ in $R_{\mathfrak p}$ for some $y\in R_{\mathfrak p}$, then $x\in\mathfrak p^e$.
@@ -490,9 +510,13 @@ Let $\mathfrak p_1,\dots,\mathfrak p_m$ be distinct nonzero primes of $R$ and $e
 This section is Section~7 (Definition~7.3, Proposition~7.4) and Theorem~8.13 of the main account. Let $\mathit{per}\colon N\times P\to R$ be bilinear over a commutative ring $R$.
 
 \begin{definition}\label{def:content}
-For an ideal $I$, $\mathit{per}$ \emph{vanishes modulo $I$} if every value $\mathit{per}(v)(w)$ reduces to $0$ in $R/I$. By tensor--hom adjunction this is the same as $\mathit{per}\otimes_RR/I=0$ as a map $N\otimes_RR/I\to\mathrm{Hom}_R(P,R/I)$, because the target is an $R/I$-module. The \emph{content} $\mathrm{cont}(\mathit{per})$ is the ideal spanned by the values. For a Dedekind domain $R$ and a nonzero prime $\mathfrak p$, $\ord_{\mathfrak p}(\mathit{per})$ is the exponent of $\mathfrak p$ in $\mathrm{cont}(\mathit{per})$.
+For an ideal $I$, $\mathit{per}$ \emph{vanishes modulo $I$} if every value $\mathit{per}(v)(w)$ reduces to $0$ in $R/I$. The \emph{content} $\mathrm{cont}(\mathit{per})$ is the ideal spanned by the values. For a Dedekind domain $R$ and a nonzero prime $\mathfrak p$, $\ord_{\mathfrak p}(\mathit{per})$ is the exponent of $\mathfrak p$ in $\mathrm{cont}(\mathit{per})$.
 \lean{GroupoidCorr.content, GroupoidCorr.VanishesMod, GroupoidCorr.ordP}\leanok
 \end{definition}
+
+\begin{remark}[not formalized]
+By tensor--hom adjunction, vanishing modulo $I$ is the same as $\mathit{per}\otimes_RR/I=0$ as a map $N\otimes_RR/I\to\mathrm{Hom}_R(P,R/I)$, because the target is an $R/I$-module. This is the main account's definition.
+\end{remark}
 
 \begin{proposition}\label{prop:content}
 \begin{enumerate}
@@ -524,7 +548,7 @@ The $\mathfrak q$ are distinct nonzero primes, so $C\subseteq\prod\mathfrak q^{n
 Lemma~\ref{lem:norm-bound} is the form of Proposition~\ref{prop:content}(3) that Claim~A uses: it needs only lower bounds on the exponents, and only at finitely many primes.
 
 \begin{theorem}[Claim A from Hypothesis J]\label{thm:claimA}
-Let $\chi=\chi_{-d}$ be as in Definition~\ref{def:quad-char}, and let $a_1,\dots,a_\ell\ge1$ be the jet orders of the steps of a chain, all at most $A$. Let $\mathit{per}$ be the period map of the chain over $\mathcal O_E$, with $\mathrm{cont}(\mathit{per})\ne0$. Assume that for every prime $\mathfrak q$ of $\mathcal O_E$ above an inert $p\le A$ there are $m_1,\dots,m_\ell\ge0$ such that:
+Let $\chi=\chi_{-d}$ be as in Definition~\ref{def:quad-char}, and let $a_1,\dots,a_\ell\ge1$ (in the application, the jet orders of the steps of a chain), all at most $A$. Let $\mathit{per}\colon N\times P\to\mathcal O_E$ be $\mathcal O_E$-bilinear (in the application, the period map of the chain), with $\mathrm{cont}(\mathit{per})\ne0$. Assume that for every prime $\mathfrak q$ of $\mathcal O_E$ above an inert $p\le A$ there are $m_1,\dots,m_\ell\ge0$ such that:
 \begin{itemize}
 \item $m_i\ge e(\mathfrak q)\,g_p(a_i)$ whenever $p\le a_i$, with $g_p$ as in Corollary~\ref{cor:factorial-gain};
 \item $\mathit{per}$ vanishes modulo $\mathfrak q^{m_1+\cdots+m_\ell}$.
@@ -536,7 +560,7 @@ Then
 \lean{GroupoidCorr.claimA_core, GroupoidCorr.claimA}\leanok
 \end{theorem}
 
-The hypothesis is what Hypothesis~J of the main account provides, which is not formalized here. Hypothesis~J and Theorem~\ref{thm:jet-gain} make step $i$ divisible by $\mathfrak q^{m_i}$ with $m_i\ge e(\mathfrak q)g_p(a_i)$. Orders add along the chain (Theorem~\ref{thm:orders-add-corr}, Corollary~\ref{cor:divisible-values} and Lemma~\ref{lem:local-global}), so the period map vanishes modulo $\mathfrak q^{\sum m_i}$.
+\noindent\emph{Not formalized.} The hypothesis is what Hypothesis~J of the main account would provide. Hypothesis~J and Theorem~\ref{thm:jet-gain} would make step $i$ divisible by $\mathfrak q^{m_i}$ with $m_i\ge e(\mathfrak q)g_p(a_i)$. Orders add along the chain (Theorem~\ref{thm:orders-add-corr}, Corollary~\ref{cor:divisible-values} and Lemma~\ref{lem:local-global}), so the period map would vanish modulo $\mathfrak q^{\sum m_i}$. Neither Hypothesis~J nor the period map of a chain is in the library.
 
 \begin{proof}
 Put $G(p)=\sum_{i:\,p\le a_i}g_p(a_i)$. By Lemma~\ref{lem:norm-bound} with $n(\mathfrak q)=\sum_im_i\ge e(\mathfrak q)G(p)$, and by the fundamental identity $\sum_{\mathfrak q\mid p}e(\mathfrak q)f(\mathfrak q)=[E:\mathbb Q]$,
@@ -553,7 +577,7 @@ Exchanging the sums over $p$ and $i$, the left side is $\frac{[E:\mathbb Q]}2\su
 This section is Section~2 of the main account: every denominator in the argument is a finite module, recorded by the right target for duality.
 
 \begin{lemma}[trace duality]\label{lem:trace-dual}
-Let $A\subseteq K$ and $B\subseteq L$ with $L/K$ finite separable (in the application $\mathcal O_{E^+}\subseteq E^+$ and $\mathcal O_E\subseteq E$). Assume $B$ is free over $A$ on a basis that is also a $K$-basis of $L$; this holds after localizing at any prime of $A$. Let $\mathfrak D^{-1}=\{y\in L:\Tr_{L/K}(yB)\subseteq A\}$ be the inverse different. Then for every $B$-module $M$, every $A$-linear $h\colon M\to A$ is $\Tr_{L/K}\circ g$ for a unique $B$-linear $g\colon M\to\mathfrak D^{-1}$. That is, $\mathrm{Hom}_B(M,\mathfrak D^{-1})\cong\mathrm{Hom}_A(M,A)$ by composition with the trace.
+Let $A\subseteq K$ and $B\subseteq L$ with $L/K$ finite separable (in the application $\mathcal O_{E^+}\subseteq E^+$ and $\mathcal O_E\subseteq E$). Assume $B$ is free over $A$ on a basis that is also a $K$-basis of $L$. Let $\mathfrak D^{-1}=\{y\in L:\Tr_{L/K}(yB)\subseteq A\}$ be the inverse different. Then for every $B$-module $M$, every $A$-linear $h\colon M\to A$ is $\Tr_{L/K}\circ g$ for a unique $B$-linear $g\colon M\to\mathfrak D^{-1}$. That is, $\mathrm{Hom}_B(M,\mathfrak D^{-1})\cong\mathrm{Hom}_A(M,A)$ by composition with the trace.
 \lean{GroupoidCorr.trace_dual_self, GroupoidCorr.trace_dual}\leanok
 \end{lemma}
 
@@ -561,8 +585,8 @@ Let $A\subseteq K$ and $B\subseteq L$ with $L/K$ finite separable (in the applic
 First let $M=B$. Let $b_i$ be the basis and $b_i^\vee$ the dual basis for the (nondegenerate) trace form. For $f\colon B\to A$, put $y=\sum_if(b_i)\,b_i^\vee$. Then $\Tr(yb_j)=f(b_j)$, so $\Tr(yc)=f(c)$ for all $c\in B$, and in particular $y\in\mathfrak D^{-1}$. Uniqueness is nondegeneracy. For general $M$ and $m\in M$, apply this to $c\mapsto h(cm)$ to get $g(m)$. Additivity and $B$-linearity of $g$ follow from uniqueness, $\Tr g(m)=h(m)$ is the case $c=1$, and any other $g'$ satisfies the defining property of $g(m)$ at each $m$.
 \end{proof}
 
-\begin{remark}
-The different is trivial exactly at the primes unramified in $L/K$. So $\mathrm{Hom}_A(M,A)$ and $\mathrm{Hom}_B(M,B)$ agree after localizing at unramified primes and differ at the ramified ones. This is not formalized.
+\begin{remark}[not formalized]
+In the application, the freeness assumption holds after localizing at any prime of $A=\mathcal O_{E^+}$. The different is trivial exactly at the primes unramified in $L/K$. So $\mathrm{Hom}_A(M,A)$ and $\mathrm{Hom}_B(M,B)$ agree after localizing at unramified primes and differ at the ramified ones.
 \end{remark}
 
 Now let $O$ be a domain with fraction field $E$.
@@ -579,12 +603,12 @@ If $ct=0$ with $c\ne0$, then $c\,f(t)=0$ in the domain $O$, so $f(t)=0$.
 The main account also identifies $\mathrm{Ext}^1_O(T,O)\cong\mathrm{Hom}_O(T,E/O)$. Its only use is the following sequence, which we construct directly instead.
 
 \begin{proposition}\label{prop:modification-dual}
-Let $u\colon M'\to M$ be injective with torsion cokernel $T=M/u(M')$ (a \emph{modification}). Every $\varphi\in M'^\vee=\mathrm{Hom}_O(M',O)$ extends uniquely to an $O$-linear map $\tilde\varphi\colon M\to E$ with $\tilde\varphi\circ u=\varphi$. Put $\delta(\varphi)=\tilde\varphi\bmod O\in\mathrm{Hom}_O(T,E/O)$. Then
+Let $u\colon M'\to M$ be injective with torsion cokernel $T=M/u(M')$ (a \emph{modification}). Every $\varphi\in M'^\vee=\mathrm{Hom}_O(M',O)$ extends to an $O$-linear map $\tilde\varphi\colon M\to E$ with $\tilde\varphi\circ u=\varphi$. Put $\delta(\varphi)=\tilde\varphi\bmod O\in\mathrm{Hom}_O(T,E/O)$. Then
 \[
 0\to M^\vee\xrightarrow{u^\vee}M'^\vee\xrightarrow{\ \delta\ }\mathrm{Hom}_O(T,E/O)\to0
 \]
 is exact at $M^\vee$ and at $M'^\vee$, and also at $\mathrm{Hom}_O(T,E/O)$ when $M$ is projective.
-\lean{GroupoidCorr.delta, GroupoidCorr.dual_injective, GroupoidCorr.delta_eq_zero_iff, GroupoidCorr.delta_surjective}\leanok
+\lean{GroupoidCorr.extL, GroupoidCorr.extL_comp, GroupoidCorr.delta, GroupoidCorr.dual_injective, GroupoidCorr.delta_eq_zero_iff, GroupoidCorr.delta_surjective}\leanok
 \end{proposition}
 
 \begin{proof}
@@ -592,9 +616,13 @@ For $m\in M$ choose $c\ne0$ and $m'$ with $u(m')=cm$, and put $\tilde\varphi(m)=
 \end{proof}
 
 \begin{lemma}[rank one]\label{ex:rank-one}
-For a vector $e$ of a module $N$, the norm map of the symmetric group $S_k$ acting on $N^{\otimes k}$ sends $e^{\otimes k}$ to $k!\,e^{\otimes k}$. For $N=Oe$ this is the norm map $\mathrm{Sym}^kN\to\Gamma^kN$, $e^k\mapsto k!\,e^{[k]}$, whose cokernel is $O/k!\,O$.
+For a vector $e$ of a module $N$, the norm map of the symmetric group $S_k$ acting on $N^{\otimes k}$ sends $e^{\otimes k}$ to $k!\,e^{\otimes k}$.
 \lean{GroupoidCorr.norm_tprod_const}\leanok
 \end{lemma}
+
+\begin{remark}[not formalized]
+For $N=Oe$ this is the norm map $\mathrm{Sym}^kN\to\Gamma^kN$, $e^k\mapsto k!\,e^{[k]}$, whose cokernel is $O/k!\,O$.
+\end{remark}
 
 \begin{proof}
 Every permutation fixes $e\otimes\cdots\otimes e$, and $|S_k|=k!$.

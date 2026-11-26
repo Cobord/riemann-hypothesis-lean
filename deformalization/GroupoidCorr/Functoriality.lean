@@ -121,7 +121,7 @@ theorem compFibreMap_injective [h.Faithful] (c : C) : Function.Injective (compFi
   rw [h.map_comp]
   exact (cancel_mono _).1 h2
 
-/-- Composite fibres are finite when the fibres of both factors are. -/
+/-- [note: lem:push-comp] Composite fibres are finite when the fibres of both factors are. -/
 instance finite_fibre_comp [∀ b, Finite (Fibre k b)] [∀ c, Finite (Fibre h c)] (c : C) :
     Finite (Fibre (k ⋙ h) c) :=
   Finite.of_surjective _ (compFibreMap_surjective k h c)
