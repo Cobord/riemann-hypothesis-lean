@@ -96,6 +96,7 @@ noncomputable def bcFibreEquiv (f : X ⥤ Y) (g : Z ⥤ Y) (z : Z) :
       show Quotient.mk _ (bcPair f g z (bcPairInv f g z p)) = Quotient.mk _ p
       simp [bcPair, bcPairInv]
 
+/-- [note: prop:base-change] Part (2): the fibres of `f'` are finite when those of `f` are. -/
 instance finite_fibre_snd (f : X ⥤ Y) (g : Z ⥤ Y) [∀ y, Finite (Fibre f y)] (z : Z) :
     Finite (Fibre (Comma.snd f g) z) :=
   Finite.of_equiv _ (bcFibreEquiv f g z).symm

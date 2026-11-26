@@ -18,3 +18,4 @@ public import GroupoidCorr.ClaimA
 public import GroupoidCorr.Duality
 public import GroupoidCorr.TraceDual
 
+public import GroupoidCorr.Doubling

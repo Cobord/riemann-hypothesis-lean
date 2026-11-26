@@ -77,7 +77,7 @@ theorem extFun_eq (φ : M' →ₗ[O] O) {m : M} {c : O} {m' : M'} (hc : c ≠ 0)
     extFun u htors φ m = algebraMap O E (φ m') / algebraMap O E c := by
   sorry
 
-/-- The extension of `φ : M' → O` to an `O`-linear map `M → E`. -/
+/-- [note: prop:modification-dual] The extension of `φ : M' → O` to an `O`-linear map `M → E`. -/
 noncomputable def extL (φ : M' →ₗ[O] O) : M →ₗ[O] E where
   toFun := extFun u htors φ
   map_add' m₁ m₂ := by
@@ -102,6 +102,7 @@ theorem extL_apply (φ : M' →ₗ[O] O) {m : M} {c : O} {m' : M'} (hc : c ≠ 0
     extL u hu htors φ m = algebraMap O E (φ m') / algebraMap O E c := by
   sorry
 
+/-- [note: prop:modification-dual] The extension restricts to `φ` along `u`. -/
 theorem extL_comp (φ : M' →ₗ[O] O) (m' : M') : extL u hu htors φ (u m') = algebraMap O E (φ m') := by
   sorry
 

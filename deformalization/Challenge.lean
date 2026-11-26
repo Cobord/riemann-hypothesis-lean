@@ -17,6 +17,7 @@ public import Challenge.Content
 public import Challenge.ClaimA
 public import Challenge.Duality
 public import Challenge.TraceDual
+public import Challenge.Doubling
 
 /-!
 # GroupoidCorr: the challenge

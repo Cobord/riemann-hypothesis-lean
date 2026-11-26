@@ -628,4 +628,62 @@ For $N=Oe$ this is the norm map $\mathrm{Sym}^kN\to\Gamma^kN$, $e^k\mapsto k!\,e
 Every permutation fixes $e\otimes\cdots\otimes e$, and $|S_k|=k!$.
 \end{proof}
 
+%======================================================================
+\section{Adjoints and the doubled correspondence}
+%======================================================================
+
+This section is the structural core of the lower bound that comes from the Rallis inner product formula (main account: hypothesis~(i) of its nonvanishing theorem, and the Rallis paragraph of Claim~B). Throughout, $X$, $X'$ and $C$ are finite groupoids (Definition~\ref{def:finite-groupoid}), and $\langle\,,\rangle$ is the pairing defined there.
+
+\begin{definition}\label{def:scalar-corr}
+Let $\mathrm{src}\colon C\to X$ and $\mathrm{tgt}\colon C\to X'$ be functors, and $K\colon C\to\mathbb C$ a function constant on isomorphism classes. The \emph{scalar kernel} $\mathrm{src}^*\mathbb C\to\mathrm{tgt}^*\mathbb C$ is multiplication by $K(c)$ at $c$. If $\mathrm{tgt}$ is faithful, it makes $(C,\mathrm{src},\mathrm{tgt})$ a correspondence $C_K$ from $(X,\mathbb C)$ to $(X',\mathbb C)$. If $\mathrm{src}$ is faithful, the \emph{transposed} correspondence $C_K^{t}$, from $(X',\mathbb C)$ to $(X,\mathbb C)$, has legs $\mathrm{tgt}$, $\mathrm{src}$ and kernel $\overline K$.
+\lean{GroupoidCorr.scalarKernel, GroupoidCorr.scalarCorr, GroupoidCorr.scalarCorrT}\leanok
+\end{definition}
+
+\begin{proposition}[adjointness for correspondences]\label{prop:corr-adjoint}
+Let $\mathrm{src}$ and $\mathrm{tgt}$ be faithful. For sections $s$ of $\mathbb C$ on $X$ and $t$ of $\mathbb C$ on $X'$,
+\[
+\langle T_{C_K}s,\,t\rangle_{X'}=\langle s,\,T_{C_K^t}t\rangle_X .
+\]
+\lean{GroupoidCorr.scalarCorr_adjoint}\leanok
+\end{proposition}
+
+\begin{proof}
+By Proposition~\ref{prop:adjoint} for $\mathrm{tgt}$, the left side is $\sum_{[c]}K(c)\,s(\mathrm{src}\,c)\,\overline{t(\mathrm{tgt}\,c)}/|\Aut c|$. By Proposition~\ref{prop:adjoint} for $\mathrm{src}$ and conjugate symmetry of the pairing, so is the right side.
+\end{proof}
+
+\begin{theorem}[doubling]\label{thm:doubling}
+Let $\mathrm{src}$ and $\mathrm{tgt}$ be faithful, and let $C_K^t\circ C_K$ be the composite correspondence (Proposition~\ref{prop:composition}), on the $2$-fibre product $C\times_{X'}C$ of $\mathrm{tgt}$ with itself.
+\begin{enumerate}
+\item Its kernel at $(c_1,c_2,\gamma)$ is multiplication by $K(c_1)\,\overline{K(c_2)}$.
+\item For sections $s,s'$ of $\mathbb C$ on $X$, $\langle T_{C_K}s,\,T_{C_K}s'\rangle_{X'}=\langle s,\,T_{C_K^t\circ C_K}s'\rangle_X$. That is, the Gram operator $T_{C_K}^\dagger T_{C_K}$ is the operator of the doubled correspondence.
+\end{enumerate}
+\lean{GroupoidCorr.doubled_kernel, GroupoidCorr.gram_eq_doubled}\leanok
+\end{theorem}
+
+\begin{proof}
+(1) The composite kernel is $K_{2,c_2}\circ F'(\gamma)\circ K_{1,c_1}$ with $F'(\gamma)=\mathrm{id}$ on the constant local system. (2) Proposition~\ref{prop:corr-adjoint} with $t=T_{C_K}s'$, then Proposition~\ref{prop:composition}.
+\end{proof}
+
+\begin{lemma}\label{lem:pairing-pos}
+For $a,b\colon X\to\mathbb C$, $\langle b,a\rangle_X=\overline{\langle a,b\rangle_X}$, and $\langle a,a\rangle_X=\sum_{[x]}|a(x)|^2/|\Aut x|$. If $a$ is constant on isomorphism classes and $\langle a,a\rangle_X=0$, then $a=0$.
+\lean{GroupoidCorr.ginner_comm, GroupoidCorr.ginner_self, GroupoidCorr.ginner_self_eq_zero}\leanok
+\end{lemma}
+
+\begin{proof}
+Each term of the sum is $|a(x)|^2/|\Aut x|\ge0$, so all vanish; $a(x)$ equals its value at the representative of the class of $x$.
+\end{proof}
+
+\begin{corollary}\label{cor:gram-kernel}
+Let $\mathrm{src}$ and $\mathrm{tgt}$ be faithful, and $s$ a section of $\mathbb C$ on $X$. Then $T_{C_K}s=0$ if and only if $\langle s,\,T_{C_K^t\circ C_K}s\rangle_X=0$.
+\lean{GroupoidCorr.op_eq_zero_iff_doubled}\leanok
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:doubling}(2) the right side is $\langle T_{C_K}s,T_{C_K}s\rangle_{X'}$; apply Lemma~\ref{lem:pairing-pos} to the section $T_{C_K}s$.
+\end{proof}
+
+\begin{remark}[not formalized]
+The Rallis inner product formula identifies the action of the doubled correspondence of a theta lift on each Hecke-isotypic component with a scalar: nonzero local factors times a special value $L^S(s_0,\pi)$ in the region of absolute convergence (main account, Claim~B and its nonvanishing theorem). Combined with Corollary~\ref{cor:gram-kernel}, this gives injectivity of the lift, which is the structural content of the main account's nonvanishing theorem. In the Lean proof \texttt{https://github.com/lsernau/grh-lean}, the corresponding statements are \texttt{exists\_adjoint\_chain\_comp\_eq\_smul\_rallisProduct} (the Gram operator of a chain of lifts as a scalar times a product of Rallis series), \texttt{chainDeterminant\_pos}, and Theorem~C \texttt{integral\_forms\_long}, which adds heights and the product formula. There the lifts are defined by averaging over classes rather than by correspondences of groupoids.
+\end{remark}
+
 \end{document}

@@ -107,7 +107,16 @@
     "GroupoidCorr.delta_surjective",
     "GroupoidCorr.norm_tprod_const",
     "GroupoidCorr.trace_dual_self",
-    "GroupoidCorr.trace_dual"
+    "GroupoidCorr.trace_dual",
+    "GroupoidCorr.mulHom_apply",
+    "GroupoidCorr.conj_invariant",
+    "GroupoidCorr.ginner_comm",
+    "GroupoidCorr.scalarCorr_adjoint",
+    "GroupoidCorr.doubled_kernel",
+    "GroupoidCorr.gram_eq_doubled",
+    "GroupoidCorr.ginner_self",
+    "GroupoidCorr.ginner_self_eq_zero",
+    "GroupoidCorr.op_eq_zero_iff_doubled"
   ],
   "definition_names": [],
   "permitted_axioms": [

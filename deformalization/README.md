@@ -11,7 +11,8 @@ A short note (`note/note.tex`) and a Lean 4 library (`GroupoidCorr/`) kept in on
 - the factorial identity relating the prime sum to the inert factorial ideal;
 - integrality of divided periods over a Dedekind domain;
 - the content of the period map, and Claim A from (the consequence of) Hypothesis J;
-- trace duality, duals of modifications, and the rank-one norm map.
+- trace duality, duals of modifications, and the rank-one norm map;
+- adjoints of correspondences and the doubled correspondence (the structural core of the Rallis lower bound).
 
 Toolchain: Lean `v4.36.0` with Mathlib `v4.36.0`. Every file uses the module system (`module`, `public import`, `@[expose] public section`).
 
