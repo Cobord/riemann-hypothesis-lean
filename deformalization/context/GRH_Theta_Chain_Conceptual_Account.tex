@@ -160,7 +160,7 @@ We prove the structural results (Sections~\ref{sec:duals}--\ref{sec:chain}), the
 \item the archimedean size estimate, Claim~B;
 \item the passage from these to the windowed prime bound, Claim~\ref{claim:window}.
 \end{itemize}
-These come from Alp\"oge's note \cite{Alpoge}, Zhang's preliminary note \cite{Zhang}, the nasqret guide \cite{nasqret} and the audit \cite{golf}. The Lean archive has been kernel-checked by the Lean and Mathlib communities \cite{LeanBlog}. Section~\ref{sec:assembly} records how the archive assembles these steps: it identifies the five inputs that carry the content and proves the elementary glue between them.
+These come from Alp\"oge's note \cite{Alpoge}, Zhang's preliminary note \cite{Zhang}, the nasqret guide \cite{nasqret} and the audit \cite{golf}. A shorter Lean proof based on Alp\"oge's \cite{grhlean} proves its own counterparts of these three items, with a different organization. It proves its version of Claim~A outright, with no one-step hypothesis. It splits the archimedean estimate into an upper bound, a spanning theorem and a lower bound from the Rallis inner product formula. Its one-sided prime bound holds for all large $y$, not only on windows. The Lean archive has been kernel-checked by the Lean and Mathlib communities \cite{LeanBlog}. Section~\ref{sec:assembly} records how the archive assembles these steps: it identifies the five inputs that carry the content and proves the elementary glue between them.
 
 Our organization deliberately differs from the archive's. The archive places lattices inside a fixed vector space, chooses class representatives and proves independence of the choice, pushes forward by averaging and clears denominators afterwards, and states integrality as membership in a sublattice. Here these are replaced by, respectively:
 \begin{itemize}
@@ -806,7 +806,7 @@ For $a>0$ let
 \[
 \ASK(a)=\sum_{n\ge1}\Lambda(n)\,\bigl(1-\chi_{-d}(n)\bigr)\,\Bigl(\frac{a}{n}-w_n\Bigr)_+ ,
 \]
-where $\Lambda$ is the von Mangoldt function, $\chi_{-d}$ is the quadratic character of $\Q(\sqrt{-d})$ for an auxiliary prime $d$, and $w_n\ge0$ are cutoff weights specified in \cite{Zhang,golf}. The factor $1-\chi_{-d}(n)$ equals $2$ on primes inert in $\Q(\sqrt{-d})$ and $0$ on split primes. The ramp gives weight about $a/n$ to small $n$, which is the shape of $\ord_n(a!)$.
+where $\Lambda$ is the von Mangoldt function, $\chi_{-d}$ is the quadratic character of $\Q(\sqrt{-d})$ for an auxiliary prime $d$ with $d=2$ or $d\equiv3\pmod4$, so that $d$ is the only prime ramified in $\Q(\sqrt{-d})$ (for $d\equiv1\pmod4$ the prime $2$ ramifies as well), and $w_n\ge0$ are cutoff weights specified in \cite{Zhang,golf}. The factor $1-\chi_{-d}(n)$ equals $2$ on primes inert in $\Q(\sqrt{-d})$ and $0$ on split primes. The ramp gives weight about $a/n$ to small $n$, which is the shape of $\ord_n(a!)$.
 
 \begin{claimA}[{\cite{Alpoge,Zhang,golf}}]
 For the theta chain of length $\len$ and suitable parameters, $\ord_\pp(\per_\len)$ grows linearly in $\len$ at primes $\pp$ inert over $E^+$, and
@@ -823,7 +823,7 @@ Put
 \[
 \ASK^\flat(a)=\sum_{n\ge1}\Lambda(n)\bigl(1-\chi_{-d}(n)\bigr)\Bigl\lfloor\frac an\Bigr\rfloor .
 \]
-When all $w_n\ge1$ we have $(a/n-w_n)_+\le(a/n-1)_+\le\lfloor a/n\rfloor$, so $\ASK(a)\le\ASK^\flat(a)$, and a lower bound by $\ASK^\flat$ is the stronger statement. For general $w_n\ge0$ the two differ by at most $\sum_{n\le a}\Lambda(n)=O(a)$.
+When all $w_n\ge1$ we have $(a/n-w_n)_+\le(a/n-1)_+\le\lfloor a/n\rfloor$, so $\ASK(a)\le\ASK^\flat(a)$, and a lower bound by $\ASK^\flat$ is the stronger statement. For general $w_n\ge0$ the two differ by at most $2\sum_{n\le a}\Lambda(n)=O(a)$, provided $w_n\ge a/n$ for $n>a$; without such a cutoff $\ASK(a)$ need not even converge.
 
 \begin{proposition}[the factorial identity]\label{prop:factorial}
 Let $K=\Q(\sqrt{-d})$. Then
@@ -1290,7 +1290,7 @@ Inequality~\eqref{eq:balance} concerns one ramp sum, weighted by the condition `
 \]
 By class field theory the characters of $\Gal(E/\Q)$ are Dirichlet characters, so a Frobenius-weighted ramp sum is a linear combination of the ramp sums $R_\chi$. The sources choose $S$ so that the combination has positive weights. This gives the family of \cite{golf} with weight $1$ on the trivial character and $(3o+1)^{-1}$ on the even nontrivial characters of $2$-power conductor $2^{o}$.
 
-The auxiliary primes $q,d$ must be re-chosen as $x$ varies. The reason is that Hecke projections in the construction introduce denominators (congruence modules), controlled by Selmer and Tate--Shafarevich groups, and at each prime a bounded number of exceptional twists must be avoided; an interval lemma finds ranges of $x$ that avoid them. As a result, the bound is obtained only on \emph{windows}. The precise form of the output is the following.
+The auxiliary primes $q,d$ must be re-chosen as $x$ varies. The reason is that Hecke projections in the construction introduce denominators (congruence modules), controlled by Selmer and Tate--Shafarevich groups, and at each prime a bounded number of exceptional twists must be avoided; an interval lemma finds ranges of $x$ that avoid them. As a result, the construction reported from \cite{golf} gives the bound only on \emph{windows}. This is a feature of that construction, not of the method: the rewriting \cite{grhlean} controls these denominators with regular families of twists and obtains its prime bound for all large $y$. The precise form of the output is the following.
 
 \begin{claim}[windowed prime bound; {\cite{Alpoge,golf}}]\label{claim:window}
 For each Dirichlet character $\psi$ there is a positive family $\mathcal F_\psi$ containing $\psi$, with this property: for every $\varepsilon>0$ there is $C>0$ such that for every $Y_0$ there exists $Y\ge Y_0$ with
@@ -1301,8 +1301,8 @@ G_{\mathcal F_\psi}(y)\le C\,y^{1/2+\varepsilon}\qquad\text{for all }y\in[Y,Y^{3
 
 Claim~\ref{claim:window} is the form in which Claims~A and~B, Theorem~C and~\eqref{eq:balance} enter the analytic step. The passage from~\eqref{eq:balance} to Claim~\ref{claim:window} (character averaging, the choice of windows, and replacing $\ASK$ by the family sum) is reported from \cite{golf} and not verified here.
 
-\begin{remark}[why the classical Landau theorem is not enough]\label{rem:allx}
-If the bound in Claim~\ref{claim:window} held for \emph{all} large $y$, the classical theorem of Landau \cite[\S1.3]{MV} would finish the argument. That theorem says the Mellin transform of a nonnegative function is singular at the real point of its abscissa of convergence. But a bound for all $y$ is essentially as strong as the generalized Riemann hypothesis itself: under GRH the centred sums are $O(y^{1/2+\varepsilon})$ for all $y$. The construction does not provide such a bound, only windows.
+\begin{remark}[why the classical Landau theorem is not enough for windows]\label{rem:allx}
+If the bound in Claim~\ref{claim:window} held for \emph{all} large $y$, the classical theorem of Landau \cite[\S1.3]{MV} would finish the argument. That theorem says the Mellin transform of a nonnegative function is singular at the real point of its abscissa of convergence. But a bound for all $y$ is essentially as strong as the generalized Riemann hypothesis itself: under GRH the centred sums are $O(y^{1/2+\varepsilon})$ for all $y$. The construction reported from \cite{golf} does not provide such a bound, only windows, so the windowed version below is needed for it. The rewriting \cite{grhlean} does obtain a one-sided bound for all large $y$, and it concludes with the classical theorem.
 
 On a window, positivity holds only on a bounded range of $y$. So the Mellin transform of the positive quantity is not controlled, and Landau's continuation argument has nothing to act on. A different argument is needed. It is given in the next section, following the structure of the archive's proof (\texttt{zeroFree\_of\_rpow\_window}, with \texttt{landau\_window} and \texttt{lemmaL}, \cite{golf}).
 \end{remark}
@@ -1605,6 +1605,8 @@ The formal proof is Alp\"oge's \cite{Alpoge}. The architecture described here is
 \bibitem{Gillet-Soule} H.~Gillet, C.~Soul\'e, \emph{Arithmetic intersection theory}, Publ.\ Math.\ IH\'ES \textbf{72} (1990), 93--174.
 
 \bibitem{golf} \texttt{nil-commits/alpoge-rh-golf}, verification notes, definitional audit and source map for the Alp\"oge archive, GitHub, November 2026.
+
+\bibitem{grhlean} \texttt{lsernau/grh-lean}, a shorter Lean~4 proof of the Riemann hypothesis and of GRH for Dirichlet $L$-functions, based on Alp\"oge's, \texttt{https://github.com/lsernau/grh-lean}, GitHub, November 2026.
 
 \bibitem{Gross-AMF} B.~H.~Gross, \emph{Algebraic modular forms}, Israel J.\ Math.\ \textbf{113} (1999), 61--93.
 
