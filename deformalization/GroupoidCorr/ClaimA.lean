@@ -1,5 +1,7 @@
-import GroupoidCorr.Content
-import GroupoidCorr.Factorial
+module
+
+public import GroupoidCorr.Content
+public import GroupoidCorr.Factorial
 
 /-!
 # Claim A from Hypothesis J
@@ -13,6 +15,8 @@ prime `𝔮` of `𝓞_E` above an inert `p ≤ aᵢ`, step `i` is divisible by `
 `mᵢ ≥ e(𝔮|p) g_p(aᵢ)` (`thm:jet-gain`), and orders add (`thm:orders-add-corr`), so the content
 lies in `𝔮 ^ (∑ᵢ mᵢ)`.
 -/
+
+@[expose] public section
 
 open NumberField Finset
 

@@ -1,4 +1,6 @@
-import GroupoidCorr.Factorial
+module
+
+public import GroupoidCorr.Factorial
 
 /-!
 # The quadratic character of `ℚ(√-d)`
@@ -11,6 +13,8 @@ reciprocity, at an odd prime `p ≠ d` it equals `(-d / p)`, so `χ_{-d}(p) = 1`
 a square mod `p`; and `χ_{-d}(2) = 1` exactly when `d ≡ 7 (mod 8)`. These are the classical
 criteria for `p` to split in `ℚ(√-d)`; the link to splitting itself is not formalized.
 -/
+
+@[expose] public section
 
 namespace GroupoidCorr
 

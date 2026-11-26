@@ -1,4 +1,6 @@
-import GroupoidCorr.Pushforward
+module
+
+public import GroupoidCorr.Pushforward
 
 /-!
 # Base change for pushforward
@@ -11,6 +13,8 @@ are pairs `(β, δ)` with `f β ≫ γ' = γ ≫ g δ`. Mathlib does not record 
 when `X` and `Z` are; we supply that by hand. The projections are `Comma.fst f g` (to `X`,
 the note's `g'`) and `Comma.snd f g` (to `Z`, the note's `f'`).
 -/
+
+@[expose] public section
 
 open CategoryTheory
 

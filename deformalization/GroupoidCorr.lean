@@ -1,17 +1,20 @@
-import GroupoidCorr.NormMap
-import GroupoidCorr.Pushforward
-import GroupoidCorr.BaseChange
-import GroupoidCorr.Functoriality
-import GroupoidCorr.Divisibility
-import GroupoidCorr.Correspondence
-import GroupoidCorr.Adjoint
-import GroupoidCorr.Chain
-import GroupoidCorr.LubinTate
-import GroupoidCorr.OneStep
-import GroupoidCorr.Factorial
-import GroupoidCorr.Divided
-import GroupoidCorr.QuadCharJacobi
-import GroupoidCorr.Content
-import GroupoidCorr.ClaimA
-import GroupoidCorr.Duality
-import GroupoidCorr.TraceDual
+module
+
+public import GroupoidCorr.NormMap
+public import GroupoidCorr.Pushforward
+public import GroupoidCorr.BaseChange
+public import GroupoidCorr.Functoriality
+public import GroupoidCorr.Divisibility
+public import GroupoidCorr.Correspondence
+public import GroupoidCorr.Adjoint
+public import GroupoidCorr.Chain
+public import GroupoidCorr.LubinTate
+public import GroupoidCorr.OneStep
+public import GroupoidCorr.Factorial
+public import GroupoidCorr.Divided
+public import GroupoidCorr.QuadCharJacobi
+public import GroupoidCorr.Content
+public import GroupoidCorr.ClaimA
+public import GroupoidCorr.Duality
+public import GroupoidCorr.TraceDual
+

@@ -1,4 +1,6 @@
-import GroupoidCorr.Pushforward
+module
+
+public import GroupoidCorr.Pushforward
 
 /-!
 # Groupoid cardinality and adjointness
@@ -13,6 +15,8 @@ Proof: double counting of triples `([x], [y], α : f x ⟶ y)` of chosen represe
 Each class in the fibre of `f` over `y` is hit `|Aut x|` times (faithfulness), and
 `|Hom(f x, y)|` is `|Aut y|` if `f x ≅ y` and `0` otherwise.
 -/
+
+@[expose] public section
 
 open CategoryTheory ComplexConjugate
 

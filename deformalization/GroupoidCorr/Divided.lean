@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Divided periods are integral
@@ -11,6 +13,8 @@ Over a Dedekind domain `R` with fraction field `K`: if every value of a period p
 `𝔞 = ∏ 𝔭 ^ e(𝔭)`, and dividing by `𝔞` keeps the values integral: for `α ∈ 𝔞⁻¹`,
 `α · per(v)(w) ∈ R`. Here `per(α v) = α · per(v)` is the `K`-linear extension.
 -/
+
+@[expose] public section
 
 open scoped nonZeroDivisors
 

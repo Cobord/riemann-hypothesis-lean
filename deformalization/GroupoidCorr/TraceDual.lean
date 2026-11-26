@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Trace duality
@@ -13,6 +15,8 @@ For every `B`-module `M`, composition with the trace is a bijection between `B`-
 `M → 𝔇⁻¹` and `A`-linear maps `M → A`. The case `M = B` is a dual-basis computation; the general
 case reduces to it.
 -/
+
+@[expose] public section
 
 open Algebra
 

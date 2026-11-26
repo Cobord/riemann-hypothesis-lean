@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Divisibility adds along chains
@@ -11,6 +13,8 @@ once each step's operator is `ϖ ^ rᵢ` times an integral operator, the composi
 (kernels on iterated fibre products) reduces to this because pullback and pushforward are
 `R`-linear; that reduction is item `prop:composition` in the note (not yet formalized).
 -/
+
+@[expose] public section
 
 namespace GroupoidCorr
 

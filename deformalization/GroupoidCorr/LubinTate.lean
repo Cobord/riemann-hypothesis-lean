@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Denominators of the Lubin–Tate exponential and divisibility of jets
@@ -13,6 +15,8 @@ The unramified hypothesis enters only as the invertibility of `p ^ m - 1` in `O`
 The proof scales the exponential: `G(Z) = ϖ⁻¹ exp_F(ϖ Z)` has coefficients `ϖ ^ (n-1) c_n`,
 and the functional equation shows by strong induction that these are integral.
 -/
+
+@[expose] public section
 
 open PowerSeries
 

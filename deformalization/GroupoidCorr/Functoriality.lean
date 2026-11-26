@@ -1,4 +1,6 @@
-import GroupoidCorr.Pushforward
+module
+
+public import GroupoidCorr.Pushforward
 
 /-!
 # Functoriality of pushforward
@@ -13,6 +15,8 @@ Mirrors `note/note.tex`, Section 2 (`def:pull-map`, `lem:push-natural`, `lem:pus
 Faithfulness of `h` is needed in `pushVal_comp`: for `k : pt → BG`, `h : BG → pt` and a constant
 local system, `h_! k_!` is multiplication by `|G|` while `(k ⋙ h)_!` is the identity.
 -/
+
+@[expose] public section
 
 open CategoryTheory
 

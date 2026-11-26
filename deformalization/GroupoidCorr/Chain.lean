@@ -1,5 +1,7 @@
-import GroupoidCorr.Correspondence
-import GroupoidCorr.Divisibility
+module
+
+public import GroupoidCorr.Correspondence
+public import GroupoidCorr.Divisibility
 
 /-!
 # Orders add along chains of correspondences
@@ -17,6 +19,8 @@ Apexes change along a chain, so chains use bundled correspondences `BCorr` whose
 To stay in one universe, all groupoids here live in `Type u` with morphisms in `Type u`;
 `Comma` preserves this.
 -/
+
+@[expose] public section
 
 open CategoryTheory
 

@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Local systems on groupoids and pushforward by summation over fibres
@@ -14,6 +16,8 @@ Mirrors `note/note.tex`, Section 2.
 
 Nothing here divides: pushforward is a finite sum with integer coefficients.
 -/
+
+@[expose] public section
 
 open CategoryTheory
 

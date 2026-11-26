@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # The one-step lemma
@@ -10,6 +12,8 @@ All statements are proved after reduction modulo `ϖ`, where `p = ϖ²` vanishes
 is additive. If `B ⧸ (ϖ)` is the zero ring there is nothing to prove; otherwise it has
 characteristic `p`.
 -/
+
+@[expose] public section
 
 open Matrix
 

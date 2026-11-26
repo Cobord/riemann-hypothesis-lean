@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # The norm map: invariants against coinvariants
@@ -12,6 +14,8 @@ differs from the norm of `v` by an element of the span of `v - ρ g v`
 whole content of "the norm map from coinvariants to invariants has kernel and
 cokernel killed by `|G|`".
 -/
+
+@[expose] public section
 
 namespace GroupoidCorr
 

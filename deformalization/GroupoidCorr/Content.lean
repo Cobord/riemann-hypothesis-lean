@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Content of a period map
@@ -11,6 +13,8 @@ For a bilinear period pairing `per : N × P → R`, "`per ⊗ R/I = 0` as a map
 `R/I`-module), to "every value of `per` reduces to `0` in `R/I`"; we take the latter as the
 definition (`VanishesMod`). The content is the ideal spanned by the values.
 -/
+
+@[expose] public section
 
 open IsDedekindDomain
 

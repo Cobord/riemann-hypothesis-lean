@@ -1,5 +1,7 @@
-import GroupoidCorr.BaseChange
-import GroupoidCorr.Functoriality
+module
+
+public import GroupoidCorr.BaseChange
+public import GroupoidCorr.Functoriality
 
 /-!
 # Correspondences and their composition
@@ -11,6 +13,8 @@ legs `src : C ⥤ X`, `tgt : C ⥤ X'` with `tgt` faithful and with finite fibre
 `K : src^* F ⟶ tgt^* F'`. Its operator is `tgt_! ∘ K ∘ src^*`. Two correspondences compose
 through the 2-fibre product `Comma tgt₁ src₂` of their apexes.
 -/
+
+@[expose] public section
 
 open CategoryTheory
 

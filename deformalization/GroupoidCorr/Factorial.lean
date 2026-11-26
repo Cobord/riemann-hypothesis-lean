@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # The prime sum is the norm of a factorial ideal
@@ -10,6 +12,8 @@ The quadratic character `χ_{-d}` enters only through the properties recorded in
 complete multiplicativity, values `±1` at primes `p ≠ d` (`+1` split, `-1` inert) and `0` at the
 ramified prime `d`.
 -/
+
+@[expose] public section
 
 open Finset ArithmeticFunction Real
 

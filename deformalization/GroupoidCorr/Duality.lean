@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Duals, torsion, modifications, and the rank-one norm map
@@ -13,6 +15,8 @@ is that extension modulo `O`. The sequence `0 → M^∨ → M'^∨ → Hom(T, E/
 last map is onto when `M` is projective. This replaces the main account's route through
 `Ext¹(T, O) ≅ Hom(T, E/O)`.
 -/
+
+@[expose] public section
 
 open Submodule
 
