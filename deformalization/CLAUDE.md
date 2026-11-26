@@ -23,10 +23,19 @@ Run all commands from this folder (`cd deformalization`).
 
 ## Toolchain
 
-- `lean-toolchain` is `leanprover/lean4:v4.33.1`.
-- Mathlib is pinned to `0df444a360eaa60ab8c11dca51a86af692955474`.
-- Both are the same as the Alpöge archive's `lean/`, so a shared cache works.
-- First time: `lake exe cache get` and then `lake build`.
+- `lean-toolchain` is `leanprover/lean4:v4.36.0`, and Mathlib is pinned to the tag `v4.36.0` (`lakefile.toml`). This differs from the Alpöge archive (`../src`, Lean v4.33.1), so the two no longer share a build cache.
+- Every file uses the module system: `module`, then `public import …`, then `@[expose] public section` after the module docstring. New files must follow the same pattern.
+- First time: `lake exe cache get`, then `lake build`.
+- **Never compile Mathlib.** `lake build` should only build `GroupoidCorr` (and `Challenge`/`Solution`). Check first with `lake build --no-build <targets>`, which lists stale targets without building. If Mathlib modules show up, the cache is stale: run `lake env .lake/packages/mathlib/.lake/build/bin/cache unpack!` to re-extract every downloaded cache file. Use the binary directly, not `lake exe cache`, so nothing gets rebuilt.
+- After bumping Mathlib, check that `.lake/packages/mathlib` is actually checked out at the new revision (`git -C .lake/packages/mathlib describe --tags`) before building. A half-finished `lake update` leaves the old checkout and triggers a Mathlib rebuild.
+- Never run `lake build` or `lake comparator` on the archive in `../src`.
+
+## The challenge (`lake comparator`)
+
+- `Challenge.lean` and `Challenge/*.lean` are **generated** by `python3 scripts/make_challenge.py`; never edit them by hand. `Challenge/<File>.lean` is `GroupoidCorr/<File>.lean` with every `theorem`'s proof replaced by `sorry` and `GroupoidCorr.*` imports redirected to `Challenge.*`. Definitions, instances and structures are copied verbatim.
+- The script also writes `comparator.json`: every theorem is a target, and the permitted axioms are `propext`, `Quot.sound` and `Classical.choice`. `Solution.lean` just imports `GroupoidCorr`.
+- `lake comparator` matches by name. Theorem targets must have identical statements. Every other constant the statements use (definitions, instances, auxiliary `_proof_n` lemmas) must be identical, including the proofs embedded in definitions. So the challenge has to mirror the library's module structure: Lean shares and numbers auxiliary proof lemmas per module, and a single-file challenge gets different names.
+- After changing the library: regenerate, run `lake build Challenge Solution`, then `lake comparator`. The generator finds a proof's start at the first depth-0 `:=` that is not part of a `have`/`let` binder, or at a line-final `where`. A theorem written in another style may need a generator fix.
 
 ## The sync convention (enforced by `scripts/check_sync.py`)
 
@@ -46,9 +55,10 @@ Run before every commit:
 lake build
 python3 scripts/check_sync.py            # structural check
 python3 scripts/check_sync.py --axioms   # also #print axioms for \leanok items
+python3 scripts/make_challenge.py && lake build Challenge Solution && lake comparator
 ```
 
-Both must exit 0.
+All must exit 0.
 
 ## Rules for changing things
 
@@ -83,7 +93,7 @@ Files:
 - `ClaimA.lean`: `prop:content`(3) (`log_absNorm_content`), `lem:norm-bound` and `thm:claimA`, over `𝓞 E` for a number field `E`. Primes above `p` are indexed by `Above E T = Σ p : T, (span {p}).primesOver (𝓞 E)`. The `Fintype` instance on `primesOver` needs `[Fact p.Prime]`, so `T`'s primality is the instance argument `[∀ p : T, Fact (p : ℕ).Prime]`. Hypothesis J is replaced by its per-step consequence. Uses the new ramification API (`Ideal.ramificationIdx`, `Ideal.inertiaDeg`, `absNorm_pow_inertiaDeg`, `sum_ramification_inertia_eq_finrank`), not the primed one.
 - `Duality.lean`: Section 9 of the note, which is §2 of the main account. Contains `lem:torsion-dual` (`Hom(T, O) = 0` only; the `Ext` identification is not formalized), `prop:modification-dual` and `ex:rank-one`. The connecting map `delta` is built directly: `φ` extends uniquely to `extL φ : M → E` (cokernel torsion), and `δ φ` is that map mod `O`. Surjectivity uses `Module.projective_lifting_property`.
 - `TraceDual.lean`: `lem:trace-dual`, assuming `B` is free over `A` on a basis that is also a `K`-basis of `L`. The inverse different is `Submodule.traceDual A K 1`. The case `M = B` uses the dual basis of the trace form; general `M` follows by uniqueness.
-- `LubinTate.lean`: Section 4 of the note, which is Section 8.2 of the main account. `LTData` bundles the hypotheses; `[p]_F(exp Z) = exp(pZ)` is an assumption, used in coefficient form. Bounds are integral: `ϖ ^ (n-1) * c_n ∈ O` with `ϖ ^ (q-1) = p`, which stands for `ord_p(c_n) ≥ -(n-1)/(q-1)`. Proof via the scaled series `G(Z) = ϖ⁻¹ E(ϖ Z)`. `cor:height` is an exact integer identity from Mathlib's Legendre formula (`sub_one_mul_padicValNat_factorial`).
+- `LubinTate.lean`: Section 4 of the note, which is Section 8.2 of the main account. `LTData` bundles the hypotheses; `[p]_F(exp Z) = exp(pZ)` is an assumption, used in coefficient form. Bounds are integral: `ϖ ^ (n-1) * c_n ∈ O` with `ϖ ^ (q-1) = p`, which stands for `ord_p(c_n) ≥ -(n-1)/(q-1)`. Proof via the scaled series `G(Z) = ϖ⁻¹ E(ϖ Z)`. `cor:height` is an exact integer identity from Mathlib's Legendre formula (`Nat.Prime.sub_one_mul_multiplicity_factorial`).
 
 Mathematical point. The original note dropped the main account's hypothesis that `tgt` is faithful. That hypothesis is needed for composition: functoriality of the unweighted pushforward fails for non-faithful `h`. The note now records this, with a counterexample. Pushforward and base change need no faithfulness.
 
@@ -91,9 +101,11 @@ Lean gotchas:
 - `Fibre` and `FibrePair` are `abbrev`s. Without that, `rw` under `pushVal` trips over `Fibre` vs `Quotient`.
 - Proofs that unfold `pushVal` should bring the same instance into scope: `let _ : ∀ z, Fintype (Fibre f z) := fun z => Fintype.ofFinite _`.
 - Use `h.map_id`, not `Functor.map_id`: with `open CategoryTheory` the latter resolves to the monad lemma.
-- `Comma.homMk` does not exist at this Mathlib commit. Build `CommaMorphism` structures directly.
+- `Comma.homMk` did not exist at the original Mathlib commit; the code builds `CommaMorphism` structures directly.
 - To prove two `BCorr`s with the same apex equal, `show` both as `⟨C, T⟩` and rewrite in `T`. For `Corr` equality, use `unfold …; congr 1; ext`.
 - Inside `namespace LTData`, a bare `mk` resolves to `LTData.mk`; write `PowerSeries.mk`.
+- Mathlib v4.36 states Legendre's formula with `multiplicity`. Bridge from `padicValNat` with `Nat.padicValNat_def`, then use `multiplicity_factorial` and `Nat.Prime.sub_one_mul_multiplicity_factorial`.
+- Renamed in Mathlib v4.36: `if_pos`/`if_neg`/`if_true` → `ite_eq_left`/`ite_eq_right`/`ite_true`; `List.sum_le_card_nsmul` → `List.sum_le_length_nsmul`; `SetLike.le_def` → `IsConcreteLE.le_iff`.
 - `push_cast` turns `padicValNat` into `padicValRat`; cast with `exact_mod_cast` and `Nat.cast_sub` instead.
 - With `open ArithmeticFunction`, the notation `Λ` is ambiguous; write `vonMangoldt n`.
 - When destructuring `Quotient.exact`, give the witness type explicitly (`obtain ⟨γ, hγ⟩ : ∃ γ : a ⟶ b, … := Quotient.exact h`).
